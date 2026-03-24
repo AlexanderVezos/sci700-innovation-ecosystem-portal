@@ -6,7 +6,6 @@ function Events() {
       <Table />
       <Table />
       <Table />
-      <Table />
     </div>
   );
 }

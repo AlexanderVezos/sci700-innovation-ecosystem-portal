@@ -5,8 +5,6 @@ function Directory() {
     <div className="h-full bg-slate-50 flex flex-col items-center gap-8 p-8">
       <Table />
       <Table />
-      <Table />
-      <Table />
     </div>
   );
 }
