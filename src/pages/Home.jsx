@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import PageTransition from "@/components/PageTransition";
+import { useMotion } from "@/context/MotionContext";
 
 const pillars = [
   {
@@ -26,33 +27,84 @@ const pillars = [
   },
 ];
 
-function Hero() {
-  const imgRef = useRef(null);
+const FADE_MS = 600;
 
+function Hero() {
+  const wrapperRef = useRef(null);
+  const videoRef = useRef(null);
+  const { reduceMotion } = useMotion();
+  const [fading, setFading] = useState(false);
+
+  // Parallax
   useEffect(() => {
-    const scrollEl = imgRef.current?.closest(".overflow-y-auto");
+    if (reduceMotion) {
+      if (wrapperRef.current) wrapperRef.current.style.transform = "";
+      return;
+    }
+    const scrollEl = wrapperRef.current?.closest(".overflow-y-auto");
     if (!scrollEl) return;
     const onScroll = () => {
-      const offset = scrollEl.scrollTop * 0.4;
-      imgRef.current.style.transform = `translateY(${offset}px)`;
+      wrapperRef.current.style.transform = `translateY(${scrollEl.scrollTop * 0.4}px)`;
     };
     scrollEl.addEventListener("scroll", onScroll, { passive: true });
     return () => scrollEl.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [reduceMotion]);
+
+  // Play/pause on motion toggle — reduced = paused at first frame
+  useEffect(() => {
+    if (!videoRef.current) return;
+    if (reduceMotion) {
+      videoRef.current.pause();
+      videoRef.current.currentTime = 0;
+    } else {
+      videoRef.current.play().catch(() => {});
+    }
+  }, [reduceMotion]);
+
+  const handleEnded = () => {
+    if (reduceMotion) {
+      videoRef.current.currentTime = 0;
+      videoRef.current.play().catch(() => {});
+      return;
+    }
+    setFading(true);
+    setTimeout(() => {
+      videoRef.current.currentTime = 0;
+      videoRef.current.play().catch(() => {});
+      setFading(false);
+    }, FADE_MS);
+  };
 
   return (
     <section className="relative h-screen overflow-hidden">
-      {/* Parallax background */}
-      <img
-        ref={imgRef}
-        src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1600&q=80"
-        alt="Sunshine Coast"
-        className="absolute inset-0 w-full h-[120%] object-cover object-center will-change-transform"
-        style={{ top: "-10%" }}
+      {/* Fade-to-black overlay for loop transition */}
+      <div
+        className="absolute inset-0 z-10 bg-black pointer-events-none"
+        style={{
+          opacity: fading ? 1 : 0,
+          transition: `opacity ${FADE_MS}ms ease`,
+        }}
       />
 
+      {/* Parallax background */}
+      <div
+        ref={wrapperRef}
+        className="absolute w-full overflow-hidden will-change-transform"
+        style={{ top: "-10%", height: "120%" }}
+      >
+        <video
+          ref={videoRef}
+          src="/beach.mp4"
+          autoPlay
+          muted
+          playsInline
+          onEnded={handleEnded}
+          className="w-full h-full object-cover"
+        />
+      </div>
+
       {/* Overlay */}
-      <div className="absolute inset-0 bg-linear-to-b from-black/10 via-black/30 to-black/70" />
+      <div className="absolute inset-0 bg-linear-to-b from-black/20 via-black/0 to-black/50" />
 
       {/* Content */}
       <div className="relative h-full flex flex-col justify-between px-8 md:px-16 pt-24 pb-12 max-w-6xl mx-auto w-full">
@@ -94,6 +146,7 @@ function Hero() {
 }
 
 function Home() {
+  const { reduceMotion } = useMotion();
   return (
     <PageTransition>
       <div className="bg-stone-50">
@@ -123,7 +176,7 @@ function Home() {
                   <img
                     src={p.image}
                     alt={p.title}
-                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    className={`absolute inset-0 w-full h-full object-cover ${reduceMotion ? "" : "group-hover:scale-105 transition-transform duration-500"}`}
                   />
                   <div className="absolute inset-0 bg-linear-to-t from-black/75 via-black/20 to-transparent" />
                   <div className="relative p-6 text-white">

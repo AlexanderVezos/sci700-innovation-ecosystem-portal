@@ -9,6 +9,11 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+if (!process.env.MONGO_URI) {
+  console.error("ERROR: MONGO_URI is not set in .env — server will not start.");
+  process.exit(1);
+}
+
 const client = new MongoClient(process.env.MONGO_URI);
 await client.connect();
 const db = client.db("innovation-portal");

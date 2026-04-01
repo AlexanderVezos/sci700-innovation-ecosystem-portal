@@ -1,5 +1,6 @@
 import { NavLink, useLocation } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
+import { useMotion } from "@/context/MotionContext";
 
 const links = [
   { to: "/", label: "Home" },
@@ -14,6 +15,7 @@ function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const navRef = useRef(null);
   const linkRefs = useRef([]);
+  const { reduceMotion, toggleReduceMotion } = useMotion();
 
   const isHome = location.pathname === "/";
 
@@ -78,6 +80,22 @@ function Navbar() {
           style={indicatorStyle}
         />
       </div>
+
+      <button
+        onClick={toggleReduceMotion}
+        title={reduceMotion ? "Enable motion" : "Reduce motion"}
+        className={`hidden md:block text-xs font-bold tracking-widest uppercase px-3 py-1.5 rounded-lg border transition-colors duration-300 ${
+          transparent
+            ? reduceMotion
+              ? "border-white/40 text-white bg-white/10"
+              : "border-white/20 text-white/60 hover:text-white hover:border-white/40"
+            : reduceMotion
+            ? "border-cyan-200 text-cyan-700 bg-cyan-50"
+            : "border-stone-200 text-slate-500 hover:text-cyan-700 hover:border-cyan-200"
+        }`}
+      >
+        {reduceMotion ? "Motion Off" : "Motion On"}
+      </button>
     </nav>
   );
 }

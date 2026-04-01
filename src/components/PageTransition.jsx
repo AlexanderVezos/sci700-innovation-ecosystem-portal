@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { useMotion } from "@/context/MotionContext";
 
 const variants = {
   initial: { opacity: 0, y: 16 },
@@ -6,14 +7,21 @@ const variants = {
   exit: { opacity: 0, y: -16 },
 };
 
+const staticVariants = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  exit: { opacity: 0 },
+};
+
 function PageTransition({ children }) {
+  const { reduceMotion } = useMotion();
   return (
     <motion.div
-      variants={variants}
+      variants={reduceMotion ? staticVariants : variants}
       initial="initial"
       animate="animate"
       exit="exit"
-      transition={{ duration: 0.25, ease: "easeOut" }}
+      transition={{ duration: reduceMotion ? 0.1 : 0.25, ease: "easeOut" }}
     >
       {children}
     </motion.div>
