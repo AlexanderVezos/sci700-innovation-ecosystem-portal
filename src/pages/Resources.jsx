@@ -1,5 +1,3 @@
-//TODO: Apply Motion Off to cards
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, LayoutGroup, AnimatePresence } from "framer-motion";
@@ -145,6 +143,58 @@ function ResourceCard({
     reduceMotion || isExpanded || hasExpanded,
   );
 
+  const cardClass = [
+    "h-full flex flex-col rounded-2xl overflow-hidden border cursor-pointer select-none bg-white",
+    isExpanded
+      ? "shadow-2xl border-amber-300 z-10"
+      : "shadow-sm border-slate-100",
+  ].join(" ");
+
+  const cardInner = (
+    <>
+      {/* Image — takes 55% of available card height */}
+      <div className="relative overflow-hidden bg-slate-100 basis-[55%] shrink-0">
+        <img src={image} alt={title} className="w-full h-full object-cover" />
+      </div>
+
+      {/* Text */}
+      <div className="flex-1 min-h-0 p-3 overflow-hidden flex flex-col gap-1">
+        <span className="font-black bg-amber-400 text-slate-900 text-sm shrink-0 uppercase px-2 py-0.5 rounded-full z-10 w-fit">
+          {title}
+        </span>
+        <p
+          className={`text-xs text-slate-500 leading-relaxed ${isExpanded ? "" : "line-clamp-2"}`}
+        >
+          {description}
+        </p>
+
+        {isExpanded && (
+          <div className="mt-2 flex flex-col gap-2 flex-1">
+            <div className="h-px bg-slate-100" />
+            <p className="text-xs text-slate-400">**</p>
+            <p className="text-xs text-slate-400">**</p>
+          </div>
+        )}
+      </div>
+    </>
+  );
+
+  if (reduceMotion) {
+    return (
+      <div
+        onClick={onToggle}
+        style={{
+          gridColumn: gridStyle.gridColumn,
+          gridRow: gridStyle.gridRow,
+          opacity: hasExpanded && !isExpanded ? 0.65 : 1,
+        }}
+        className={cardClass}
+      >
+        {cardInner}
+      </div>
+    );
+  }
+
   return (
     <motion.div
       ref={ref}
@@ -159,12 +209,7 @@ function ResourceCard({
       }}
       animate={{ opacity: hasExpanded && !isExpanded ? 0.65 : 1 }}
       transition={SPRING}
-      className={[
-        "h-full flex flex-col rounded-2xl overflow-hidden border cursor-pointer select-none bg-white",
-        isExpanded
-          ? "shadow-2xl border-amber-300 z-10"
-          : "shadow-sm border-slate-100",
-      ].join(" ")}
+      className={cardClass}
     >
       {/* Image — takes 55% of available card height */}
       <div className="relative overflow-hidden bg-slate-100 basis-[55%] shrink-0">
@@ -211,19 +256,28 @@ function Resources() {
 
   return (
     <PageTransition>
-      <AnimatePresence>
-        {expandedId !== null && (
-          <motion.div
-            key="backdrop"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
+      {reduceMotion ? (
+        expandedId !== null && (
+          <div
             className="fixed inset-0 z-40 cursor-default"
             onClick={() => setExpandedId(null)}
           />
-        )}
-      </AnimatePresence>
+        )
+      ) : (
+        <AnimatePresence>
+          {expandedId !== null && (
+            <motion.div
+              key="backdrop"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 z-40 cursor-default"
+              onClick={() => setExpandedId(null)}
+            />
+          )}
+        </AnimatePresence>
+      )}
       <div className="bg-slate-50 min-h-screen">
         {/* Page hero */}
         <div className="bg-slate-900 px-8 md:px-16 pt-36 pb-20">
