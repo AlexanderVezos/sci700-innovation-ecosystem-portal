@@ -52,7 +52,7 @@ function StatBlob({ value, label, index, animate: shouldAnimate }) {
         ease: "easeInOut",
       }}
       style={{ borderRadius: BLOB_RADII[index][0] }}
-      className="bg-amber-400 px-8 py-6 flex flex-col items-center justify-center min-w-[140px] shadow-lg shadow-amber-900/20"
+      className="bg-amber-400 px-8 py-6 flex flex-col items-center justify-center min-w-35 shadow-lg shadow-amber-900/20"
     >
       <span className="text-5xl font-black tracking-tighter text-stone-900 leading-none tabular-nums">
         <motion.span>{rounded}</motion.span>

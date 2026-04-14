@@ -19,5 +19,6 @@ await client.connect();
 const db = client.db("innovation-portal");
 
 app.use("/api/entries", (await import("./routes/entries.js")).default(db));
+app.use("/api/startups", (await import("./routes/startups.js")).default(db));
 
 app.listen(3001, () => console.log("Server running on http://localhost:3001"));
