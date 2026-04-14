@@ -6,9 +6,9 @@ import { useMotion } from "@/context/MotionContext";
 import { useTilt } from "@/hooks/useTilt";
 
 const STATS = [
-  { value: 47, label: "Startups" },
-  { value: 12, label: "Events" },
-  { value: 89, label: "Members" },
+  { value: 99, label: "Startups" },
+  { value: 99, label: "Events" },
+  { value: 99, label: "Members" },
 ];
 
 // Blob border-radius keyframe sequences — one per stat so they're out of phase
