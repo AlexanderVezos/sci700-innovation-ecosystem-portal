@@ -6,6 +6,8 @@ const links = [
   { to: "/", label: "Home" },
   { to: "/directory", label: "Directory" },
   { to: "/events", label: "Events" },
+  { to: "/opportunities", label: "Opportunities" },
+  { to: "/map", label: "Map" },
   { to: "/resources", label: "Resources" },
 ];
 
@@ -26,10 +28,9 @@ function Navbar() {
     if (activeEl && navEl) {
       const navLeft = navEl.getBoundingClientRect().left;
       const linkLeft = activeEl.getBoundingClientRect().left;
-      setIndicatorStyle({
-        left: linkLeft - navLeft,
-        width: activeEl.offsetWidth,
-      });
+      setIndicatorStyle({ left: linkLeft - navLeft, width: activeEl.offsetWidth });
+    } else {
+      setIndicatorStyle({ width: 0 });
     }
   }, [location.pathname]);
 

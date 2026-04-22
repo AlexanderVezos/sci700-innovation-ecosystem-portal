@@ -1,7 +1,6 @@
 import express from "express";
 import { ObjectId } from "mongodb";
 
-// Basic moderation — catches obvious offensive/spam content before it hits the DB.
 const BLOCKED_TERMS = [
   "fuck", "shit", "cunt", "bitch", "asshole", "nigger", "faggot",
   "retard", "whore", "dick", "cock", "pussy", "bastard",
@@ -15,50 +14,46 @@ function moderate(fields) {
   for (const term of BLOCKED_TERMS) {
     if (combined.includes(term)) return "Submission contains disallowed content.";
   }
-  if (GIBBERISH.test(fields.name?.trim())) return "Company name doesn't appear to be valid.";
+  if (GIBBERISH.test(fields.title?.trim())) return "Title doesn't appear to be valid.";
   if (fields.description?.trim().split(/\s+/).length < 4) return "Description is too short to be meaningful.";
   return null;
 }
 
 export default function (db) {
   const router = express.Router();
-  const startups = db.collection("startups");
+  const opportunities = db.collection("opportunities");
 
-  // Public — only approved entries
   router.get("/", async (_req, res) => {
-    res.json(await startups.find({ status: "approved" }).toArray());
+    res.json(await opportunities.find({ status: "approved" }).sort({ createdAt: -1 }).toArray());
   });
 
-  // All entries regardless of status — for admin review
   router.get("/pending", async (_req, res) => {
-    res.json(await startups.find({ status: "pending" }).toArray());
+    res.json(await opportunities.find({ status: "pending" }).toArray());
   });
 
-  // New submissions go in as pending
   router.post("/", async (req, res) => {
-    const { name, tag, description, year, employees, stage, email, website, phone } = req.body;
-
-    const reason = moderate({ name, description });
+    const { title, description, type, organisation, sector, deadline, email, website } = req.body;
+    if (!title || !description || !type || !organisation) {
+      return res.status(400).json({ error: "Missing required fields." });
+    }
+    const reason = moderate({ title, description, organisation });
     if (reason) return res.status(422).json({ error: reason });
 
-    const result = await startups.insertOne({
-      name, tag, description,
-      year: Number(year),
-      employees: Number(employees),
-      stage, email, website, phone,
+    const result = await opportunities.insertOne({
+      title, description, type, organisation, sector: sector || null,
+      deadline: deadline || null, email: email || null, website: website || null,
       status: "pending",
       createdAt: new Date(),
     });
     res.status(201).json(result);
   });
 
-  // Approve or reject: PATCH /api/startups/:id  body: { status: "approved" | "rejected" }
   router.patch("/:id", async (req, res) => {
     const { status } = req.body;
     if (!["approved", "rejected"].includes(status)) {
       return res.status(400).json({ error: "status must be 'approved' or 'rejected'" });
     }
-    const result = await startups.updateOne(
+    const result = await opportunities.updateOne(
       { _id: new ObjectId(req.params.id) },
       { $set: { status } }
     );

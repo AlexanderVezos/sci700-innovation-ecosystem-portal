@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import { motion, LayoutGroup, AnimatePresence } from "framer-motion";
 import PageTransition from "@/components/PageTransition";
 import { useMotion } from "@/context/MotionContext";
@@ -8,121 +7,140 @@ import { useTilt } from "@/hooks/useTilt";
 const resources = [
   {
     title: "Business Planning",
-    description: "**",
+    description:
+      "Templates, frameworks, and guides to help you validate your idea and build a solid business case.",
+    detail1:
+      "Covers lean canvas, financial modelling, and go-to-market planning.",
+    detail2: "Suited to early-stage founders through to scaling ventures.",
     image:
       "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&q=80",
-    to: "/resources/business-planning",
   },
   {
     title: "Funding & Grants",
-    description: "**",
+    description:
+      "Local, state, and federal funding opportunities, grants, and incentives for early-stage and growing ventures.",
+    detail1:
+      "Includes Advance Queensland, CSIRO programmes, and private grant databases.",
+    detail2: "Updated regularly as new rounds open.",
     image:
       "https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=800&q=80",
-    to: "/resources/funding",
   },
   {
     title: "Networks & Mentors",
-    description: "**",
+    description:
+      "Connect with experienced founders, mentors, and industry leaders who have been where you are.",
+    detail1: "Links to Sunshine Coast and broader Queensland mentor networks.",
+    detail2: "Includes peer founder groups and industry-specific communities.",
     image:
       "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=800&q=80",
-    to: "/resources/networks",
   },
   {
     title: "Legal & Compliance",
-    description: "**",
+    description:
+      "Plain-English guidance on business structures, IP, contracts, and regulatory requirements.",
+    detail1: "Covers company registration, founder agreements, and IP basics.",
+    detail2: "Links to Queensland Business and ACCC resources.",
     image:
       "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=800&q=80",
-    to: "/resources/legal",
   },
   {
     title: "Digital Tools",
-    description: "**",
+    description:
+      "Recommended platforms and tools to help you build, manage, and scale your startup.",
+    detail1: "Covers product, operations, marketing, and team collaboration.",
+    detail2: "Includes free tiers and startup discount programmes.",
     image:
       "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80",
-    to: "/resources/digital-tools",
   },
   {
     title: "Market Research",
-    description: "**",
+    description:
+      "Tools and resources to understand your market, validate demand, and size your opportunity.",
+    detail1:
+      "Includes ABS data, industry reports, and customer discovery frameworks.",
+    detail2: "Useful for pitch preparation and investor due diligence.",
     image:
       "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80",
-    to: "/resources/market-research",
   },
   {
     title: "Sustainability",
-    description: "**",
+    description:
+      "Frameworks and support for building environmental and social responsibility into your business from day one.",
+    detail1: "Covers B Corp certification, carbon measurement, and ESG basics.",
+    detail2: "Links to Queensland sustainability grants and programmes.",
     image:
       "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=800&q=80",
-    to: "/resources/sustainability",
   },
   {
     title: "Talent & Hiring",
-    description: "**",
+    description:
+      "Find the right people, understand your obligations as an employer, and build a team that lasts.",
+    detail1:
+      "Covers Fair Work obligations, equity agreements, and hiring platforms.",
+    detail2: "Links to UniSC graduate networks and regional talent pipelines.",
     image:
       "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=800&q=80",
-    to: "/resources/talent",
+  },
+  {
+    title: "Accelerators",
+    description:
+      "Structured programmes offering mentorship, funding pathways, and networks to accelerate your growth.",
+    detail1: "Includes local, national, and sector-specific accelerators.",
+    detail2: "Covers application tips and what to expect from each programme.",
+    image:
+      "https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&q=80",
+  },
+  {
+    title: "Working Spaces",
+    description:
+      "Hot desks, dedicated offices, and collaborative environments across the Sunshine Coast.",
+    detail1: "From beachside hubs to university precincts and CBD co-working.",
+    detail2: "Includes day pass options through to long-term leases.",
+    image:
+      "https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=800&q=80",
   },
 ];
 
 const SPRING = { type: "spring", stiffness: 260, damping: 26, mass: 1 };
 
-// Grid is always 4 cols × 12 row-tracks. In the normal state each card spans 6 rows
-// (2 visual rows × 6 tracks each = 12 total). When one card expands it takes all 12
-// row-tracks and 2 columns. The remaining 7 cards fill the other 2 columns:
-//   near column → 3 cards × 4 tracks = 12
-//   far  column → 4 cards × 3 tracks = 12
-// All three columns are exactly the same total height.
+// 5 cols × 2 rows = 10 cards, 12 row-tracks total.
+// Normal: each card spans 1 col × 6 tracks.
+// Expanded: 2 cols × 12 tracks. Remaining 9 cards fill 3 cols × 3 cards × 4 tracks each.
 function computeGridStyles(expandedId) {
-  const result = Array(8).fill(null);
+  const result = Array(10).fill(null);
 
   if (expandedId === null) {
-    for (let i = 0; i < 8; i++) {
+    for (let i = 0; i < 10; i++) {
       result[i] = {
-        gridColumn: `${(i % 4) + 1} / span 1`,
-        gridRow: `${Math.floor(i / 4) * 6 + 1} / span 6`,
+        gridColumn: `${(i % 5) + 1} / span 1`,
+        gridRow: `${Math.floor(i / 5) * 6 + 1} / span 6`,
       };
     }
     return result;
   }
 
-  const expandLeft = expandedId % 4 <= 1;
+  const expandLeft = expandedId % 5 < 3;
+  const expandCol = expandLeft ? 1 : 4;
+  const remainingCols = expandLeft ? [3, 4, 5] : [1, 2, 3];
 
   result[expandedId] = {
-    gridColumn: expandLeft ? "1 / span 2" : "3 / span 2",
+    gridColumn: `${expandCol} / span 2`,
     gridRow: "1 / span 12",
   };
 
-  // nearCol is adjacent to the expanded block; farCol is on the other side
-  const nearCol = expandLeft ? 3 : 2;
-  const farCol = expandLeft ? 4 : 1;
-
-  const remaining = [0, 1, 2, 3, 4, 5, 6, 7].filter((i) => i !== expandedId);
-
-  // Cards from the same half as the expanded card (displaced directly) → near column (3)
-  // Cards from the opposite half (pushed furthest) → far column (4)
-  // Within each group maintain natural reading order (by row, then col)
   const byReadingOrder = (a, b) =>
-    Math.floor(a / 4) - Math.floor(b / 4) || (a % 4) - (b % 4);
+    Math.floor(a / 5) - Math.floor(b / 5) || (a % 5) - (b % 5);
 
-  const near = remaining
-    .filter((i) => i % 4 <= 1 === expandLeft)
+  const remaining = Array.from({ length: 10 }, (_, i) => i)
+    .filter((i) => i !== expandedId)
     .sort(byReadingOrder);
 
-  const far = remaining
-    .filter((i) => i % 4 <= 1 !== expandLeft)
-    .sort(byReadingOrder);
-
-  near.forEach((idx, pos) => {
+  remaining.forEach((idx, pos) => {
+    const col = remainingCols[Math.floor(pos / 3)];
+    const rowWithinCol = pos % 3;
     result[idx] = {
-      gridColumn: `${nearCol} / span 1`,
-      gridRow: `${pos * 4 + 1} / span 4`,
-    };
-  });
-
-  far.forEach((idx, pos) => {
-    result[idx] = {
-      gridColumn: `${farCol} / span 1`,
-      gridRow: `${pos * 3 + 1} / span 3`,
+      gridColumn: `${col} / span 1`,
+      gridRow: `${rowWithinCol * 4 + 1} / span 4`,
     };
   });
 
@@ -132,6 +150,8 @@ function computeGridStyles(expandedId) {
 function ResourceCard({
   title,
   description,
+  detail1,
+  detail2,
   image,
   gridStyle,
   isExpanded,
@@ -152,18 +172,16 @@ function ResourceCard({
 
   const cardInner = (
     <>
-      {/* Image — takes 55% of available card height */}
-      <div className="relative overflow-hidden bg-slate-100 basis-[55%] shrink-0">
+      <div className="relative overflow-hidden bg-slate-100 basis-[50%] shrink-0">
         <img src={image} alt={title} className="w-full h-full object-cover" />
       </div>
 
-      {/* Text */}
-      <div className="flex-1 min-h-0 p-3 overflow-hidden flex flex-col gap-1">
+      <div className="flex-1 min-h-0 p-4 overflow-hidden flex flex-col gap-1.5">
         <span className="font-black bg-amber-400 text-slate-900 text-sm shrink-0 uppercase px-2 py-0.5 rounded-full z-10 w-fit">
           {title}
         </span>
         <p
-          className={`text-xs text-slate-500 leading-relaxed ${isExpanded ? "" : "line-clamp-2"}`}
+          className={`text-base text-slate-500 leading-relaxed ${isExpanded ? "" : "line-clamp-3"}`}
         >
           {description}
         </p>
@@ -171,8 +189,8 @@ function ResourceCard({
         {isExpanded && (
           <div className="mt-2 flex flex-col gap-2 flex-1">
             <div className="h-px bg-slate-100" />
-            <p className="text-xs text-slate-400">**</p>
-            <p className="text-xs text-slate-400">**</p>
+            <p className="text-lg text-slate-600">{detail1}</p>
+            <p className="text-lg text-slate-600">{detail2}</p>
           </div>
         )}
       </div>
@@ -211,8 +229,7 @@ function ResourceCard({
       transition={SPRING}
       className={cardClass}
     >
-      {/* Image — takes 55% of available card height */}
-      <div className="relative overflow-hidden bg-slate-100 basis-[55%] shrink-0">
+      <div className="relative overflow-hidden bg-slate-100 basis-[50%] shrink-0">
         <motion.img
           src={image}
           alt={title}
@@ -221,13 +238,12 @@ function ResourceCard({
         />
       </div>
 
-      {/* Text */}
-      <div className="flex-1 min-h-0 p-3 overflow-hidden flex flex-col gap-1">
+      <div className="flex-1 min-h-0 p-4 overflow-hidden flex flex-col gap-1.5">
         <span className="font-black bg-amber-400 text-slate-900 text-sm shrink-0 uppercase px-2 py-0.5 rounded-full z-10 w-fit">
           {title}
         </span>
         <p
-          className={`text-xs text-slate-500 leading-relaxed ${isExpanded ? "" : "line-clamp-2"}`}
+          className={`text-base text-slate-500 leading-relaxed ${isExpanded ? "" : "line-clamp-3"}`}
         >
           {description}
         </p>
@@ -240,8 +256,8 @@ function ResourceCard({
             className="mt-2 flex flex-col gap-2 flex-1"
           >
             <div className="h-px bg-slate-100" />
-            <p className="text-xs text-slate-400">**</p>
-            <p className="text-xs text-slate-400">**</p>
+            <p className="text-xs text-slate-600">{detail1}</p>
+            <p className="text-xs text-slate-600">{detail2}</p>
           </motion.div>
         )}
       </div>
@@ -259,7 +275,7 @@ function Resources() {
       {reduceMotion ? (
         expandedId !== null && (
           <div
-            className="fixed inset-0 z-40 cursor-default"
+            className="fixed inset-0 z-20 cursor-default"
             onClick={() => setExpandedId(null)}
           />
         )
@@ -272,7 +288,7 @@ function Resources() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="fixed inset-0 z-40 cursor-default"
+              className="fixed inset-0 z-20 cursor-default"
               onClick={() => setExpandedId(null)}
             />
           )}
@@ -281,27 +297,28 @@ function Resources() {
       <div className="bg-slate-50 min-h-screen">
         {/* Page hero */}
         <div className="bg-slate-900 px-8 md:px-16 pt-36 pb-20">
-          <div className="max-w-5xl mx-auto">
+          <div className="max-w-[1440px] mx-auto">
             <h1 className="text-5xl md:text-7xl font-black tracking-tighter text-white leading-none mt-3">
-              **
+              Everything you need
               <br />
-              **
+              to build.
             </h1>
             <p className="text-slate-400 mt-6 text-lg max-w-xl leading-relaxed">
-              **
+              Practical guides, tools, and programmes to help you start, fund,
+              and grow your venture on the Sunshine Coast.
             </p>
           </div>
         </div>
 
         {/* Bento grid */}
-        <div className="px-8 md:px-16 py-16 max-w-5xl mx-auto relative z-50">
+        <div className="px-8 md:px-16 py-16 max-w-[1440px] mx-auto relative z-10">
           <LayoutGroup>
             <div
               style={{
                 display: "grid",
-                gridTemplateColumns: "repeat(4, 1fr)",
+                gridTemplateColumns: "repeat(5, 1fr)",
                 gridTemplateRows: "repeat(12, 1fr)",
-                height: "660px",
+                height: "580px",
                 gap: "12px",
               }}
             >
