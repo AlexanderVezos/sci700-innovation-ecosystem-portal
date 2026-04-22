@@ -297,7 +297,7 @@ function Resources() {
       <div className="bg-slate-50 min-h-screen">
         {/* Page hero */}
         <div className="bg-slate-900 px-8 md:px-16 pt-36 pb-20">
-          <div className="max-w-[1440px] mx-auto">
+          <div className="max-w-360 mx-auto">
             <h1 className="text-5xl md:text-7xl font-black tracking-tighter text-white leading-none mt-3">
               Everything you need
               <br />
@@ -311,7 +311,7 @@ function Resources() {
         </div>
 
         {/* Bento grid */}
-        <div className="px-8 md:px-16 py-16 max-w-[1440px] mx-auto relative z-10">
+        <div className="px-8 md:px-16 py-16 max-w-360 mx-auto relative z-10">
           <LayoutGroup>
             <div
               style={{

@@ -79,7 +79,7 @@ function CyclingType({ reduceMotion }) {
       {displayText || " "}
       {showCursor && (
         <span
-          className="animate-pulse absolute w-[2px] inset-y-0 bg-current"
+          className="animate-pulse absolute w-0.5 inset-y-0 bg-current"
           style={{ left: "calc(100% + 10px)" }}
         />
       )}
