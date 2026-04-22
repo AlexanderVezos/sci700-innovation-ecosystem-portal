@@ -170,7 +170,7 @@ function AddEventForm({ onAdded }) {
 
               <div className="flex flex-col gap-1">
                 <label className={LABEL}>Organiser</label>
-                <input required minLength={2} maxLength={100} value={form.organizer} onChange={set("organizer")} placeholder="Organisation name" className={INPUT} />
+                <input required minLength={2} maxLength={100} value={form.organizer} onChange={set("organizer")} placeholder="Your organisation" className={INPUT} />
               </div>
 
               <div className="flex flex-col gap-1 sm:col-span-2">
@@ -235,6 +235,7 @@ function Events() {
             <input
               type="search"
               placeholder="Search events…"
+
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-slate-300"
@@ -261,6 +262,7 @@ function Events() {
             ? Array.from({ length: 3 }, (_, i) => <SkeletonEventCard key={i} />)
             : visible.length === 0
               ? <p className="text-sm text-slate-400 text-center py-8">No events found.</p>
+
               : visible.map((event, i) => <EventCard key={i} event={event} />)
           }
         </div>

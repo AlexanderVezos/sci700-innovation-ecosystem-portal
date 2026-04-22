@@ -299,7 +299,7 @@ function EcosystemMap() {
           {nodes.length === 0 && (
             <div className="absolute inset-0 flex items-center justify-center">
               <p className="text-sm" style={{ color: "rgba(255,255,255,0.25)" }}>
-                No approved startups to display yet.
+                No startups found.
               </p>
             </div>
           )}

@@ -386,7 +386,7 @@ function Table({ showForm = true }) {
       <div className="flex flex-col gap-2">
         <input
           type="search"
-          placeholder="Search by name or description…"
+          placeholder="Search startups…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-slate-300"
@@ -410,7 +410,7 @@ function Table({ showForm = true }) {
       </div>
 
       {visible.length === 0 && (
-        <p className="text-sm text-slate-400 text-center py-8">No results found.</p>
+        <p className="text-sm text-slate-400 text-center py-8">No startups found.</p>
       )}
       {visible.map((entry, i) => (
         <DirectoryCard key={i} entry={entry} />

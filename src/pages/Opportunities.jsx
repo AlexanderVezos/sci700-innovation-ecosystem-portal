@@ -205,7 +205,7 @@ function AddOpportunityForm({ onAdded }) {
             <div className="flex items-center justify-end gap-4">
               {error && <p className="text-xs text-red-500">{error}</p>}
               <button type="submit" disabled={submitting} className="bg-amber-400 text-stone-900 font-bold text-sm px-6 py-2.5 rounded-xl hover:bg-amber-300 transition-colors disabled:opacity-50">
-                {submitting ? "Submitting…" : "Post Opportunity"}
+                {submitting ? "Submitting…" : "Submit Opportunity"}
               </button>
             </div>
           </motion.form>
@@ -282,7 +282,7 @@ function Opportunities() {
           {loading
             ? Array.from({ length: 3 }, (_, i) => <SkeletonCard key={i} />)
             : visible.length === 0
-              ? <p className="text-sm text-slate-400 text-center py-8">No opportunities posted yet.</p>
+              ? <p className="text-sm text-slate-400 text-center py-8">No opportunities found.</p>
               : visible.map((opp, i) => <OpportunityCard key={i} opp={opp} />)
           }
         </div>
