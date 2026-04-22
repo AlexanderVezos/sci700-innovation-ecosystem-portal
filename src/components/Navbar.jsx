@@ -28,7 +28,10 @@ function Navbar() {
     if (activeEl && navEl) {
       const navLeft = navEl.getBoundingClientRect().left;
       const linkLeft = activeEl.getBoundingClientRect().left;
-      setIndicatorStyle({ left: linkLeft - navLeft, width: activeEl.offsetWidth });
+      setIndicatorStyle({
+        left: linkLeft - navLeft,
+        width: activeEl.offsetWidth,
+      });
     } else {
       setIndicatorStyle({ width: 0 });
     }
@@ -51,8 +54,15 @@ function Navbar() {
         transparent ? "bg-transparent" : "bg-white shadow-sm"
       }`}
     >
-      <div className={`text-4xl font-black tracking-tighter transition-colors duration-300 ${transparent ? "text-white" : "text-slate-800"}`}>
-        STARTUP<span className={`transition-colors duration-300 ${transparent ? "text-amber-400" : "text-cyan-600"}`}>SC</span>
+      <div
+        className={`text-4xl font-black tracking-tighter transition-colors duration-300 ${transparent ? "text-white" : "text-slate-800"}`}
+      >
+        STARTUP
+        <span
+          className={`transition-colors duration-300 ${transparent ? "text-amber-400" : "text-cyan-600"}`}
+        >
+          SC
+        </span>
       </div>
 
       <div
@@ -67,8 +77,12 @@ function Navbar() {
             className={({ isActive }) =>
               `pb-1 transition-colors duration-300 ${
                 isActive
-                  ? transparent ? "text-white" : "text-cyan-700"
-                  : transparent ? "text-white/70 hover:text-white" : "text-slate-600 hover:text-cyan-700"
+                  ? transparent
+                    ? "text-white"
+                    : "text-cyan-700"
+                  : transparent
+                    ? "text-white/70 hover:text-white"
+                    : "text-slate-600 hover:text-cyan-700"
               }`
             }
           >
@@ -91,8 +105,8 @@ function Navbar() {
               ? "border-white/40 text-white bg-white/10"
               : "border-white/20 text-white/60 hover:text-white hover:border-white/40"
             : reduceMotion
-            ? "border-cyan-200 text-cyan-700 bg-cyan-50"
-            : "border-stone-200 text-slate-500 hover:text-cyan-700 hover:border-cyan-200"
+              ? "border-cyan-200 text-cyan-700 bg-cyan-50"
+              : "border-stone-200 text-slate-500 hover:text-cyan-700 hover:border-cyan-200"
         }`}
       >
         {reduceMotion ? "Motion Off" : "Motion On"}

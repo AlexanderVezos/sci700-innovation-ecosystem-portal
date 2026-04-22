@@ -7,7 +7,6 @@ const variants = {
   exit: { opacity: 0, y: -16 },
 };
 
-
 function PageTransition({ children }) {
   const { reduceMotion } = useMotion();
 

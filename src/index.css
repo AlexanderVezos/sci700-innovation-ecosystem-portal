@@ -127,8 +127,12 @@
   }
 }
 
-.scrollbar-none { scrollbar-width: none; }
-.scrollbar-none::-webkit-scrollbar { display: none; }
+.scrollbar-none {
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
 
 /* Sitewide reduce-motion: kills all CSS transitions and animations */
 .reduce-motion *,

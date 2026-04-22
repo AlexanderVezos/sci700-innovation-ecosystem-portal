@@ -8,8 +8,12 @@ function Footer() {
       </span>
       <span>© 2026 StartupSC</span>
       <div className="flex gap-4">
-        <Link to="/privacy" className="hover:text-slate-600 transition-colors">Privacy Policy</Link>
-        <Link to="/terms" className="hover:text-slate-600 transition-colors">Terms &amp; Conditions</Link>
+        <Link to="/privacy" className="hover:text-slate-600 transition-colors">
+          Privacy Policy
+        </Link>
+        <Link to="/terms" className="hover:text-slate-600 transition-colors">
+          Terms &amp; Conditions
+        </Link>
       </div>
     </footer>
   );

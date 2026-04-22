@@ -12,7 +12,14 @@ import PrivacyPolicy from "@/pages/PrivacyPolicy";
 import Terms from "@/pages/Terms";
 import EcosystemMap from "@/pages/EcosystemMap";
 
-const routes = ["/", "/directory", "/events", "/opportunities", "/map", "/resources"];
+const routes = [
+  "/",
+  "/directory",
+  "/events",
+  "/opportunities",
+  "/map",
+  "/resources",
+];
 
 function App() {
   const location = useLocation();
@@ -22,7 +29,8 @@ function App() {
     const onKey = (e) => {
       const i = routes.indexOf(location.pathname);
       if (e.key === "ArrowRight") navigate(routes[(i + 1) % routes.length]);
-      if (e.key === "ArrowLeft") navigate(routes[(i - 1 + routes.length) % routes.length]);
+      if (e.key === "ArrowLeft")
+        navigate(routes[(i - 1 + routes.length) % routes.length]);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -57,7 +65,6 @@ function App() {
         </div>
       </div>
     </div>
-
   );
 }
 

@@ -14,11 +14,11 @@ const TAGS = [
 
 const TAG_COLOURS = {
   HealthTech: "bg-blue-100 text-blue-700",
-  EdTech:     "bg-violet-100 text-violet-700",
-  CleanTech:  "bg-emerald-100 text-emerald-700",
-  FinTech:    "bg-amber-100 text-amber-700",
-  AgriTech:   "bg-lime-100 text-lime-700",
-  Other:      "bg-slate-100 text-slate-500",
+  EdTech: "bg-violet-100 text-violet-700",
+  CleanTech: "bg-emerald-100 text-emerald-700",
+  FinTech: "bg-amber-100 text-amber-700",
+  AgriTech: "bg-lime-100 text-lime-700",
+  Other: "bg-slate-100 text-slate-500",
 };
 
 const AVATAR_COLOURS = [
@@ -57,14 +57,44 @@ const EMPTY_FORM = {
 };
 
 const CURRENT_YEAR = new Date().getFullYear();
-const INPUT = "border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-300";
+
+function formatPhone(value) {
+  const raw = value.replace(/[^\d+]/g, "").replace(/(?!^\+)\+/g, "");
+  if (raw.startsWith("+61")) {
+    const nat = raw.slice(3);
+    let out = "+61";
+    if (nat.length > 0) out += " " + nat.slice(0, 3);
+    if (nat.length > 3) out += " " + nat.slice(3, 6);
+    if (nat.length > 6) out += " " + nat.slice(6, 9);
+    return out;
+  }
+  if (raw.startsWith("04")) {
+    let out = raw.slice(0, 4);
+    if (raw.length > 4) out += " " + raw.slice(4, 7);
+    if (raw.length > 7) out += " " + raw.slice(7, 10);
+    return out;
+  }
+  if (raw.startsWith("0") && raw.length >= 2) {
+    let out = "(" + raw.slice(0, 2) + ")";
+    if (raw.length > 2) out += " " + raw.slice(2, 6);
+    if (raw.length > 6) out += " " + raw.slice(6, 10);
+    return out;
+  }
+  return raw;
+}
+const INPUT =
+  "border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-300";
 const LABEL = "text-xs font-semibold text-slate-500 uppercase tracking-wide";
-const OPT = <span className="normal-case font-normal text-slate-400">(optional)</span>;
+const OPT = (
+  <span className="normal-case font-normal text-slate-400">(optional)</span>
+);
 
 function Field({ label, optional, children }) {
   return (
     <div className="flex flex-col gap-1">
-      <label className={LABEL}>{label} {optional && OPT}</label>
+      <label className={LABEL}>
+        {label} {optional && OPT}
+      </label>
       {children}
     </div>
   );
@@ -120,7 +150,10 @@ function AddStartupForm({ onAdded }) {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: reduceMotion ? 0 : 0.3, ease: [0.16, 1, 0.3, 1] }}
+            transition={{
+              duration: reduceMotion ? 0 : 0.3,
+              ease: [0.16, 1, 0.3, 1],
+            }}
             style={{ overflow: "hidden" }}
             onSubmit={handleSubmit}
             className="bg-white border border-slate-100 rounded-2xl shadow-sm p-6 mb-4 flex flex-col gap-4"
@@ -139,9 +172,16 @@ function AddStartupForm({ onAdded }) {
               </Field>
 
               <Field label="Category">
-                <select required value={form.tag} onChange={set("tag")} className={INPUT}>
+                <select
+                  required
+                  value={form.tag}
+                  onChange={set("tag")}
+                  className={INPUT}
+                >
                   <option value="">Select…</option>
-                  {TAGS.map((t) => <option key={t}>{t}</option>)}
+                  {TAGS.map((t) => (
+                    <option key={t}>{t}</option>
+                  ))}
                 </select>
               </Field>
 
@@ -190,9 +230,16 @@ function AddStartupForm({ onAdded }) {
               </Field>
 
               <Field label="Stage">
-                <select required value={form.stage} onChange={set("stage")} className={INPUT}>
+                <select
+                  required
+                  value={form.stage}
+                  onChange={set("stage")}
+                  className={INPUT}
+                >
                   <option value="">Select…</option>
-                  {STAGES.map((s) => <option key={s}>{s}</option>)}
+                  {STAGES.map((s) => (
+                    <option key={s}>{s}</option>
+                  ))}
                 </select>
               </Field>
 
@@ -222,19 +269,20 @@ function AddStartupForm({ onAdded }) {
                 <input
                   type="tel"
                   value={form.phone}
-                  onChange={set("phone")}
-                  placeholder="+61 400 000 000"
-                  pattern="[+\d][\d\s\-().]{6,18}"
-                  title="Enter a valid phone number"
+                  onChange={(e) =>
+                    setForm((f) => ({
+                      ...f,
+                      phone: formatPhone(e.target.value),
+                    }))
+                  }
+                  placeholder="0412 345 678"
                   className={INPUT}
                 />
               </Field>
             </div>
 
             <div className="flex items-center justify-end gap-4">
-              {error && (
-                <p className="text-xs text-red-500">{error}</p>
-              )}
+              {error && <p className="text-xs text-red-500">{error}</p>}
               <button
                 type="submit"
                 disabled={submitting}
@@ -257,27 +305,52 @@ function DirectoryCard({ entry }) {
   const tagColour = TAG_COLOURS[entry.tag] ?? TAG_COLOURS.Other;
 
   const contacts = [
-    entry.email   && { label: "Email",   href: `mailto:${entry.email}`,  value: entry.email,   newTab: false },
-    entry.website && { label: "Website", href: entry.website,             value: entry.website, newTab: true  },
-    entry.phone   && { label: "Phone",   href: `tel:${entry.phone}`,      value: entry.phone,   newTab: false },
+    entry.email && {
+      label: "Email",
+      href: `mailto:${entry.email}`,
+      value: entry.email,
+      newTab: false,
+    },
+    entry.website && {
+      label: "Website",
+      href: entry.website,
+      value: entry.website,
+      newTab: true,
+    },
+    entry.phone && {
+      label: "Phone",
+      href: `tel:${entry.phone}`,
+      value: entry.phone,
+      newTab: false,
+    },
   ].filter(Boolean);
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 flex gap-4 items-start">
-      <div className={`w-14 h-14 rounded-xl shrink-0 flex items-center justify-center font-bold text-lg select-none ${av}`}>
+      <div
+        className={`w-14 h-14 rounded-xl shrink-0 flex items-center justify-center font-bold text-lg select-none ${av}`}
+      >
         {initials(entry.name)}
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="font-semibold text-slate-800 text-base">{entry.name}</span>
-          <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${tagColour}`}>
+          <span className="font-semibold text-slate-800 text-base">
+            {entry.name}
+          </span>
+          <span
+            className={`text-xs font-medium px-2 py-0.5 rounded-full ${tagColour}`}
+          >
             {entry.tag}
           </span>
         </div>
-        <p className="text-sm text-slate-500 mt-1 leading-snug">{entry.description}</p>
+        <p className="text-sm text-slate-500 mt-1 leading-snug">
+          {entry.description}
+        </p>
         <div className="flex items-center gap-4 mt-2 flex-wrap">
           <span className="text-xs text-slate-400">Est. {entry.year}</span>
-          <span className="text-xs text-slate-400">{entry.employees} people</span>
+          <span className="text-xs text-slate-400">
+            {entry.employees} people
+          </span>
           <span className="text-xs text-slate-400">{entry.stage}</span>
           {contacts.length > 0 && (
             <button
@@ -301,7 +374,9 @@ function DirectoryCard({ entry }) {
               <div className="mt-3 pt-3 border-t border-slate-100 flex flex-col gap-1.5">
                 {contacts.map(({ label, href, value, newTab }) => (
                   <div key={label} className="flex items-center gap-2 text-xs">
-                    <span className="w-14 font-semibold text-slate-400 uppercase tracking-wide shrink-0">{label}</span>
+                    <span className="w-14 font-semibold text-slate-400 uppercase tracking-wide shrink-0">
+                      {label}
+                    </span>
                     <a
                       href={href}
                       target={newTab ? "_blank" : undefined}
@@ -364,7 +439,10 @@ function Table({ showForm = true }) {
   const visible = entries.filter((e) => {
     const matchTag = filterTag === "All" || e.tag === filterTag;
     const q = search.toLowerCase();
-    const matchSearch = !q || e.name.toLowerCase().includes(q) || e.description.toLowerCase().includes(q);
+    const matchSearch =
+      !q ||
+      e.name.toLowerCase().includes(q) ||
+      e.description.toLowerCase().includes(q);
     return matchTag && matchSearch;
   });
 
@@ -410,7 +488,9 @@ function Table({ showForm = true }) {
       </div>
 
       {visible.length === 0 && (
-        <p className="text-sm text-slate-400 text-center py-8">No startups found.</p>
+        <p className="text-sm text-slate-400 text-center py-8">
+          No startups found.
+        </p>
       )}
       {visible.map((entry, i) => (
         <DirectoryCard key={i} entry={entry} />

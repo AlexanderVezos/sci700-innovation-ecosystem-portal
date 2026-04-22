@@ -12,7 +12,10 @@ function Directory() {
               <br />
               on the Coast.
             </h1>
-            <p className="text-slate-400 mt-6 text-lg max-w-xl leading-relaxed">Browse startups, investors, research institutions, and industry partners shaping the Sunshine Coast innovation ecosystem.</p>
+            <p className="text-slate-400 mt-6 text-lg max-w-xl leading-relaxed">
+              Browse startups, investors, research institutions, and industry
+              partners shaping the Sunshine Coast innovation ecosystem.
+            </p>
           </div>
         </div>
         <div className="px-8 md:px-16 py-12 max-w-2xl mx-auto">

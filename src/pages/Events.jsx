@@ -3,20 +3,36 @@ import { AnimatePresence, motion } from "framer-motion";
 import PageTransition from "@/components/PageTransition";
 import { useMotion } from "@/context/MotionContext";
 
-const EVENT_TYPES = ["Networking", "Workshop", "Pitch Night", "Conference", "Webinar", "Other"];
+const EVENT_TYPES = [
+  "Networking",
+  "Workshop",
+  "Pitch Night",
+  "Conference",
+  "Webinar",
+  "Other",
+];
 
 const TYPE_COLOURS = {
-  Networking:   "bg-blue-100 text-blue-700",
-  Workshop:     "bg-violet-100 text-violet-700",
-  "Pitch Night":"bg-amber-100 text-amber-700",
-  Conference:   "bg-emerald-100 text-emerald-700",
-  Webinar:      "bg-cyan-100 text-cyan-700",
-  Other:        "bg-slate-100 text-slate-500",
+  Networking: "bg-blue-100 text-blue-700",
+  Workshop: "bg-violet-100 text-violet-700",
+  "Pitch Night": "bg-amber-100 text-amber-700",
+  Conference: "bg-emerald-100 text-emerald-700",
+  Webinar: "bg-cyan-100 text-cyan-700",
+  Other: "bg-slate-100 text-slate-500",
 };
 
-const INPUT = "border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-300";
+const INPUT =
+  "border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-300";
 const LABEL = "text-xs font-semibold text-slate-500 uppercase tracking-wide";
-const EMPTY_FORM = { title: "", description: "", date: "", location: "", type: "", organizer: "", rsvpUrl: "" };
+const EMPTY_FORM = {
+  title: "",
+  description: "",
+  date: "",
+  location: "",
+  type: "",
+  organizer: "",
+  rsvpUrl: "",
+};
 const CURRENT_YEAR = new Date().getFullYear();
 
 function DateBlock({ iso }) {
@@ -38,10 +54,18 @@ function EventCard({ event }) {
       <DateBlock iso={event.date} />
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="font-semibold text-slate-800 text-base">{event.title}</span>
-          <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${typeColour}`}>{event.type}</span>
+          <span className="font-semibold text-slate-800 text-base">
+            {event.title}
+          </span>
+          <span
+            className={`text-xs font-medium px-2 py-0.5 rounded-full ${typeColour}`}
+          >
+            {event.type}
+          </span>
         </div>
-        <p className="text-sm text-slate-500 mt-1 leading-snug line-clamp-2">{event.description}</p>
+        <p className="text-sm text-slate-500 mt-1 leading-snug line-clamp-2">
+          {event.description}
+        </p>
         <div className="flex gap-4 mt-2 flex-wrap">
           <span className="text-xs text-slate-400">{event.location}</span>
           <span className="text-xs text-slate-400">by {event.organizer}</span>
@@ -88,7 +112,8 @@ function AddEventForm({ onAdded }) {
   const [error, setError] = useState(null);
   const { reduceMotion } = useMotion();
 
-  const set = (field) => (e) => setForm((f) => ({ ...f, [field]: e.target.value }));
+  const set = (field) => (e) =>
+    setForm((f) => ({ ...f, [field]: e.target.value }));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -126,7 +151,10 @@ function AddEventForm({ onAdded }) {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: reduceMotion ? 0 : 0.3, ease: [0.16, 1, 0.3, 1] }}
+            transition={{
+              duration: reduceMotion ? 0 : 0.3,
+              ease: [0.16, 1, 0.3, 1],
+            }}
             style={{ overflow: "hidden" }}
             onSubmit={handleSubmit}
             className="bg-white border border-slate-100 rounded-2xl shadow-sm p-6 mb-4 flex flex-col gap-4"
@@ -134,13 +162,32 @@ function AddEventForm({ onAdded }) {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="flex flex-col gap-1 sm:col-span-2">
                 <label className={LABEL}>Title</label>
-                <input required minLength={4} maxLength={120} value={form.title} onChange={set("title")} placeholder="Event title" className={INPUT} />
+                <input
+                  required
+                  minLength={4}
+                  maxLength={120}
+                  value={form.title}
+                  onChange={set("title")}
+                  placeholder="Event title"
+                  className={INPUT}
+                />
               </div>
 
               <div className="flex flex-col gap-1 sm:col-span-2">
                 <label className={LABEL}>Description</label>
-                <textarea required minLength={20} maxLength={500} value={form.description} onChange={set("description")} placeholder="What's happening? (20–500 characters)" rows={2} className={`${INPUT} resize-none`} />
-                <span className="text-xs text-slate-400 text-right">{form.description.length}/500</span>
+                <textarea
+                  required
+                  minLength={20}
+                  maxLength={500}
+                  value={form.description}
+                  onChange={set("description")}
+                  placeholder="What's happening? (20–500 characters)"
+                  rows={2}
+                  className={`${INPUT} resize-none`}
+                />
+                <span className="text-xs text-slate-400 text-right">
+                  {form.description.length}/500
+                </span>
               </div>
 
               <div className="flex flex-col gap-1">
@@ -157,31 +204,71 @@ function AddEventForm({ onAdded }) {
 
               <div className="flex flex-col gap-1">
                 <label className={LABEL}>Type</label>
-                <select required value={form.type} onChange={set("type")} className={INPUT}>
+                <select
+                  required
+                  value={form.type}
+                  onChange={set("type")}
+                  className={INPUT}
+                >
                   <option value="">Select…</option>
-                  {EVENT_TYPES.map((t) => <option key={t}>{t}</option>)}
+                  {EVENT_TYPES.map((t) => (
+                    <option key={t}>{t}</option>
+                  ))}
                 </select>
               </div>
 
               <div className="flex flex-col gap-1">
                 <label className={LABEL}>Location</label>
-                <input required minLength={3} maxLength={120} value={form.location} onChange={set("location")} placeholder="Sunshine Coast, QLD" className={INPUT} />
+                <input
+                  required
+                  minLength={3}
+                  maxLength={120}
+                  value={form.location}
+                  onChange={set("location")}
+                  placeholder="Sunshine Coast, QLD"
+                  className={INPUT}
+                />
               </div>
 
               <div className="flex flex-col gap-1">
                 <label className={LABEL}>Organiser</label>
-                <input required minLength={2} maxLength={100} value={form.organizer} onChange={set("organizer")} placeholder="Your organisation" className={INPUT} />
+                <input
+                  required
+                  minLength={2}
+                  maxLength={100}
+                  value={form.organizer}
+                  onChange={set("organizer")}
+                  placeholder="Your organisation"
+                  className={INPUT}
+                />
               </div>
 
               <div className="flex flex-col gap-1 sm:col-span-2">
-                <label className={LABEL}>RSVP Link <span className="normal-case font-normal text-slate-400">(optional)</span></label>
-                <input type="url" value={form.rsvpUrl} onChange={set("rsvpUrl")} placeholder="https://eventbrite.com/…" pattern="https?://.+" title="Must start with http:// or https://" className={INPUT} />
+                <label className={LABEL}>
+                  RSVP Link{" "}
+                  <span className="normal-case font-normal text-slate-400">
+                    (optional)
+                  </span>
+                </label>
+                <input
+                  type="url"
+                  value={form.rsvpUrl}
+                  onChange={set("rsvpUrl")}
+                  placeholder="https://eventbrite.com/…"
+                  pattern="https?://.+"
+                  title="Must start with http:// or https://"
+                  className={INPUT}
+                />
               </div>
             </div>
 
             <div className="flex items-center justify-end gap-4">
               {error && <p className="text-xs text-red-500">{error}</p>}
-              <button type="submit" disabled={submitting} className="bg-amber-400 text-stone-900 font-bold text-sm px-6 py-2.5 rounded-xl hover:bg-amber-300 transition-colors disabled:opacity-50">
+              <button
+                type="submit"
+                disabled={submitting}
+                className="bg-amber-400 text-stone-900 font-bold text-sm px-6 py-2.5 rounded-xl hover:bg-amber-300 transition-colors disabled:opacity-50"
+              >
                 {submitting ? "Submitting…" : "Submit Event"}
               </button>
             </div>
@@ -201,15 +288,24 @@ function Events() {
   const fetchEvents = () => {
     fetch("http://localhost:3001/api/events")
       .then((res) => res.json())
-      .then((data) => { setEvents(data); setLoading(false); });
+      .then((data) => {
+        setEvents(data);
+        setLoading(false);
+      });
   };
 
-  useEffect(() => { fetchEvents(); }, []);
+  useEffect(() => {
+    fetchEvents();
+  }, []);
 
   const visible = events.filter((e) => {
     const matchType = filterType === "All" || e.type === filterType;
     const q = search.toLowerCase();
-    const matchSearch = !q || e.title.toLowerCase().includes(q) || e.description.toLowerCase().includes(q) || e.organizer.toLowerCase().includes(q);
+    const matchSearch =
+      !q ||
+      e.title.toLowerCase().includes(q) ||
+      e.description.toLowerCase().includes(q) ||
+      e.organizer.toLowerCase().includes(q);
     return matchType && matchSearch;
   });
 
@@ -223,7 +319,10 @@ function Events() {
               <br />
               on.
             </h1>
-            <p className="text-slate-400 mt-6 text-lg max-w-xl leading-relaxed">Networking nights, workshops, pitch events, and conferences across the Sunshine Coast. Add yours to the list.</p>
+            <p className="text-slate-400 mt-6 text-lg max-w-xl leading-relaxed">
+              Networking nights, workshops, pitch events, and conferences across
+              the Sunshine Coast. Add yours to the list.
+            </p>
           </div>
         </div>
 
@@ -235,7 +334,6 @@ function Events() {
             <input
               type="search"
               placeholder="Search events…"
-
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-slate-300"
@@ -258,13 +356,15 @@ function Events() {
             </div>
           </div>
 
-          {loading
-            ? Array.from({ length: 3 }, (_, i) => <SkeletonEventCard key={i} />)
-            : visible.length === 0
-              ? <p className="text-sm text-slate-400 text-center py-8">No events found.</p>
-
-              : visible.map((event, i) => <EventCard key={i} event={event} />)
-          }
+          {loading ? (
+            Array.from({ length: 3 }, (_, i) => <SkeletonEventCard key={i} />)
+          ) : visible.length === 0 ? (
+            <p className="text-sm text-slate-400 text-center py-8">
+              No events found.
+            </p>
+          ) : (
+            visible.map((event, i) => <EventCard key={i} event={event} />)
+          )}
         </div>
       </div>
     </PageTransition>
