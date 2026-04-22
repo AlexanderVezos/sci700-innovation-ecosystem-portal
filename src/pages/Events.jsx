@@ -338,13 +338,13 @@ function Events() {
               onChange={(e) => setSearch(e.target.value)}
               className="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-slate-300"
             />
-            <div className="flex flex-wrap gap-1.5">
+            <div className="flex flex-wrap md:flex-nowrap gap-1.5">
               {["All", ...EVENT_TYPES].map((t) => (
                 <button
                   key={t}
                   onClick={() => setFilterType(t)}
                   className={[
-                    "font-medium px-3 py-1 rounded-full transition-colors text-sm whitespace-nowrap",
+                    "md:flex-auto font-medium px-3 py-1.5 md:px-2 md:py-1 rounded-full transition-colors text-sm md:text-[clamp(0.6rem,1.2vw,0.875rem)] whitespace-nowrap",
                     filterType === t
                       ? "bg-slate-800 text-white"
                       : "bg-white border border-slate-200 text-slate-500 hover:border-slate-400",
