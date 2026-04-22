@@ -27,13 +27,18 @@ function commonPrefixLen(a, b) {
 
 function CyclingType({ reduceMotion }) {
   const final = CYCLING_PHRASES.at(-1);
-  const [text, setText] = useState(() => (reduceMotion ? final : ""));
+  const [text, setText] = useState("");
   const [idx, setIdx] = useState(0);
   const [deleting, setDeleting] = useState(false);
-  const [done, setDone] = useState(() => reduceMotion);
+  const [done, setDone] = useState(false);
+
+  // Derive display values — when motion is off, show final text immediately
+  // without touching state (avoids syncing state in an effect).
+  const displayText = reduceMotion ? final : text;
+  const showCursor = !reduceMotion && !done;
 
   useEffect(() => {
-    if (done) return;
+    if (done || reduceMotion) return;
     const current = CYCLING_PHRASES[idx];
     const isLast = idx === CYCLING_PHRASES.length - 1;
 
@@ -67,12 +72,12 @@ function CyclingType({ reduceMotion }) {
       DELETE_SPEED,
     );
     return () => clearTimeout(tid);
-  }, [text, idx, deleting, done]);
+  }, [text, idx, deleting, done, reduceMotion]);
 
   return (
     <span className="relative whitespace-nowrap">
-      {text || " "}
-      {!done && (
+      {displayText || " "}
+      {showCursor && (
         <span
           className="animate-pulse absolute w-[2px] inset-y-0 bg-current"
           style={{ left: "calc(100% + 10px)" }}
@@ -122,12 +127,16 @@ function StatBlob({ value, label, index, animate: shouldAnimate }) {
 
   return (
     <motion.div
-      animate={shouldAnimate ? { borderRadius: BLOB_RADII[index] } : {}}
-      transition={{
-        duration: 7 + index * 1.5,
-        repeat: Infinity,
-        ease: "easeInOut",
-      }}
+      animate={
+        shouldAnimate
+          ? { borderRadius: BLOB_RADII[index] }
+          : { borderRadius: BLOB_RADII[index][0] }
+      }
+      transition={
+        shouldAnimate
+          ? { duration: 7 + index * 1.5, repeat: Infinity, ease: "easeInOut" }
+          : { duration: 0.5, ease: "easeOut" }
+      }
       style={{ borderRadius: BLOB_RADII[index][0] }}
       className="bg-amber-400 px-8 py-6 flex flex-col items-center justify-center min-w-35 shadow-lg shadow-amber-900/20"
     >
@@ -356,12 +365,13 @@ function PillarCard({
       onMouseMove={onMouseMove}
       onMouseLeave={onMouseLeave}
       initial={reduceMotion ? false : { opacity: 0, y: 28 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      animate={reduceMotion ? { opacity: 1, y: 0 } : undefined}
+      whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.3, margin: "0px 0px -120px 0px" }}
       transition={{
-        duration: 0.55,
+        duration: reduceMotion ? 0 : 0.55,
         ease: [0.16, 1, 0.3, 1],
-        delay: index * 0.07,
+        delay: reduceMotion ? 0 : index * 0.07,
       }}
       style={cardStyle}
       className={`relative rounded-2xl overflow-hidden h-80 flex flex-col justify-end ${cols ?? ""}`}
@@ -420,9 +430,10 @@ function Home() {
           <div className="max-w-5xl mx-auto">
             <motion.p
               initial={reduceMotion ? false : { opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              animate={reduceMotion ? { opacity: 1, y: 0 } : undefined}
+              whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.5 }}
-              transition={{ duration: 0.4, ease: "easeOut" }}
+              transition={{ duration: reduceMotion ? 0 : 0.4, ease: "easeOut" }}
               className="text-xs font-bold tracking-widest uppercase text-stone-400 mb-6"
             >
               Explore the platform

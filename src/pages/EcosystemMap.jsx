@@ -5,12 +5,9 @@ import {
   forceCollide,
   forceManyBody,
   forceRadial,
-  forceX,
-  forceY,
 } from "d3-force";
 import { AnimatePresence, motion } from "framer-motion";
 import PageTransition from "@/components/PageTransition";
-import { useMotion } from "@/context/MotionContext";
 
 const TAGS = [
   "HealthTech",
@@ -181,6 +178,24 @@ function DetailPanel({ node, onClose }) {
   );
 }
 
+// Applies center + radial forces for the current dims and active filter.
+// Called by both the resize and filter effects so they stay in sync.
+function applyForces(sim, w, h, tag) {
+  const cx = w / 2;
+  const cy = h / 2;
+  // Non-matching nodes are pushed to an outer ring clearly past the centre cluster.
+  const outerR = Math.min(w, h) * 0.58;
+  sim.force("center", forceCenter(cx, cy).strength(0.004));
+  sim.force(
+    "radial",
+    forceRadial(
+      (d) => (tag === "All" || d.tag === tag ? 0 : outerR),
+      cx,
+      cy,
+    ).strength((d) => (tag === "All" || d.tag === tag ? 0.12 : 0.15)),
+  );
+}
+
 function EcosystemMap() {
   const [startups, setStartups] = useState([]);
   const [nodes, setNodes] = useState([]);
@@ -191,12 +206,15 @@ function EcosystemMap() {
   const containerRef = useRef(null);
   const simRef = useRef(null);
   const dimsRef = useRef({ w: 800, h: 600 });
-  const { reduceMotion } = useMotion();
+  const filterTagRef = useRef("All");
 
-  // Keep dimsRef in sync without triggering sim rebuilds
   useEffect(() => {
     dimsRef.current = dims;
   }, [dims]);
+
+  useEffect(() => {
+    filterTagRef.current = filterTag;
+  }, [filterTag]);
 
   // Derived — panel hides if filtered tag doesn't match, no setState needed
   const visibleSelected =
@@ -228,78 +246,73 @@ function EcosystemMap() {
     simRef.current?.stop();
 
     const { w, h } = dimsRef.current;
-    const wellR = Math.min(w, h) * 0.3;
+    // Spread initial positions evenly around a wider ring to prevent spawn collisions
+    const initial = startups.map((s, i) => {
+      const angle = (i / startups.length) * Math.PI * 2;
+      const r = Math.min(w, h) * (0.3 + Math.random() * 0.15);
+      return {
+        ...s,
+        id: i,
+        r: bubbleR(s.employees),
+        x: w / 2 + Math.cos(angle) * r,
+        y: h / 2 + Math.sin(angle) * r,
+      };
+    });
 
-    const initial = startups.map((s, i) => ({
-      ...s,
-      id: i,
-      r: bubbleR(s.employees),
-      x: w / 2 + (Math.random() - 0.5) * wellR,
-      y: h / 2 + (Math.random() - 0.5) * wellR,
-    }));
-
+    let tick = 0;
     const sim = forceSimulation(initial)
-      .force("center", forceCenter(w / 2, h / 2).strength(0.015))
-      .force("radial", forceRadial(wellR * 0.7, w / 2, h / 2).strength(0.07))
-      .force("charge", forceManyBody().strength(-25))
+      .force("charge", forceManyBody().strength(-20))
       .force(
         "collide",
-        forceCollide((d) => d.r + 1.5)
+        forceCollide((d) => d.r + 6)
           .strength(0.9)
-          .iterations(4),
+          .iterations(6),
       )
-      .alphaDecay(reduceMotion ? 0.05 : 0.018)
+      .alphaDecay(0.016)
       .alphaTarget(0)
-      .velocityDecay(0.6)
+      .velocityDecay(0.38)
       .on("tick", () => {
         const { w: cw, h: ch } = dimsRef.current;
         for (const n of sim.nodes()) {
           n.x = Math.max(n.r + 4, Math.min(cw - n.r - 4, n.x));
           n.y = Math.max(n.r + 4, Math.min(ch - n.r - 4, n.y));
         }
-        setNodes(sim.nodes().map((n) => ({ ...n })));
-      });
+        // Update React state every 3rd tick — sim still runs at full speed internally
+        if (++tick % 3 === 0) {
+          setNodes(sim.nodes().map((n) => ({ ...n })));
+        }
+      })
+      .on("end", () => setNodes(sim.nodes().map((n) => ({ ...n }))));
+
+    applyForces(sim, w, h, filterTagRef.current);
+
+    // Pre-settle silently so the first rendered frame is already spread out
+    sim.tick(120);
+    for (const n of sim.nodes()) {
+      n.x = Math.max(n.r + 4, Math.min(w - n.r - 4, n.x));
+      n.y = Math.max(n.r + 4, Math.min(h - n.r - 4, n.y));
+    }
+    setNodes(sim.nodes().map((n) => ({ ...n })));
 
     simRef.current = sim;
     return () => sim.stop();
-  }, [startups, reduceMotion]);
+  }, [startups]);
 
-  // On resize, nudge forces to new center without rebuilding
+  // On resize: nudge forces to new center — reads filterTagRef so the active filter is preserved
   useEffect(() => {
     const sim = simRef.current;
     if (!sim || !dims.w) return;
-    const wellR = Math.min(dims.w, dims.h) * 0.3;
-    sim.force("center", forceCenter(dims.w / 2, dims.h / 2).strength(0.015));
-    sim.force(
-      "radial",
-      forceRadial(wellR * 0.7, dims.w / 2, dims.h / 2).strength(0.07),
-    );
-    sim.alpha(0.15).restart();
+    applyForces(sim, dims.w, dims.h, filterTagRef.current);
+    sim.alpha(0.08).restart();
   }, [dims]);
 
-  // Update clustering force when filter changes
+  // On filter change: re-apply forces with the new tag
   useEffect(() => {
     const sim = simRef.current;
     if (!sim) return;
     const { w, h } = dimsRef.current;
-    const wellR = Math.min(w, h) * 0.3;
-    if (filterTag === "All") {
-      sim
-        .force("x", null)
-        .force("y", null)
-        .force("radial", forceRadial(wellR * 0.7, w / 2, h / 2).strength(0.07));
-    } else {
-      sim
-        .force("radial", null)
-        .force(
-          "x",
-          forceX((d) =>
-            d.tag === filterTag ? w / 2 : d.id % 2 === 0 ? w * 0.15 : w * 0.85,
-          ).strength(0.06),
-        )
-        .force("y", forceY(h / 2).strength(0.04));
-    }
-    sim.alpha(0.3).restart();
+    applyForces(sim, w, h, filterTag);
+    sim.alpha(0.4).restart();
   }, [filterTag]);
 
   const handleBubbleClick = useCallback((node) => {
@@ -340,7 +353,7 @@ function EcosystemMap() {
 
         <div
           ref={containerRef}
-          className="flex-1 relative"
+          className="flex-1 relative motion-exempt"
           style={{ minHeight: "500px" }}
         >
           <svg
@@ -388,7 +401,7 @@ function EcosystemMap() {
               const dimmed = filterTag !== "All" && node.tag !== filterTag;
               const isSelected = visibleSelected?.id === node.id;
               const isHovered = hovered === node.id;
-              const scale = isSelected ? 1.12 : isHovered ? 1.07 : 1;
+              const scale = isHovered && !isSelected ? 1.06 : 1;
 
               return (
                 <g
@@ -406,7 +419,7 @@ function EcosystemMap() {
                     transition: "opacity 0.35s",
                   }}
                   filter={
-                    !dimmed ? `url(#glow-${node.tag ?? "Other"})` : undefined
+                    (isHovered || isSelected) ? `url(#glow-${node.tag ?? "Other"})` : undefined
                   }
                 >
                   <g
@@ -421,7 +434,7 @@ function EcosystemMap() {
                       r={node.r}
                       fill={s.bg}
                       stroke={isSelected ? "#f59e0b" : s.stroke}
-                      strokeWidth={isSelected ? 2.5 : 1.5}
+                      strokeWidth={isSelected ? 4 : 1.5}
                     />
                     <text
                       textAnchor="middle"

@@ -10,15 +10,13 @@ const variants = {
 function PageTransition({ children }) {
   const { reduceMotion } = useMotion();
 
-  if (reduceMotion) return <>{children}</>;
-
   return (
     <motion.div
       variants={variants}
-      initial="initial"
+      initial={reduceMotion ? false : "initial"}
       animate="animate"
-      exit="exit"
-      transition={{ duration: 0.25, ease: "easeOut" }}
+      exit={reduceMotion ? false : "exit"}
+      transition={{ duration: reduceMotion ? 0 : 0.25, ease: "easeOut" }}
     >
       {children}
     </motion.div>
