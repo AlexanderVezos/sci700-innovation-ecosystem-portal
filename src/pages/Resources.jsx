@@ -310,7 +310,6 @@ function Resources() {
           </div>
         </div>
 
-        {/* Bento grid */}
         <div className="px-8 md:px-16 py-16 max-w-360 mx-auto relative z-10">
           <LayoutGroup>
             <div

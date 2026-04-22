@@ -1,5 +1,6 @@
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, Link, useLocation } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useMotion } from "@/context/MotionContext";
 
 const links = [
@@ -15,6 +16,7 @@ function Navbar() {
   const location = useLocation();
   const [indicatorStyle, setIndicatorStyle] = useState({});
   const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const navRef = useRef(null);
   const linkRefs = useRef([]);
   const { reduceMotion, toggleReduceMotion } = useMotion();
@@ -35,6 +37,7 @@ function Navbar() {
     } else {
       setIndicatorStyle({ width: 0 });
     }
+    setMenuOpen(false);
   }, [location.pathname]);
 
   useEffect(() => {
@@ -46,16 +49,18 @@ function Navbar() {
     return () => scrollEl.removeEventListener("scroll", onScroll);
   }, [location.pathname]);
 
-  const transparent = isHome && !scrolled;
+  const transparent = isHome && !scrolled && !menuOpen;
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 py-4 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-8 py-4 transition-all duration-300 ${
         transparent ? "bg-transparent" : "bg-white shadow-sm"
       }`}
     >
-      <div
-        className={`text-4xl font-black tracking-tighter transition-colors duration-300 ${transparent ? "text-white" : "text-slate-800"}`}
+      {/* Logo — always links home */}
+      <Link
+        to="/"
+        className={`text-3xl md:text-4xl font-black tracking-tighter transition-colors duration-300 ${transparent ? "text-white" : "text-slate-800"}`}
       >
         STARTUP
         <span
@@ -63,8 +68,9 @@ function Navbar() {
         >
           SC
         </span>
-      </div>
+      </Link>
 
+      {/* Desktop nav links */}
       <div
         ref={navRef}
         className="relative hidden md:flex items-center gap-8 font-semibold"
@@ -96,6 +102,7 @@ function Navbar() {
         />
       </div>
 
+      {/* Desktop motion button */}
       <button
         onClick={toggleReduceMotion}
         title={reduceMotion ? "Enable motion" : "Reduce motion"}
@@ -111,6 +118,84 @@ function Navbar() {
       >
         {reduceMotion ? "Motion Off" : "Motion On"}
       </button>
+
+      {/* Mobile right: motion toggle + hamburger */}
+      <div className="flex items-center gap-3 md:hidden">
+        <button
+          onClick={toggleReduceMotion}
+          className={`text-xs font-bold tracking-widest uppercase px-3 py-1.5 rounded-lg border transition-colors duration-300 ${
+            transparent
+              ? reduceMotion
+                ? "border-white/40 text-white bg-white/10"
+                : "border-white/20 text-white/60"
+              : reduceMotion
+                ? "border-cyan-200 text-cyan-700 bg-cyan-50"
+                : "border-stone-200 text-slate-500"
+          }`}
+        >
+          {reduceMotion ? "Motion Off" : "Motion On"}
+        </button>
+
+        <button
+          onClick={() => setMenuOpen((v) => !v)}
+          aria-label={menuOpen ? "Close menu" : "Open menu"}
+          className="flex flex-col justify-center items-center w-8 h-8 gap-1.5"
+        >
+          <span
+            className={`block w-6 h-0.5 rounded-full transition-all duration-200 origin-center ${
+              transparent ? "bg-white" : "bg-slate-800"
+            } ${menuOpen ? "rotate-45 translate-y-2" : ""}`}
+          />
+          <span
+            className={`block w-6 h-0.5 rounded-full transition-all duration-200 ${
+              transparent ? "bg-white" : "bg-slate-800"
+            } ${menuOpen ? "opacity-0 scale-x-0" : ""}`}
+          />
+          <span
+            className={`block w-6 h-0.5 rounded-full transition-all duration-200 origin-center ${
+              transparent ? "bg-white" : "bg-slate-800"
+            } ${menuOpen ? "-rotate-45 -translate-y-2" : ""}`}
+          />
+        </button>
+      </div>
+
+      {/* Mobile menu — animated slide-down with staggered links */}
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            initial={reduceMotion ? false : { opacity: 0, y: -12, scaleY: 0.95 }}
+            animate={{ opacity: 1, y: 0, scaleY: 1 }}
+            exit={{ opacity: 0, y: -8, scaleY: 0.97 }}
+            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+            style={{ transformOrigin: "top" }}
+            className="absolute top-full left-0 right-0 bg-white shadow-xl border-t-2 border-amber-400 md:hidden overflow-hidden"
+          >
+            <div className="flex flex-col py-2">
+              {links.map((link, i) => (
+                <motion.div
+                  key={link.to}
+                  initial={reduceMotion ? false : { opacity: 0, x: -16 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: reduceMotion ? 0 : i * 0.045, duration: 0.18, ease: "easeOut" }}
+                >
+                  <NavLink
+                    to={link.to}
+                    className={({ isActive }) =>
+                      `block px-6 py-3 font-semibold transition-colors ${
+                        isActive
+                          ? "text-cyan-700 bg-cyan-50 border-l-2 border-cyan-500"
+                          : "text-slate-700 hover:text-cyan-700 hover:bg-slate-50"
+                      }`
+                    }
+                  >
+                    {link.label}
+                  </NavLink>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 }

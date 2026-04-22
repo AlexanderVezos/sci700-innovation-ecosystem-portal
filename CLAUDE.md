@@ -4,7 +4,7 @@
 
 A wireframe/prototype for the **Sunshine Coast Innovation Ecosystem Portal** — a web platform to connect startups, investors, researchers, corporates, and government in the Sunshine Coast region. Built as part of SCI700.
 
-Stack: React + Vite, Tailwind CSS, Framer Motion, React Router. Backend stub at `server/` serving mock data from `localhost:3001`.
+Stack: React + Vite, Tailwind CSS, Framer Motion, React Router. Backend stub at `server/` serving mock data from `localhost:3001`. Vite dev server proxies `/api` → `http://localhost:3001`, so all fetch calls use relative paths (`/api/...`). Run with `npm run dev` — `vite --host` is set, so the app is accessible on LAN.
 
 ---
 
@@ -59,27 +59,25 @@ Stack: React + Vite, Tailwind CSS, Framer Motion, React Router. Backend stub at 
 | Page | Status | Notes |
 |---|---|---|
 | Home | Shell | Hero (video bg), stat blobs, 3 pillar cards. All copy is placeholder `**`. |
-| Directory | Partial | Card list from API. Has View Profile + Say Hello buttons. **No search or filter.** |
-| Events | Incomplete | Reuses Directory's Table component — same data, same layout. Needs its own shape. |
-| Resources | Shell | 8-card bento grid (Business Planning, Funding & Grants, Networks & Mentors, Legal & Compliance, Digital Tools, Market Research, Sustainability, Talent & Hiring). Expand-on-click. All descriptions placeholder `**`. Missing: Accelerator Programs. |
+| Directory | Working | Card list from API with text search and type filter (tag chips). Add-startup form (`AddStartupForm`). Has View Profile + Say Hello buttons. |
+| Events | Working | Own event cards with date, location, organiser, type badge. Text search + event-type filter. Add-event form. |
+| Opportunities | Working | Opportunity cards (Pilot, Co-development, Challenge, Research, Other) with search + type filter. Add-opportunity form. |
+| Resources | Shell | 9-card bento grid: Business Planning, Funding & Grants, Networks & Mentors, Legal & Compliance, Digital Tools, Market Research, Sustainability, Talent & Hiring, Accelerators. Expand-on-click. All descriptions placeholder `**`. |
 
 ### Not yet built (priority order from survey)
-1. **Search + filter in Directory** — type filter (Startup / Investor / Research / Corporate / Government), text search. The #1 requested feature is currently just a browsable list.
-2. **Opportunities section** — post pilots, challenges, co-development calls. Covers Q2 items 3, 5, and 6 in one page.
-3. **Matchmaking** — even a basic "find collaborators" flow would address the #3 most-wanted feature.
-4. **Events as its own thing** — date, location, RSVP, event type. Currently identical to Directory.
-5. **Accelerator Programs** — add to Resources grid.
-6. **Startup / VC listing flow** — submission form so orgs can add themselves.
+1. **Matchmaking** — "find collaborators" flow to address the #3 most-wanted feature.
+2. **Profile pages** — individual startup/org profiles behind the "View Profile" button.
+3. **Ecosystem Map** — EcosystemMap.jsx exists as a shell; visual bubbles map not fully implemented.
+4. **Real copy** — all hero/page copy is `**` placeholder; needs content before any demo.
 
-### Known structural issues
-- `Events.jsx` imports and renders `Table` (the directory card component) — needs its own data and UI.
+### Known issues
 - All hero/page copy is `**` placeholder — fine for wireframe but needs real copy before any demo.
-- `Table.jsx` fetches from `http://localhost:3001/api/entries` — requires the local server running (`server/`).
+- `Directory.jsx` renders `<Table />` which calls `/api/startups` — requires `server/` running locally.
 
 ---
 
 ## Design intent
-- Desktop-first (matches ~75% desktop access finding)
+- Desktop-first (matches ~75% desktop access finding); mobile hamburger nav is implemented in `Navbar.jsx`
 - Amber (`amber-400`) as the primary accent colour throughout
 - Framer Motion for page transitions and card interactions; reduce-motion support via `MotionContext`
 - The portal should feel like a place to *do things* (connect, post, match) not just browse lists

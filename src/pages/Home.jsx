@@ -293,8 +293,8 @@ function Hero({ stats }) {
       {/* Overlay */}
       <div className="absolute inset-0 bg-linear-to-b from-black/20 via-black/0 to-black/50" />
 
-      {/* Stat blobs */}
-      <div className="absolute right-8 md:right-16 top-1/2 -translate-y-1/2 hidden md:flex flex-col gap-3 z-20">
+      {/* Stat blobs — desktop only, hidden below lg to avoid overlap with hero text */}
+      <div className="absolute right-16 top-1/2 -translate-y-1/2 hidden lg:flex flex-col gap-3 z-20">
         {stats.map((s, i) => (
           <StatBlob
             key={s.label}
@@ -311,7 +311,7 @@ function Hero({ stats }) {
         <span className="text-xs font-bold tracking-widest uppercase text-white/60" />
 
         <div className="flex flex-col gap-6">
-          <h1 className="text-6xl md:text-8xl font-black tracking-tighter text-white leading-none">
+          <h1 className="text-[7.5vw] sm:text-5xl lg:text-8xl font-black tracking-tighter text-white leading-none">
             <CyclingType reduceMotion={reduceMotion} />
             <br />
             Starts Here.
@@ -400,9 +400,9 @@ function Home() {
 
   useEffect(() => {
     Promise.all([
-      fetch("http://localhost:3001/api/startups").then((r) => r.json()),
-      fetch("http://localhost:3001/api/events").then((r) => r.json()),
-      fetch("http://localhost:3001/api/opportunities").then((r) => r.json()),
+      fetch("/api/startups").then((r) => r.json()),
+      fetch("/api/events").then((r) => r.json()),
+      fetch("/api/opportunities").then((r) => r.json()),
     ])
       .then(([startups, events, opportunities]) => {
         setStats([

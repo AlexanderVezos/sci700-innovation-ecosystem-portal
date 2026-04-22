@@ -166,7 +166,7 @@ function AddOpportunityForm({ onAdded }) {
     e.preventDefault();
     setSubmitting(true);
     setError(null);
-    const res = await fetch("http://localhost:3001/api/opportunities", {
+    const res = await fetch("/api/opportunities", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(form),
@@ -359,7 +359,7 @@ function Opportunities() {
   const [filterType, setFilterType] = useState("All");
 
   const fetchOpps = () => {
-    fetch("http://localhost:3001/api/opportunities")
+    fetch("/api/opportunities")
       .then((res) => res.json())
       .then((data) => {
         setOpps(data);
@@ -410,13 +410,13 @@ function Opportunities() {
               onChange={(e) => setSearch(e.target.value)}
               className="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-slate-300"
             />
-            <div className="flex gap-1.5">
+            <div className="flex flex-wrap gap-1.5">
               {["All", ...OPP_TYPES].map((t) => (
                 <button
                   key={t}
                   onClick={() => setFilterType(t)}
                   className={[
-                    "flex-auto text-center font-medium px-2 py-1 rounded-full transition-colors text-[clamp(0.6rem,1.2vw,0.875rem)]",
+                    "font-medium px-3 py-1 rounded-full transition-colors text-sm whitespace-nowrap",
                     filterType === t
                       ? "bg-slate-800 text-white"
                       : "bg-white border border-slate-200 text-slate-500 hover:border-slate-400",

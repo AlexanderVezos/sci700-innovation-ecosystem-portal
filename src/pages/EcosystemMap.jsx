@@ -203,6 +203,7 @@ function EcosystemMap() {
   const [hovered, setHovered] = useState(null);
   const [filterTag, setFilterTag] = useState("All");
   const [dims, setDims] = useState({ w: 800, h: 600 });
+  const [isSmall, setIsSmall] = useState(false);
   const containerRef = useRef(null);
   const simRef = useRef(null);
   const dimsRef = useRef({ w: 800, h: 600 });
@@ -223,7 +224,7 @@ function EcosystemMap() {
       : null;
 
   useEffect(() => {
-    fetch("http://localhost:3001/api/startups")
+    fetch("/api/startups")
       .then((r) => r.json())
       .then(setStartups)
       .catch(() => {});
@@ -233,19 +234,27 @@ function EcosystemMap() {
     const el = containerRef.current;
     if (!el) return;
     const obs = new ResizeObserver(([e]) => {
-      setDims({ w: e.contentRect.width, h: e.contentRect.height });
+      const w = e.contentRect.width;
+      const h = e.contentRect.height;
+      setDims({ w, h });
+      setIsSmall((prev) => {
+        const next = w > 0 && w < 768;
+        return next === prev ? prev : next;
+      });
     });
     obs.observe(el);
     setDims({ w: el.offsetWidth, h: el.offsetHeight });
+    setIsSmall(el.offsetWidth < 768);
     return () => obs.disconnect();
   }, []);
 
-  // Build simulation only when startups change — uses dimsRef so resize never rebuilds
+  // Rebuilds when startups load OR when the small/large threshold is crossed
   useEffect(() => {
     if (!startups.length) return;
     simRef.current?.stop();
 
     const { w, h } = dimsRef.current;
+    const rScale = isSmall ? 0.48 : 1;
     // Spread initial positions evenly around a wider ring to prevent spawn collisions
     const initial = startups.map((s, i) => {
       const angle = (i / startups.length) * Math.PI * 2;
@@ -253,7 +262,7 @@ function EcosystemMap() {
       return {
         ...s,
         id: i,
-        r: bubbleR(s.employees),
+        r: bubbleR(s.employees) * rScale,
         x: w / 2 + Math.cos(angle) * r,
         y: h / 2 + Math.sin(angle) * r,
       };
@@ -296,7 +305,7 @@ function EcosystemMap() {
 
     simRef.current = sim;
     return () => sim.stop();
-  }, [startups]);
+  }, [startups, isSmall]);
 
   // On resize: nudge forces to new center — reads filterTagRef so the active filter is preserved
   useEffect(() => {

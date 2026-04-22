@@ -114,7 +114,7 @@ function AddStartupForm({ onAdded }) {
     e.preventDefault();
     setSubmitting(true);
     setError(null);
-    const res = await fetch("http://localhost:3001/api/startups", {
+    const res = await fetch("/api/startups", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -424,7 +424,7 @@ function Table({ showForm = true }) {
   const [filterTag, setFilterTag] = useState("All");
 
   const fetchEntries = () => {
-    fetch("http://localhost:3001/api/startups")
+    fetch("/api/startups")
       .then((res) => res.json())
       .then((data) => {
         setEntries(data);
@@ -469,13 +469,13 @@ function Table({ showForm = true }) {
           onChange={(e) => setSearch(e.target.value)}
           className="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-slate-300"
         />
-        <div className="flex gap-1.5">
+        <div className="flex flex-wrap gap-1.5">
           {["All", ...TAGS].map((t) => (
             <button
               key={t}
               onClick={() => setFilterTag(t)}
               className={[
-                "flex-auto text-center font-medium px-2 py-1 rounded-full transition-colors text-[clamp(0.6rem,1.2vw,0.875rem)]",
+                "font-medium px-3 py-1 rounded-full transition-colors text-sm whitespace-nowrap",
                 filterTag === t
                   ? "bg-slate-800 text-white"
                   : "bg-white border border-slate-200 text-slate-500 hover:border-slate-400",
