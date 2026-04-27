@@ -1,22 +1,13 @@
 import express from "express";
 import { ObjectId } from "mongodb";
 
-// Basic moderation — catches obvious offensive/spam content before it hits the DB.
-const BLOCKED_TERMS = [
-  "fuck", "shit", "cunt", "bitch", "asshole", "nigger", "faggot",
-  "retard", "whore", "dick", "cock", "pussy", "bastard",
-  "scam", "ponzi", "fraud", "fake", "spam",
-];
-
 const GIBBERISH = /^(.)\1{4,}$|^[^aeiouy\s]{7,}$/i;
 
 function moderate(fields) {
-  const combined = Object.values(fields).join(" ").toLowerCase();
-  for (const term of BLOCKED_TERMS) {
-    if (combined.includes(term)) return "Submission contains disallowed content.";
-  }
-  if (GIBBERISH.test(fields.name?.trim())) return "Company name doesn't appear to be valid.";
-  if (fields.description?.trim().split(/\s+/).length < 4) return "Description is too short to be meaningful.";
+  if (GIBBERISH.test(fields.name?.trim()))
+    return "Company name doesn't appear to be valid.";
+  if (fields.description?.trim().split(/\s+/).length < 4)
+    return "Description is too short to be meaningful.";
   return null;
 }
 
@@ -24,45 +15,63 @@ export default function (db) {
   const router = express.Router();
   const startups = db.collection("startups");
 
-  // Public — only approved entries
   router.get("/", async (_req, res) => {
-    res.json(await startups.find({ status: "approved" }).toArray());
+    res.json(
+      await startups.find({ status: "approved" }).sort({ name: 1 }).toArray(),
+    );
   });
 
-  // All entries regardless of status — for admin review
   router.get("/pending", async (_req, res) => {
     res.json(await startups.find({ status: "pending" }).toArray());
   });
 
-  // New submissions go in as pending
   router.post("/", async (req, res) => {
-    const { name, tag, description, year, employees, stage, email, website, phone } = req.body;
-
+    const {
+      name,
+      tag,
+      description,
+      year,
+      employees,
+      stage,
+      email,
+      website,
+      phone,
+    } = req.body;
+    if (!name || !description) {
+      return res.status(400).json({ error: "Missing required fields." });
+    }
     const reason = moderate({ name, description });
     if (reason) return res.status(422).json({ error: reason });
 
     const result = await startups.insertOne({
-      name, tag, description,
+      name,
+      tag,
+      description,
       year: Number(year),
       employees: Number(employees),
-      stage, email, website, phone,
+      stage,
+      email,
+      website,
+      phone,
       status: "pending",
       createdAt: new Date(),
     });
     res.status(201).json(result);
   });
 
-  // Approve or reject: PATCH /api/startups/:id  body: { status: "approved" | "rejected" }
   router.patch("/:id", async (req, res) => {
     const { status } = req.body;
     if (!["approved", "rejected"].includes(status)) {
-      return res.status(400).json({ error: "status must be 'approved' or 'rejected'" });
+      return res
+        .status(400)
+        .json({ error: "status must be 'approved' or 'rejected'" });
     }
     const result = await startups.updateOne(
       { _id: new ObjectId(req.params.id) },
-      { $set: { status } }
+      { $set: { status } },
     );
-    if (result.matchedCount === 0) return res.status(404).json({ error: "Not found" });
+    if (result.matchedCount === 0)
+      return res.status(404).json({ error: "Not found" });
     res.json({ ok: true });
   });
 
