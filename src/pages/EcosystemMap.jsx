@@ -231,6 +231,8 @@ function EcosystemMap() {
       .then((data) => {
         const sim = simRef.current;
         if (sim && sim.nodes().length > 0) {
+          // Sim is already running — always skip the rebuild effect
+          skipRebuild.current = true;
           const existingIds = new Set(sim.nodes().map((n) => n._id));
           const brandNew = data.filter((s) => !existingIds.has(s._id));
           if (brandNew.length > 0) {
@@ -244,7 +246,6 @@ function EcosystemMap() {
               x: w / 2 + (Math.random() - 0.5) * 100,
               y: h / 2 + (Math.random() - 0.5) * 100,
             }));
-            skipRebuild.current = true;
             sim.nodes([...existingNodes, ...newSimNodes]);
             sim.force("collide", forceCollide((d) => d.r + 6).strength(0.9).iterations(6));
             applyForces(sim, w, h, filterTagRef.current);
