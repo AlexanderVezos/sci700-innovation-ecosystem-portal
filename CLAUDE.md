@@ -64,11 +64,14 @@ Stack: React + Vite, Tailwind CSS, Framer Motion, React Router. Backend stub at 
 | Opportunities | Working | Opportunity cards (Pilot, Co-development, Challenge, Research, Other) with search + type filter. Add-opportunity form. |
 | Resources | Working | 9-card bento grid: Business Planning, Funding & Grants, Networks & Mentors, Legal & Compliance, Digital Tools, Market Research, Sustainability, Talent & Hiring, Accelerators. Expand-on-click. Copy is live. |
 
-### Not yet built (priority order from survey)
+### Current focus (post-demo priorities)
+1. **Rebrand to Silicon Coast** — pending stakeholder sign-off; would affect all branding, copy, and the `startupsc` Cloudflare subdomain.
+2. **Live map demo** — using the existing ecosystem map with live polling as the centrepiece for industry demos (iPad form → bubble appears on big screen).
+3. **User accounts** — if scope allows; would unlock saved profiles, personalised matchmaking, and posting under an identity.
+
+### Not yet built
 1. **Matchmaking** — "find collaborators" flow to address the #3 most-wanted feature.
 2. **Profile pages** — individual startup/org profiles behind the "View Profile" button.
-3. **Ecosystem Map** — EcosystemMap.jsx exists as a shell; visual bubbles map not fully implemented.
-4. **Real copy** — all hero/page copy is `**` placeholder; needs content before any demo.
 
 ### Known issues
 - `Directory.jsx` renders `<Table />` which calls `/api/startups` — requires `server/` running locally.
