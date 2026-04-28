@@ -58,11 +58,11 @@ Stack: React + Vite, Tailwind CSS, Framer Motion, React Router. Backend stub at 
 ### Pages built
 | Page | Status | Notes |
 |---|---|---|
-| Home | Shell | Hero (video bg), stat blobs, 3 pillar cards. All copy is placeholder `**`. |
+| Home | Working | Hero (video bg), stat blobs, pillar cards. Copy is live. |
 | Directory | Working | Card list from API with text search and type filter (tag chips). Add-startup form (`AddStartupForm`). Has View Profile + Say Hello buttons. |
 | Events | Working | Own event cards with date, location, organiser, type badge. Text search + event-type filter. Add-event form. |
 | Opportunities | Working | Opportunity cards (Pilot, Co-development, Challenge, Research, Other) with search + type filter. Add-opportunity form. |
-| Resources | Shell | 9-card bento grid: Business Planning, Funding & Grants, Networks & Mentors, Legal & Compliance, Digital Tools, Market Research, Sustainability, Talent & Hiring, Accelerators. Expand-on-click. All descriptions placeholder `**`. |
+| Resources | Working | 9-card bento grid: Business Planning, Funding & Grants, Networks & Mentors, Legal & Compliance, Digital Tools, Market Research, Sustainability, Talent & Hiring, Accelerators. Expand-on-click. Copy is live. |
 
 ### Not yet built (priority order from survey)
 1. **Matchmaking** — "find collaborators" flow to address the #3 most-wanted feature.
@@ -71,7 +71,6 @@ Stack: React + Vite, Tailwind CSS, Framer Motion, React Router. Backend stub at 
 4. **Real copy** — all hero/page copy is `**` placeholder; needs content before any demo.
 
 ### Known issues
-- All hero/page copy is `**` placeholder — fine for wireframe but needs real copy before any demo.
 - `Directory.jsx` renders `<Table />` which calls `/api/startups` — requires `server/` running locally.
 
 ---

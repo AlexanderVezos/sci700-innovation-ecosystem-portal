@@ -65,8 +65,12 @@ function initials(name) {
     .join("");
 }
 
-function bubbleR(employees) {
-  return Math.max(30, Math.min(65, Math.sqrt(Math.max(employees || 1, 1)) * 9));
+function bubbleR(employees, viewportMin) {
+  // Normalise employee count to 0–1, then map to a viewport-relative radius range
+  const t = (Math.min(65, Math.sqrt(Math.max(employees || 1, 1)) * 9) - 30) / 35;
+  const minR = viewportMin * 0.028;
+  const maxR = viewportMin * 0.065;
+  return minR + Math.max(0, t) * (maxR - minR);
 }
 
 function DetailPanel({ node, onClose }) {
@@ -196,6 +200,8 @@ function applyForces(sim, w, h, tag) {
   );
 }
 
+const POLL_INTERVAL = 3000;
+
 function EcosystemMap() {
   const [startups, setStartups] = useState([]);
   const [nodes, setNodes] = useState([]);
@@ -203,32 +209,61 @@ function EcosystemMap() {
   const [hovered, setHovered] = useState(null);
   const [filterTag, setFilterTag] = useState("All");
   const [dims, setDims] = useState({ w: 800, h: 600 });
-  const [isSmall, setIsSmall] = useState(false);
+  const [newNodeIds, setNewNodeIds] = useState(new Set());
   const containerRef = useRef(null);
   const simRef = useRef(null);
   const dimsRef = useRef({ w: 800, h: 600 });
   const filterTagRef = useRef("All");
+  const skipRebuild = useRef(false);
+  const newNodeTimer = useRef(null);
 
-  useEffect(() => {
-    dimsRef.current = dims;
-  }, [dims]);
+  useEffect(() => { dimsRef.current = dims; }, [dims]);
+  useEffect(() => { filterTagRef.current = filterTag; }, [filterTag]);
 
-  useEffect(() => {
-    filterTagRef.current = filterTag;
-  }, [filterTag]);
-
-  // Derived — panel hides if filtered tag doesn't match, no setState needed
   const visibleSelected =
     selected && (filterTag === "All" || selected.tag === filterTag)
       ? selected
       : null;
 
-  useEffect(() => {
+  const fetchStartups = useCallback(() => {
     fetch("/api/startups")
       .then((r) => r.json())
-      .then(setStartups)
+      .then((data) => {
+        const sim = simRef.current;
+        if (sim && sim.nodes().length > 0) {
+          const existingIds = new Set(sim.nodes().map((n) => n._id));
+          const brandNew = data.filter((s) => !existingIds.has(s._id));
+          if (brandNew.length > 0) {
+            const { w, h } = dimsRef.current;
+            const vMin = Math.min(w, h);
+            const existingNodes = sim.nodes();
+            const newSimNodes = brandNew.map((s, i) => ({
+              ...s,
+              id: existingNodes.length + i,
+              r: bubbleR(s.employees, vMin),
+              x: w / 2 + (Math.random() - 0.5) * 100,
+              y: h / 2 + (Math.random() - 0.5) * 100,
+            }));
+            skipRebuild.current = true;
+            sim.nodes([...existingNodes, ...newSimNodes]);
+            sim.force("collide", forceCollide((d) => d.r + 6).strength(0.9).iterations(6));
+            applyForces(sim, w, h, filterTagRef.current);
+            sim.alpha(0.6).restart();
+            clearTimeout(newNodeTimer.current);
+            setNewNodeIds(new Set(brandNew.map((s) => s._id)));
+            newNodeTimer.current = setTimeout(() => setNewNodeIds(new Set()), 3500);
+          }
+        }
+        setStartups(data);
+      })
       .catch(() => {});
   }, []);
+
+  useEffect(() => {
+    fetchStartups();
+    const interval = setInterval(fetchStartups, POLL_INTERVAL);
+    return () => { clearInterval(interval); clearTimeout(newNodeTimer.current); };
+  }, [fetchStartups]);
 
   useEffect(() => {
     const el = containerRef.current;
@@ -237,32 +272,27 @@ function EcosystemMap() {
       const w = e.contentRect.width;
       const h = e.contentRect.height;
       setDims({ w, h });
-      setIsSmall((prev) => {
-        const next = w > 0 && w < 768;
-        return next === prev ? prev : next;
-      });
     });
     obs.observe(el);
     setDims({ w: el.offsetWidth, h: el.offsetHeight });
-    setIsSmall(el.offsetWidth < 768);
     return () => obs.disconnect();
   }, []);
 
-  // Rebuilds when startups load OR when the small/large threshold is crossed
   useEffect(() => {
     if (!startups.length) return;
+    if (skipRebuild.current) { skipRebuild.current = false; return; }
     simRef.current?.stop();
 
     const { w, h } = dimsRef.current;
-    const rScale = isSmall ? 0.48 : 1;
+    const viewportMin = Math.min(w, h);
     // Spread initial positions evenly around a wider ring to prevent spawn collisions
     const initial = startups.map((s, i) => {
       const angle = (i / startups.length) * Math.PI * 2;
-      const r = Math.min(w, h) * (0.3 + Math.random() * 0.15);
+      const r = viewportMin * (0.3 + Math.random() * 0.15);
       return {
         ...s,
         id: i,
-        r: bubbleR(s.employees) * rScale,
+        r: bubbleR(s.employees, viewportMin),
         x: w / 2 + Math.cos(angle) * r,
         y: h / 2 + Math.sin(angle) * r,
       };
@@ -305,14 +335,19 @@ function EcosystemMap() {
 
     simRef.current = sim;
     return () => sim.stop();
-  }, [startups, isSmall]);
+  }, [startups]);
 
-  // On resize: nudge forces to new center — reads filterTagRef so the active filter is preserved
+  // On resize: update node radii, re-apply collision + center forces
   useEffect(() => {
     const sim = simRef.current;
     if (!sim || !dims.w) return;
+    const vMin = Math.min(dims.w, dims.h);
+    for (const n of sim.nodes()) {
+      n.r = bubbleR(n.employees, vMin);
+    }
+    sim.force("collide", forceCollide((d) => d.r + 6).strength(0.9).iterations(6));
     applyForces(sim, dims.w, dims.h, filterTagRef.current);
-    sim.alpha(0.08).restart();
+    sim.alpha(0.3).restart();
   }, [dims]);
 
   // On filter change: re-apply forces with the new tag
@@ -410,35 +445,38 @@ function EcosystemMap() {
               const dimmed = filterTag !== "All" && node.tag !== filterTag;
               const isSelected = visibleSelected?.id === node.id;
               const isHovered = hovered === node.id;
-              const scale = isHovered && !isSelected ? 1.06 : 1;
+              const isNew = newNodeIds.has(node._id);
 
               return (
                 <g
-                  key={node.id}
+                  key={node._id ?? node.id}
                   transform={`translate(${node.x},${node.y})`}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleBubbleClick(node);
-                  }}
+                  onClick={(e) => { e.stopPropagation(); handleBubbleClick(node); }}
                   onMouseEnter={() => setHovered(node.id)}
                   onMouseLeave={() => setHovered(null)}
-                  style={{
-                    cursor: "pointer",
-                    opacity: dimmed ? 0.2 : 1,
-                    transition: "opacity 0.35s",
-                  }}
-                  filter={
-                    (isHovered || isSelected) ? `url(#glow-${node.tag ?? "Other"})` : undefined
-                  }
+                  style={{ cursor: "pointer", opacity: dimmed ? 0.2 : 1, transition: "opacity 0.35s" }}
+                  filter={(isHovered || isSelected) ? `url(#glow-${node.tag ?? "Other"})` : undefined}
                 >
-                  <g
-                    style={{
-                      transform: `scale(${scale})`,
-                      transition: "transform 0.2s",
-                      transformBox: "fill-box",
-                      transformOrigin: "center",
-                    }}
+                  <motion.g
+                    initial={isNew ? { scale: 0, opacity: 0 } : false}
+                    animate={{ scale: isHovered && !isSelected ? 1.06 : 1, opacity: 1 }}
+                    transition={isNew
+                      ? { type: "spring", stiffness: 280, damping: 20 }
+                      : { duration: 0.15 }
+                    }
+                    style={{ transformBox: "fill-box", transformOrigin: "center" }}
                   >
+                    {isNew && (
+                      <motion.circle
+                        r={node.r + 6}
+                        fill="none"
+                        stroke="#fbbf24"
+                        strokeWidth={2.5}
+                        initial={{ opacity: 0.9 }}
+                        animate={{ opacity: 0 }}
+                        transition={{ duration: 2.5, delay: 0.5, ease: "easeOut" }}
+                      />
+                    )}
                     <circle
                       r={node.r}
                       fill={s.bg}
@@ -466,18 +504,12 @@ function EcosystemMap() {
                         fontSize={node.r * 0.2}
                         fontWeight="600"
                         fontFamily="inherit"
-                        style={{
-                          pointerEvents: "none",
-                          userSelect: "none",
-                          opacity: 0.7,
-                        }}
+                        style={{ pointerEvents: "none", userSelect: "none", opacity: 0.7 }}
                       >
-                        {node.name.length > 13
-                          ? node.name.slice(0, 12) + "…"
-                          : node.name}
+                        {node.name.length > 13 ? node.name.slice(0, 12) + "…" : node.name}
                       </text>
                     )}
-                  </g>
+                  </motion.g>
                 </g>
               );
             })}

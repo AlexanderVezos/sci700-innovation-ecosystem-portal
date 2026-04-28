@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import PageTransition from "@/components/PageTransition";
 import { useMotion } from "@/context/MotionContext";
@@ -21,6 +21,21 @@ const TYPE_COLOURS = {
   Other: "bg-slate-100 text-slate-500",
 };
 
+const TYPE_DOT = {
+  Networking: "bg-blue-400",
+  Workshop: "bg-violet-400",
+  "Pitch Night": "bg-amber-400",
+  Conference: "bg-emerald-400",
+  Webinar: "bg-cyan-400",
+  Other: "bg-slate-400",
+};
+
+const MONTH_NAMES = [
+  "January","February","March","April","May","June",
+  "July","August","September","October","November","December",
+];
+const DAY_NAMES = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+
 const INPUT =
   "border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-300";
 const LABEL = "text-xs font-semibold text-slate-500 uppercase tracking-wide";
@@ -34,6 +49,28 @@ const EMPTY_FORM = {
   rsvpUrl: "",
 };
 const CURRENT_YEAR = new Date().getFullYear();
+
+const slideVariants = {
+  enter: (dir) => ({ x: dir >= 0 ? 20 : -20, opacity: 0 }),
+  center: { x: 0, opacity: 1 },
+  exit: (dir) => ({ x: dir >= 0 ? -20 : 20, opacity: 0 }),
+};
+const slideTransition = { duration: 0.16, ease: [0.25, 0, 0.35, 1] };
+
+function parseEventDate(iso) {
+  const s = (iso ?? "").split("T")[0];
+  const [y, m, d] = s.split("-").map(Number);
+  return { year: y, month: m - 1, day: d };
+}
+
+function buildCalendarCells(year, month) {
+  const firstDow = new Date(year, month, 1).getDay();
+  const offset = (firstDow + 6) % 7;
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const cells = Array(offset).fill(null);
+  for (let d = 1; d <= daysInMonth; d++) cells.push(d);
+  return cells;
+}
 
 function DateBlock({ iso }) {
   const d = new Date(iso);
@@ -54,16 +91,12 @@ function EventCard({ event }) {
       <DateBlock iso={event.date} />
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="font-semibold text-slate-800 text-base">
-            {event.title}
-          </span>
-          <span
-            className={`text-xs font-medium px-2 py-0.5 rounded-full ${typeColour}`}
-          >
+          <span className="font-semibold text-slate-800 text-base">{event.title}</span>
+          <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${typeColour}`}>
             {event.type}
           </span>
         </div>
-        <p className="text-sm text-slate-500 mt-1 leading-snug line-clamp-2">
+        <p className="text-sm text-slate-500 mt-1 leading-snug line-clamp-2 whitespace-pre-line">
           {event.description}
         </p>
         <div className="flex gap-4 mt-2 flex-wrap">
@@ -101,6 +134,210 @@ function SkeletonEventCard() {
           <div className="h-3 w-20 bg-slate-100 rounded" />
         </div>
       </div>
+    </div>
+  );
+}
+
+function CalendarView({ events, reduceMotion }) {
+  const today = new Date();
+  const todayYear = today.getFullYear();
+  const todayMonth = today.getMonth();
+  const todayDay = today.getDate();
+
+  const [year, setYear] = useState(todayYear);
+  const [month, setMonth] = useState(todayMonth);
+  const [direction, setDirection] = useState(1);
+  const [selectedDay, setSelectedDay] = useState(null);
+
+  const calKey = year * 12 + month;
+  const isCurrentMonth = year === todayYear && month === todayMonth;
+
+  const go = useCallback((delta) => {
+    setDirection(delta);
+    setSelectedDay(null);
+    setMonth((m) => {
+      const next = m + delta;
+      if (next < 0) { setYear((y) => y - 1); return 11; }
+      if (next > 11) { setYear((y) => y + 1); return 0; }
+      return next;
+    });
+  }, []);
+
+  const goToday = useCallback(() => {
+    setDirection(calKey < todayYear * 12 + todayMonth ? 1 : -1);
+    setSelectedDay(null);
+    setYear(todayYear);
+    setMonth(todayMonth);
+  }, [calKey, todayYear, todayMonth]);
+
+
+  const eventsOnDay = (day) =>
+    events.filter((e) => {
+      const p = parseEventDate(e.date);
+      return p.year === year && p.month === month && p.day === day;
+    });
+
+  const monthEventCount = events.filter((e) => {
+    const p = parseEventDate(e.date);
+    return p.year === year && p.month === month;
+  }).length;
+
+  const cells = buildCalendarCells(year, month);
+  const selectedEvents = selectedDay ? eventsOnDay(selectedDay) : [];
+
+  return (
+    <div className="flex flex-col gap-4">
+      {/* Month nav bar */}
+      <div className="flex items-center gap-2 bg-white border border-slate-100 rounded-2xl px-4 py-3 shadow-sm">
+        <button
+          onClick={() => go(-1)}
+          className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 text-slate-500 transition-colors text-lg font-bold select-none"
+        >
+          ‹
+        </button>
+
+        <div className="flex-1 flex items-center justify-center gap-2">
+          <span className="font-black text-slate-800 text-base tracking-tight">
+            {MONTH_NAMES[month]} {year}
+          </span>
+          {monthEventCount > 0 && (
+            <span className="text-xs font-semibold bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">
+              {monthEventCount} event{monthEventCount > 1 ? "s" : ""}
+            </span>
+          )}
+        </div>
+
+        {!isCurrentMonth && (
+          <button
+            onClick={goToday}
+            className="text-xs font-semibold text-slate-500 hover:text-slate-800 px-2 py-1 rounded-lg hover:bg-slate-100 transition-colors"
+          >
+            Today
+          </button>
+        )}
+
+        <button
+          onClick={() => go(1)}
+          className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 text-slate-500 transition-colors text-lg font-bold select-none"
+        >
+          ›
+        </button>
+      </div>
+
+      {/* Calendar grid with slide animation + swipe */}
+      <div className="overflow-hidden rounded-2xl bg-white border border-slate-100 shadow-sm">
+        <div className="grid grid-cols-7 border-b border-slate-100 px-3 pt-3">
+          {DAY_NAMES.map((d) => (
+            <div key={d} className="text-center text-xs font-semibold text-slate-400 pb-2">
+              {d}
+            </div>
+          ))}
+        </div>
+
+        <AnimatePresence custom={direction} mode="wait">
+          <motion.div
+            key={calKey}
+            custom={direction}
+            variants={reduceMotion ? {} : slideVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={slideTransition}
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.08}
+            onDragEnd={(_, info) => {
+              if (info.offset.x < -40) go(1);
+              else if (info.offset.x > 40) go(-1);
+            }}
+            className="grid grid-cols-7 gap-1 p-3 cursor-grab active:cursor-grabbing"
+            style={{ touchAction: "pan-y" }}
+          >
+            {cells.map((day, i) => {
+              const dayEvents = day ? eventsOnDay(day) : [];
+              const isToday = day && year === todayYear && month === todayMonth && day === todayDay;
+              const isSelected = day === selectedDay;
+
+              return (
+                <motion.button
+                  key={i}
+                  whileTap={day ? { scale: 0.92 } : {}}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (day) setSelectedDay(day === selectedDay ? null : day);
+                  }}
+                  disabled={!day}
+                  className={[
+                    "relative flex flex-col items-center rounded-xl py-1.5 text-sm font-semibold transition-colors min-h-12 select-none",
+                    !day ? "invisible pointer-events-none" : "",
+                    isSelected
+                      ? "bg-slate-800 text-white shadow-md"
+                      : isToday
+                      ? "bg-amber-50 text-amber-600 ring-1 ring-amber-300"
+                      : dayEvents.length > 0
+                      ? "bg-slate-50 text-slate-700 hover:bg-slate-100"
+                      : "text-slate-400 hover:bg-slate-50",
+                  ].join(" ")}
+                >
+                  <span>{day}</span>
+                  {dayEvents.length > 0 && (
+                    <div className="flex gap-0.5 mt-1 flex-wrap justify-center px-1">
+                      {dayEvents.slice(0, 3).map((e, j) => (
+                        <span
+                          key={j}
+                          className={`w-1.5 h-1.5 rounded-full ${
+                            isSelected ? "bg-white/70" : (TYPE_DOT[e.type] ?? TYPE_DOT.Other)
+                          }`}
+                        />
+                      ))}
+                      {dayEvents.length > 3 && (
+                        <span className={`text-[9px] font-bold leading-none ${isSelected ? "text-white/70" : "text-slate-400"}`}>
+                          +{dayEvents.length - 3}
+                        </span>
+                      )}
+                    </div>
+                  )}
+                </motion.button>
+              );
+            })}
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      {/* Keyboard hint */}
+      <p className="text-xs text-slate-400 text-center -mt-2">
+        Swipe left or right to navigate months
+      </p>
+
+      {/* Selected day events */}
+      <AnimatePresence mode="wait">
+        {selectedDay && (
+          <motion.div
+            key={`${year}-${month}-${selectedDay}`}
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: reduceMotion ? 0 : 0.18 }}
+            className="flex flex-col gap-3"
+          >
+            <p className="text-sm font-semibold text-slate-500">
+              {selectedEvents.length === 0
+                ? `No events on ${selectedDay} ${MONTH_NAMES[month]}`
+                : `${selectedEvents.length} event${selectedEvents.length > 1 ? "s" : ""} on ${selectedDay} ${MONTH_NAMES[month]}`}
+            </p>
+            {selectedEvents.map((event, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.05, duration: reduceMotion ? 0 : 0.2 }}
+              >
+                <EventCard event={event} />
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
@@ -151,10 +388,7 @@ function AddEventForm({ onAdded }) {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            transition={{
-              duration: reduceMotion ? 0 : 0.3,
-              ease: [0.16, 1, 0.3, 1],
-            }}
+            transition={{ duration: reduceMotion ? 0 : 0.3, ease: [0.16, 1, 0.3, 1] }}
             style={{ overflow: "hidden" }}
             onSubmit={handleSubmit}
             className="bg-white border border-slate-100 rounded-2xl shadow-sm p-6 mb-4 flex flex-col gap-4"
@@ -162,113 +396,40 @@ function AddEventForm({ onAdded }) {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="flex flex-col gap-1 sm:col-span-2">
                 <label className={LABEL}>Title</label>
-                <input
-                  required
-                  minLength={4}
-                  maxLength={120}
-                  value={form.title}
-                  onChange={set("title")}
-                  placeholder="Event title"
-                  className={INPUT}
-                />
+                <input required minLength={4} maxLength={120} value={form.title} onChange={set("title")} placeholder="Event title" className={INPUT} />
               </div>
-
               <div className="flex flex-col gap-1 sm:col-span-2">
                 <label className={LABEL}>Description</label>
-                <textarea
-                  required
-                  minLength={20}
-                  maxLength={500}
-                  value={form.description}
-                  onChange={set("description")}
-                  placeholder="What's happening? (20–500 characters)"
-                  rows={2}
-                  className={`${INPUT} resize-none`}
-                />
-                <span className="text-xs text-slate-400 text-right">
-                  {form.description.length}/500
-                </span>
+                <textarea required minLength={20} maxLength={500} value={form.description} onChange={set("description")} placeholder="What's happening? (20–500 characters)" rows={2} className={`${INPUT} resize-none`} />
+                <span className="text-xs text-slate-400 text-right">{form.description.length}/500</span>
               </div>
-
               <div className="flex flex-col gap-1">
                 <label className={LABEL}>Date</label>
-                <input
-                  required
-                  type="date"
-                  value={form.date}
-                  onChange={set("date")}
-                  min={`${CURRENT_YEAR}-01-01`}
-                  className={INPUT}
-                />
+                <input required type="date" value={form.date} onChange={set("date")} min={`${CURRENT_YEAR}-01-01`} className={INPUT} />
               </div>
-
               <div className="flex flex-col gap-1">
                 <label className={LABEL}>Type</label>
-                <select
-                  required
-                  value={form.type}
-                  onChange={set("type")}
-                  className={INPUT}
-                >
+                <select required value={form.type} onChange={set("type")} className={INPUT}>
                   <option value="">Select…</option>
-                  {EVENT_TYPES.map((t) => (
-                    <option key={t}>{t}</option>
-                  ))}
+                  {EVENT_TYPES.map((t) => <option key={t}>{t}</option>)}
                 </select>
               </div>
-
               <div className="flex flex-col gap-1">
                 <label className={LABEL}>Location</label>
-                <input
-                  required
-                  minLength={3}
-                  maxLength={120}
-                  value={form.location}
-                  onChange={set("location")}
-                  placeholder="Sunshine Coast, QLD"
-                  className={INPUT}
-                />
+                <input required minLength={3} maxLength={120} value={form.location} onChange={set("location")} placeholder="Sunshine Coast, QLD" className={INPUT} />
               </div>
-
               <div className="flex flex-col gap-1">
                 <label className={LABEL}>Organiser</label>
-                <input
-                  required
-                  minLength={2}
-                  maxLength={100}
-                  value={form.organizer}
-                  onChange={set("organizer")}
-                  placeholder="Your organisation"
-                  className={INPUT}
-                />
+                <input required minLength={2} maxLength={100} value={form.organizer} onChange={set("organizer")} placeholder="Your organisation" className={INPUT} />
               </div>
-
               <div className="flex flex-col gap-1 sm:col-span-2">
-                <label className={LABEL}>
-                  RSVP Link{" "}
-                  <span className="normal-case font-normal text-slate-400">
-                    (optional)
-                  </span>
-                </label>
-                <input
-                  type="url"
-                  value={form.rsvpUrl}
-                  onChange={set("rsvpUrl")}
-                  placeholder="https://eventbrite.com/…"
-                  pattern="https?://.+"
-                  title="Must start with http:// or https://"
-                  className={INPUT}
-                />
+                <label className={LABEL}>RSVP Link <span className="normal-case font-normal text-slate-400">(optional)</span></label>
+                <input type="url" value={form.rsvpUrl} onChange={set("rsvpUrl")} placeholder="https://eventbrite.com/…" pattern="https?://.+" title="Must start with http:// or https://" className={INPUT} />
               </div>
             </div>
-
             <div className="flex items-center justify-end gap-4">
               {error && <p className="text-xs text-red-500">{error}</p>}
-              <button
-                type="submit"
-                disabled={submitting}
-                className="bg-amber-400 text-stone-900 font-bold text-sm px-6 py-2.5 rounded-xl hover:bg-amber-300 transition-colors disabled:opacity-50"
-              >
+              <button type="submit" disabled={submitting} className="bg-amber-400 text-stone-900 font-bold text-sm px-6 py-2.5 rounded-xl hover:bg-amber-300 transition-colors disabled:opacity-50">
                 {submitting ? "Submitting…" : "Submit Event"}
               </button>
             </div>
@@ -279,24 +440,69 @@ function AddEventForm({ onAdded }) {
   );
 }
 
+function ViewToggle({ view, setView }) {
+  return (
+    <div className="relative flex rounded-xl bg-slate-100 p-1 shrink-0 gap-0.5">
+      {[
+        { id: "list", label: "List" },
+        { id: "calendar", label: "Calendar" },
+      ].map(({ id, label }) => (
+        <button
+          key={id}
+          onClick={() => setView(id)}
+          className="relative px-3.5 py-1.5 text-sm font-semibold rounded-lg z-10 transition-colors"
+          style={{ color: view === id ? "#1e293b" : "#94a3b8" }}
+        >
+          {view === id && (
+            <motion.div
+              layoutId="view-pill"
+              className="absolute inset-0 bg-white rounded-lg shadow-sm"
+              transition={{ type: "spring", stiffness: 400, damping: 30 }}
+            />
+          )}
+          <span className="relative">{label}</span>
+        </button>
+      ))}
+    </div>
+  );
+}
+
+const POLL_INTERVAL = 3000;
+
 function Events() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [filterType, setFilterType] = useState("All");
+  const [view, setView] = useState("list");
+  const [newIds, setNewIds] = useState(new Set());
+  const seenIds = useRef(null);
+  const newIdTimer = useRef(null);
+  const { reduceMotion } = useMotion();
 
-  const fetchEvents = () => {
+  const fetchEvents = useCallback(() => {
     fetch("/api/events")
       .then((res) => res.json())
       .then((data) => {
+        if (seenIds.current !== null) {
+          const brandNew = data.filter((e) => !seenIds.current.has(e._id)).map((e) => e._id);
+          if (brandNew.length > 0) {
+            clearTimeout(newIdTimer.current);
+            setNewIds(new Set(brandNew));
+            newIdTimer.current = setTimeout(() => setNewIds(new Set()), 3000);
+          }
+        }
+        seenIds.current = new Set(data.map((e) => e._id));
         setEvents(data);
         setLoading(false);
       });
-  };
+  }, []);
 
   useEffect(() => {
     fetchEvents();
-  }, []);
+    const interval = setInterval(fetchEvents, POLL_INTERVAL);
+    return () => { clearInterval(interval); clearTimeout(newIdTimer.current); };
+  }, [fetchEvents]);
 
   const visible = events.filter((e) => {
     const matchType = filterType === "All" || e.type === filterType;
@@ -315,9 +521,7 @@ function Events() {
         <div className="bg-slate-900 px-8 md:px-16 pt-36 pb-20">
           <div className="max-w-2xl mx-auto">
             <h1 className="text-5xl md:text-7xl font-black tracking-tighter text-white leading-none mt-3">
-              What's
-              <br />
-              on.
+              What's<br />on.
             </h1>
             <p className="text-slate-400 mt-6 text-lg max-w-xl leading-relaxed">
               Networking nights, workshops, pitch events, and conferences across
@@ -329,15 +533,19 @@ function Events() {
         <div className="px-8 md:px-16 py-12 max-w-2xl mx-auto flex flex-col gap-4">
           <AddEventForm onAdded={fetchEvents} />
 
-          {/* Search + filter */}
+          {/* Search + view toggle */}
           <div className="flex flex-col gap-2">
-            <input
-              type="search"
-              placeholder="Search events…"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-slate-300"
-            />
+            <div className="flex gap-2 items-center">
+              <input
+                type="search"
+                placeholder="Search events…"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="flex-1 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-slate-300"
+              />
+              <ViewToggle view={view} setView={setView} />
+            </div>
+
             <div className="flex flex-wrap md:flex-nowrap gap-1.5">
               {["All", ...EVENT_TYPES].map((t) => (
                 <button
@@ -356,14 +564,52 @@ function Events() {
             </div>
           </div>
 
+          {/* Content area with crossfade between views */}
           {loading ? (
             Array.from({ length: 3 }, (_, i) => <SkeletonEventCard key={i} />)
-          ) : visible.length === 0 ? (
-            <p className="text-sm text-slate-400 text-center py-8">
-              No events found.
-            </p>
           ) : (
-            visible.map((event, i) => <EventCard key={i} event={event} />)
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={view}
+                initial={{ opacity: 0, y: reduceMotion ? 0 : 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: reduceMotion ? 0 : -8 }}
+                transition={{ duration: reduceMotion ? 0 : 0.2 }}
+              >
+                {view === "calendar" ? (
+                  <CalendarView events={visible} reduceMotion={reduceMotion} />
+                ) : visible.length === 0 ? (
+                  <p className="text-sm text-slate-400 text-center py-8">No events found.</p>
+                ) : (
+                  <div className="flex flex-col gap-4">
+                    {visible.map((event) => {
+                      const isNew = newIds.has(event._id);
+                      return (
+                        <motion.div
+                          key={event._id}
+                          layout
+                          initial={isNew && !reduceMotion ? { scale: 0.88, opacity: 0, y: -20 } : false}
+                          animate={{ scale: 1, opacity: 1, y: 0 }}
+                          transition={{ type: "spring", stiffness: 260, damping: 22 }}
+                          className="relative"
+                        >
+                          {isNew && !reduceMotion && (
+                            <motion.div
+                              className="absolute inset-0 rounded-2xl pointer-events-none"
+                              style={{ boxShadow: "0 0 0 2px #fbbf24, 0 0 24px 4px #fbbf2440" }}
+                              initial={{ opacity: 1 }}
+                              animate={{ opacity: 0 }}
+                              transition={{ duration: 2.5, delay: 0.4, ease: "easeOut" }}
+                            />
+                          )}
+                          <EventCard event={event} />
+                        </motion.div>
+                      );
+                    })}
+                  </div>
+                )}
+              </motion.div>
+            </AnimatePresence>
           )}
         </div>
       </div>

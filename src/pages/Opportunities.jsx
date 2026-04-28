@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import PageTransition from "@/components/PageTransition";
 import { useMotion } from "@/context/MotionContext";
@@ -352,24 +352,41 @@ function AddOpportunityForm({ onAdded }) {
   );
 }
 
+const POLL_INTERVAL = 3000;
+
 function Opportunities() {
   const [opps, setOpps] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [filterType, setFilterType] = useState("All");
+  const [newIds, setNewIds] = useState(new Set());
+  const seenIds = useRef(null);
+  const newIdTimer = useRef(null);
+  const { reduceMotion } = useMotion();
 
-  const fetchOpps = () => {
+  const fetchOpps = useCallback(() => {
     fetch("/api/opportunities")
       .then((res) => res.json())
       .then((data) => {
+        if (seenIds.current !== null) {
+          const brandNew = data.filter((o) => !seenIds.current.has(o._id)).map((o) => o._id);
+          if (brandNew.length > 0) {
+            clearTimeout(newIdTimer.current);
+            setNewIds(new Set(brandNew));
+            newIdTimer.current = setTimeout(() => setNewIds(new Set()), 3000);
+          }
+        }
+        seenIds.current = new Set(data.map((o) => o._id));
         setOpps(data);
         setLoading(false);
       });
-  };
+  }, []);
 
   useEffect(() => {
     fetchOpps();
-  }, []);
+    const interval = setInterval(fetchOpps, POLL_INTERVAL);
+    return () => { clearInterval(interval); clearTimeout(newIdTimer.current); };
+  }, [fetchOpps]);
 
   const visible = opps.filter((o) => {
     const matchType = filterType === "All" || o.type === filterType;
@@ -435,7 +452,32 @@ function Opportunities() {
               No opportunities found.
             </p>
           ) : (
-            visible.map((opp, i) => <OpportunityCard key={i} opp={opp} />)
+            <AnimatePresence>
+              {visible.map((opp) => {
+                const isNew = newIds.has(opp._id);
+                return (
+                  <motion.div
+                    key={opp._id}
+                    layout
+                    initial={isNew && !reduceMotion ? { scale: 0.88, opacity: 0, y: -20 } : false}
+                    animate={{ scale: 1, opacity: 1, y: 0 }}
+                    transition={{ type: "spring", stiffness: 260, damping: 22 }}
+                    className="relative"
+                  >
+                    {isNew && !reduceMotion && (
+                      <motion.div
+                        className="absolute inset-0 rounded-2xl pointer-events-none"
+                        style={{ boxShadow: "0 0 0 2px #fbbf24, 0 0 24px 4px #fbbf2440" }}
+                        initial={{ opacity: 1 }}
+                        animate={{ opacity: 0 }}
+                        transition={{ duration: 2.5, delay: 0.4, ease: "easeOut" }}
+                      />
+                    )}
+                    <OpportunityCard opp={opp} />
+                  </motion.div>
+                );
+              })}
+            </AnimatePresence>
           )}
         </div>
       </div>

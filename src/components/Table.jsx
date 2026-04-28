@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useMotion } from "@/context/MotionContext";
 
@@ -82,6 +82,7 @@ function formatPhone(value) {
   }
   return raw;
 }
+
 const INPUT =
   "border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-300";
 const LABEL = "text-xs font-semibold text-slate-500 uppercase tracking-wide";
@@ -150,144 +151,52 @@ function AddStartupForm({ onAdded }) {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            transition={{
-              duration: reduceMotion ? 0 : 0.3,
-              ease: [0.16, 1, 0.3, 1],
-            }}
+            transition={{ duration: reduceMotion ? 0 : 0.3, ease: [0.16, 1, 0.3, 1] }}
             style={{ overflow: "hidden" }}
             onSubmit={handleSubmit}
             className="bg-white border border-slate-100 rounded-2xl shadow-sm p-6 mb-4 flex flex-col gap-4"
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Field label="Name">
-                <input
-                  required
-                  minLength={2}
-                  maxLength={100}
-                  value={form.name}
-                  onChange={set("name")}
-                  placeholder="Your startup's name"
-                  className={INPUT}
-                />
+                <input required minLength={2} maxLength={100} value={form.name} onChange={set("name")} placeholder="Your startup's name" className={INPUT} />
               </Field>
-
               <Field label="Category">
-                <select
-                  required
-                  value={form.tag}
-                  onChange={set("tag")}
-                  className={INPUT}
-                >
+                <select required value={form.tag} onChange={set("tag")} className={INPUT}>
                   <option value="">Select…</option>
-                  {TAGS.map((t) => (
-                    <option key={t}>{t}</option>
-                  ))}
+                  {TAGS.map((t) => <option key={t}>{t}</option>)}
                 </select>
               </Field>
-
               <Field label="Description" className="sm:col-span-2">
                 <div className="sm:col-span-2 flex flex-col gap-1">
-                  <textarea
-                    required
-                    minLength={20}
-                    maxLength={500}
-                    value={form.description}
-                    onChange={set("description")}
-                    placeholder="What does your startup do? (20–500 characters)"
-                    rows={2}
-                    className={`${INPUT} resize-none`}
-                  />
-                  <span className="text-xs text-slate-400 text-right">
-                    {form.description.length}/500
-                  </span>
+                  <textarea required minLength={20} maxLength={500} value={form.description} onChange={set("description")} placeholder="What does your startup do? (20–500 characters)" rows={2} className={`${INPUT} resize-none`} />
+                  <span className="text-xs text-slate-400 text-right">{form.description.length}/500</span>
                 </div>
               </Field>
-
               <Field label="Founded Year">
-                <input
-                  required
-                  type="number"
-                  value={form.year}
-                  onChange={set("year")}
-                  placeholder={String(CURRENT_YEAR)}
-                  min={1990}
-                  max={CURRENT_YEAR}
-                  className={INPUT}
-                />
+                <input required type="number" value={form.year} onChange={set("year")} placeholder={String(CURRENT_YEAR)} min={1990} max={CURRENT_YEAR} className={INPUT} />
               </Field>
-
               <Field label="Team Size">
-                <input
-                  required
-                  type="number"
-                  value={form.employees}
-                  onChange={set("employees")}
-                  placeholder="1"
-                  min={1}
-                  max={100000}
-                  className={INPUT}
-                />
+                <input required type="number" value={form.employees} onChange={set("employees")} placeholder="1" min={1} max={100000} className={INPUT} />
               </Field>
-
               <Field label="Stage">
-                <select
-                  required
-                  value={form.stage}
-                  onChange={set("stage")}
-                  className={INPUT}
-                >
+                <select required value={form.stage} onChange={set("stage")} className={INPUT}>
                   <option value="">Select…</option>
-                  {STAGES.map((s) => (
-                    <option key={s}>{s}</option>
-                  ))}
+                  {STAGES.map((s) => <option key={s}>{s}</option>)}
                 </select>
               </Field>
-
               <Field label="Email" optional>
-                <input
-                  type="email"
-                  value={form.email}
-                  onChange={set("email")}
-                  placeholder="hello@startup.com"
-                  className={INPUT}
-                />
+                <input type="email" value={form.email} onChange={set("email")} placeholder="hello@startup.com" className={INPUT} />
               </Field>
-
               <Field label="Website" optional>
-                <input
-                  type="url"
-                  value={form.website}
-                  onChange={set("website")}
-                  placeholder="https://startup.com"
-                  pattern="https?://.+"
-                  title="Must start with http:// or https://"
-                  className={INPUT}
-                />
+                <input type="url" value={form.website} onChange={set("website")} placeholder="https://startup.com" pattern="https?://.+" title="Must start with http:// or https://" className={INPUT} />
               </Field>
-
               <Field label="Phone" optional>
-                <input
-                  type="tel"
-                  value={form.phone}
-                  onChange={(e) =>
-                    setForm((f) => ({
-                      ...f,
-                      phone: formatPhone(e.target.value),
-                    }))
-                  }
-                  placeholder="0412 345 678"
-                  className={INPUT}
-                />
+                <input type="tel" value={form.phone} onChange={(e) => setForm((f) => ({ ...f, phone: formatPhone(e.target.value) }))} placeholder="0412 345 678" className={INPUT} />
               </Field>
             </div>
-
             <div className="flex items-center justify-end gap-4">
               {error && <p className="text-xs text-red-500">{error}</p>}
-              <button
-                type="submit"
-                disabled={submitting}
-                className="bg-amber-400 text-stone-900 font-bold text-sm px-6 py-2.5 rounded-xl hover:bg-amber-300 transition-colors disabled:opacity-50"
-              >
+              <button type="submit" disabled={submitting} className="bg-amber-400 text-stone-900 font-bold text-sm px-6 py-2.5 rounded-xl hover:bg-amber-300 transition-colors disabled:opacity-50">
                 {submitting ? "Submitting…" : "Submit Startup"}
               </button>
             </div>
@@ -298,59 +207,49 @@ function AddStartupForm({ onAdded }) {
   );
 }
 
-function DirectoryCard({ entry }) {
+function DirectoryCard({ entry, isNew }) {
   const [contactOpen, setContactOpen] = useState(false);
   const { reduceMotion } = useMotion();
   const av = avatarColour(entry.name);
   const tagColour = TAG_COLOURS[entry.tag] ?? TAG_COLOURS.Other;
 
   const contacts = [
-    entry.email && {
-      label: "Email",
-      href: `mailto:${entry.email}`,
-      value: entry.email,
-      newTab: false,
-    },
-    entry.website && {
-      label: "Website",
-      href: entry.website,
-      value: entry.website,
-      newTab: true,
-    },
-    entry.phone && {
-      label: "Phone",
-      href: `tel:${entry.phone}`,
-      value: entry.phone,
-      newTab: false,
-    },
+    entry.email && { label: "Email", href: `mailto:${entry.email}`, value: entry.email, newTab: false },
+    entry.website && { label: "Website", href: entry.website, value: entry.website, newTab: true },
+    entry.phone && { label: "Phone", href: `tel:${entry.phone}`, value: entry.phone, newTab: false },
   ].filter(Boolean);
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 flex gap-4 items-start">
-      <div
-        className={`w-14 h-14 rounded-xl shrink-0 flex items-center justify-center font-bold text-lg select-none ${av}`}
-      >
+    <motion.div
+      layout
+      initial={isNew && !reduceMotion ? { scale: 0.88, opacity: 0, y: -20 } : false}
+      animate={{ scale: 1, opacity: 1, y: 0 }}
+      transition={{ type: "spring", stiffness: 260, damping: 22 }}
+      className="relative bg-white rounded-2xl shadow-sm border border-slate-100 p-5 flex gap-4 items-start"
+    >
+      {/* Amber highlight ring that fades out on new entries */}
+      {isNew && !reduceMotion && (
+        <motion.div
+          className="absolute inset-0 rounded-2xl pointer-events-none"
+          style={{ boxShadow: "0 0 0 2px #fbbf24, 0 0 24px 4px #fbbf2440" }}
+          initial={{ opacity: 1 }}
+          animate={{ opacity: 0 }}
+          transition={{ duration: 2.5, delay: 0.4, ease: "easeOut" }}
+        />
+      )}
+
+      <div className={`w-14 h-14 rounded-xl shrink-0 flex items-center justify-center font-bold text-lg select-none ${av}`}>
         {initials(entry.name)}
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="font-semibold text-slate-800 text-base">
-            {entry.name}
-          </span>
-          <span
-            className={`text-xs font-medium px-2 py-0.5 rounded-full ${tagColour}`}
-          >
-            {entry.tag}
-          </span>
+          <span className="font-semibold text-slate-800 text-base">{entry.name}</span>
+          <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${tagColour}`}>{entry.tag}</span>
         </div>
-        <p className="text-sm text-slate-500 mt-1 leading-snug">
-          {entry.description}
-        </p>
+        <p className="text-sm text-slate-500 mt-1 leading-snug">{entry.description}</p>
         <div className="flex items-center gap-4 mt-2 flex-wrap">
           <span className="text-xs text-slate-400">Est. {entry.year}</span>
-          <span className="text-xs text-slate-400">
-            {entry.employees} people
-          </span>
+          <span className="text-xs text-slate-400">{entry.employees} people</span>
           <span className="text-xs text-slate-400">{entry.stage}</span>
           {contacts.length > 0 && (
             <button
@@ -374,15 +273,8 @@ function DirectoryCard({ entry }) {
               <div className="mt-3 pt-3 border-t border-slate-100 flex flex-col gap-1.5">
                 {contacts.map(({ label, href, value, newTab }) => (
                   <div key={label} className="flex items-center gap-2 text-xs">
-                    <span className="w-14 font-semibold text-slate-400 uppercase tracking-wide shrink-0">
-                      {label}
-                    </span>
-                    <a
-                      href={href}
-                      target={newTab ? "_blank" : undefined}
-                      rel="noreferrer"
-                      className="text-amber-600 hover:underline truncate"
-                    >
+                    <span className="w-14 font-semibold text-slate-400 uppercase tracking-wide shrink-0">{label}</span>
+                    <a href={href} target={newTab ? "_blank" : undefined} rel="noreferrer" className="text-amber-600 hover:underline truncate">
                       {value}
                     </a>
                   </div>
@@ -392,7 +284,7 @@ function DirectoryCard({ entry }) {
           )}
         </AnimatePresence>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -417,24 +309,45 @@ function SkeletonCard() {
   );
 }
 
+const POLL_INTERVAL = 3000;
+
 function Table({ showForm = true }) {
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [filterTag, setFilterTag] = useState("All");
+  const [newIds, setNewIds] = useState(new Set());
+  const seenIds = useRef(null);
+  const newIdTimer = useRef(null);
 
-  const fetchEntries = () => {
+  const fetchEntries = useCallback(() => {
     fetch("/api/startups")
       .then((res) => res.json())
       .then((data) => {
+        if (seenIds.current !== null) {
+          const brandNew = data
+            .filter((s) => !seenIds.current.has(s._id))
+            .map((s) => s._id);
+          if (brandNew.length > 0) {
+            clearTimeout(newIdTimer.current);
+            setNewIds(new Set(brandNew));
+            newIdTimer.current = setTimeout(() => setNewIds(new Set()), 3000);
+          }
+        }
+        seenIds.current = new Set(data.map((s) => s._id));
         setEntries(data);
         setLoading(false);
       });
-  };
+  }, []);
 
   useEffect(() => {
     fetchEntries();
-  }, []);
+    const interval = setInterval(fetchEntries, POLL_INTERVAL);
+    return () => {
+      clearInterval(interval);
+      clearTimeout(newIdTimer.current);
+    };
+  }, [fetchEntries]);
 
   const visible = entries.filter((e) => {
     const matchTag = filterTag === "All" || e.tag === filterTag;
@@ -449,9 +362,7 @@ function Table({ showForm = true }) {
   if (loading) {
     return (
       <div className="w-full max-w-2xl flex flex-col gap-3">
-        {Array.from({ length: 4 }, (_, i) => (
-          <SkeletonCard key={i} />
-        ))}
+        {Array.from({ length: 4 }, (_, i) => <SkeletonCard key={i} />)}
       </div>
     );
   }
@@ -460,7 +371,6 @@ function Table({ showForm = true }) {
     <div className="flex flex-col gap-3 w-full max-w-2xl">
       {showForm && <AddStartupForm onAdded={fetchEntries} />}
 
-      {/* Search + filter */}
       <div className="flex flex-col gap-2">
         <input
           type="search"
@@ -488,13 +398,18 @@ function Table({ showForm = true }) {
       </div>
 
       {visible.length === 0 && (
-        <p className="text-sm text-slate-400 text-center py-8">
-          No startups found.
-        </p>
+        <p className="text-sm text-slate-400 text-center py-8">No startups found.</p>
       )}
-      {visible.map((entry, i) => (
-        <DirectoryCard key={i} entry={entry} />
-      ))}
+
+      <AnimatePresence>
+        {visible.map((entry) => (
+          <DirectoryCard
+            key={entry._id}
+            entry={entry}
+            isNew={newIds.has(entry._id)}
+          />
+        ))}
+      </AnimatePresence>
     </div>
   );
 }

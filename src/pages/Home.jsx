@@ -399,19 +399,24 @@ function Home() {
   const [stats, setStats] = useState(DEFAULT_STATS);
 
   useEffect(() => {
-    Promise.all([
-      fetch("/api/startups").then((r) => r.json()),
-      fetch("/api/events").then((r) => r.json()),
-      fetch("/api/opportunities").then((r) => r.json()),
-    ])
-      .then(([startups, events, opportunities]) => {
-        setStats([
-          { value: startups.length, label: "Startups" },
-          { value: events.length, label: "Events" },
-          { value: opportunities.length, label: "Opportunities" },
-        ]);
-      })
-      .catch(() => {});
+    const fetchStats = () => {
+      Promise.all([
+        fetch("/api/startups").then((r) => r.json()),
+        fetch("/api/events").then((r) => r.json()),
+        fetch("/api/opportunities").then((r) => r.json()),
+      ])
+        .then(([startups, events, opportunities]) => {
+          setStats([
+            { value: startups.length, label: "Startups" },
+            { value: events.length, label: "Events" },
+            { value: opportunities.length, label: "Opportunities" },
+          ]);
+        })
+        .catch(() => {});
+    };
+    fetchStats();
+    const interval = setInterval(fetchStats, 3000);
+    return () => clearInterval(interval);
   }, []);
 
   return (
