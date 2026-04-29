@@ -53,14 +53,14 @@ function Navbar() {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-8 py-4 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 lg:px-8 py-4 transition-all duration-300 ${
         transparent ? "bg-transparent" : "bg-white shadow-sm"
       }`}
     >
       {/* Logo — always links home */}
       <Link
         to="/"
-        className={`text-3xl md:text-4xl font-black tracking-tighter transition-colors duration-300 ${transparent ? "text-white" : "text-slate-800"}`}
+        className={`text-3xl lg:text-4xl font-black tracking-tighter transition-colors duration-300 ${transparent ? "text-white" : "text-slate-800"}`}
       >
         STARTUP
         <span
@@ -73,7 +73,7 @@ function Navbar() {
       {/* Desktop nav links */}
       <div
         ref={navRef}
-        className="relative hidden md:flex items-center gap-8 font-semibold"
+        className="relative hidden lg:flex items-center gap-8 font-semibold"
       >
         {links.map((link, i) => (
           <NavLink
@@ -106,7 +106,7 @@ function Navbar() {
       <button
         onClick={toggleReduceMotion}
         title={reduceMotion ? "Enable motion" : "Reduce motion"}
-        className={`hidden md:block text-xs font-bold tracking-widest uppercase px-3 py-1.5 rounded-lg border transition-colors duration-300 ${
+        className={`hidden lg:block text-xs font-bold tracking-widest uppercase px-3 py-1.5 rounded-lg border transition-colors duration-300 ${
           transparent
             ? reduceMotion
               ? "border-white/40 text-white bg-white/10"
@@ -120,7 +120,7 @@ function Navbar() {
       </button>
 
       {/* Mobile right: motion toggle + hamburger */}
-      <div className="flex items-center gap-3 md:hidden">
+      <div className="flex items-center gap-3 lg:hidden">
         <button
           onClick={toggleReduceMotion}
           className={`text-xs font-bold tracking-widest uppercase px-3 py-1.5 rounded-lg border transition-colors duration-300 ${
@@ -168,7 +168,7 @@ function Navbar() {
             exit={{ opacity: 0, y: -8, scaleY: 0.97 }}
             transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
             style={{ transformOrigin: "top" }}
-            className="absolute top-full left-0 right-0 bg-white shadow-xl border-t-2 border-amber-400 md:hidden overflow-hidden"
+            className="absolute top-full left-0 right-0 bg-white shadow-xl border-t-2 border-amber-400 lg:hidden overflow-hidden"
           >
             <div className="flex flex-col py-2">
               {links.map((link, i) => (
