@@ -2,9 +2,10 @@ module.exports = {
   apps: [
     {
       name: "portal-api",
-      script: "server/index.js",
+      script: "npm",
+      args: "start",
       cwd: "/home/weebus/sci700-innovation-portal-wireframe",
-      interpreter: "node",
+      interpreter: "none",
       env_file: ".env",
     },
     {
