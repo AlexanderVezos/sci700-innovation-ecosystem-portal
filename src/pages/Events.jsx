@@ -3,6 +3,15 @@ import { AnimatePresence, motion } from "framer-motion";
 import PageTransition from "@/components/PageTransition";
 import { useMotion } from "@/context/MotionContext";
 
+const EVENT_SORT_OPTIONS = [
+  ["createdAt-desc", "Listed: newest first"],
+  ["createdAt-asc", "Listed: oldest first"],
+  ["title-asc", "Title: A–Z"],
+  ["title-desc", "Title: Z–A"],
+  ["date-asc", "Event date: soonest"],
+  ["date-desc", "Event date: latest"],
+];
+
 const EVENT_TYPES = [
   "Networking",
   "Workshop",
@@ -474,6 +483,7 @@ function Events() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [filterType, setFilterType] = useState("All");
+  const [sort, setSort] = useState("createdAt-desc");
   const [view, setView] = useState("list");
   const [newIds, setNewIds] = useState(new Set());
   const seenIds = useRef(null);
@@ -504,16 +514,25 @@ function Events() {
     return () => { clearInterval(interval); clearTimeout(newIdTimer.current); };
   }, [fetchEvents]);
 
-  const visible = events.filter((e) => {
-    const matchType = filterType === "All" || e.type === filterType;
-    const q = search.toLowerCase();
-    const matchSearch =
-      !q ||
-      e.title.toLowerCase().includes(q) ||
-      e.description.toLowerCase().includes(q) ||
-      e.organizer.toLowerCase().includes(q);
-    return matchType && matchSearch;
-  });
+  const visible = events
+    .filter((e) => {
+      const matchType = filterType === "All" || e.type === filterType;
+      const q = search.toLowerCase();
+      const matchSearch =
+        !q ||
+        e.title.toLowerCase().includes(q) ||
+        e.description.toLowerCase().includes(q) ||
+        e.organizer.toLowerCase().includes(q);
+      return matchType && matchSearch;
+    })
+    .sort((a, b) => {
+      const [field, dir] = sort.split("-");
+      const mul = dir === "asc" ? 1 : -1;
+      if (field === "title") return mul * a.title.localeCompare(b.title);
+      if (field === "date") return mul * (new Date(a.date) - new Date(b.date));
+      if (field === "createdAt") return mul * (new Date(a.createdAt) - new Date(b.createdAt));
+      return 0;
+    });
 
   return (
     <PageTransition>
@@ -562,6 +581,20 @@ function Events() {
                 </button>
               ))}
             </div>
+            {view === "list" && (
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-medium text-slate-400">Sort</span>
+                <select
+                  value={sort}
+                  onChange={(e) => setSort(e.target.value)}
+                  className="flex-1 border border-slate-200 rounded-lg px-2 py-1.5 text-sm text-slate-700 bg-white focus:outline-none focus:ring-2 focus:ring-slate-300"
+                >
+                  {EVENT_SORT_OPTIONS.map(([value, label]) => (
+                    <option key={value} value={value}>{label}</option>
+                  ))}
+                </select>
+              </div>
+            )}
           </div>
 
           {/* Content area with crossfade between views */}
@@ -581,16 +614,17 @@ function Events() {
                 ) : visible.length === 0 ? (
                   <p className="text-sm text-slate-400 text-center py-8">No events found.</p>
                 ) : (
-                  <div className="flex flex-col gap-4">
+                  <AnimatePresence>
                     {visible.map((event) => {
                       const isNew = newIds.has(event._id);
                       return (
                         <motion.div
                           key={event._id}
                           layout
-                          initial={isNew && !reduceMotion ? { scale: 0.88, opacity: 0, y: -20 } : false}
-                          animate={{ scale: 1, opacity: 1, y: 0 }}
-                          transition={{ type: "spring", stiffness: 260, damping: 22 }}
+                          initial={!reduceMotion ? { opacity: 0, y: 8 } : false}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={!reduceMotion ? { opacity: 0, y: -4 } : undefined}
+                          transition={{ layout: { duration: 0.2, ease: "easeOut" }, default: { duration: 0.15, ease: "easeOut" } }}
                           className="relative"
                         >
                           {isNew && !reduceMotion && (
@@ -606,7 +640,7 @@ function Events() {
                         </motion.div>
                       );
                     })}
-                  </div>
+                  </AnimatePresence>
                 )}
               </motion.div>
             </AnimatePresence>

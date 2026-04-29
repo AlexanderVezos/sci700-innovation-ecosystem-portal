@@ -3,6 +3,15 @@ import { AnimatePresence, motion } from "framer-motion";
 import PageTransition from "@/components/PageTransition";
 import { useMotion } from "@/context/MotionContext";
 
+const OPP_SORT_OPTIONS = [
+  ["createdAt-desc", "Listed: newest first"],
+  ["createdAt-asc", "Listed: oldest first"],
+  ["title-asc", "Title: A–Z"],
+  ["title-desc", "Title: Z–A"],
+  ["deadline-asc", "Deadline: soonest"],
+  ["deadline-desc", "Deadline: latest"],
+];
+
 const OPP_TYPES = ["Pilot", "Co-development", "Challenge", "Research", "Other"];
 const SECTORS = [
   "HealthTech",
@@ -359,6 +368,7 @@ function Opportunities() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [filterType, setFilterType] = useState("All");
+  const [sort, setSort] = useState("createdAt-desc");
   const [newIds, setNewIds] = useState(new Set());
   const seenIds = useRef(null);
   const newIdTimer = useRef(null);
@@ -388,16 +398,30 @@ function Opportunities() {
     return () => { clearInterval(interval); clearTimeout(newIdTimer.current); };
   }, [fetchOpps]);
 
-  const visible = opps.filter((o) => {
-    const matchType = filterType === "All" || o.type === filterType;
-    const q = search.toLowerCase();
-    const matchSearch =
-      !q ||
-      o.title.toLowerCase().includes(q) ||
-      o.description.toLowerCase().includes(q) ||
-      o.organisation.toLowerCase().includes(q);
-    return matchType && matchSearch;
-  });
+  const visible = opps
+    .filter((o) => {
+      const matchType = filterType === "All" || o.type === filterType;
+      const q = search.toLowerCase();
+      const matchSearch =
+        !q ||
+        o.title.toLowerCase().includes(q) ||
+        o.description.toLowerCase().includes(q) ||
+        o.organisation.toLowerCase().includes(q);
+      return matchType && matchSearch;
+    })
+    .sort((a, b) => {
+      const [field, dir] = sort.split("-");
+      const mul = dir === "asc" ? 1 : -1;
+      if (field === "title") return mul * a.title.localeCompare(b.title);
+      if (field === "createdAt") return mul * (new Date(a.createdAt) - new Date(b.createdAt));
+      if (field === "deadline") {
+        if (!a.deadline && !b.deadline) return 0;
+        if (!a.deadline) return 1;
+        if (!b.deadline) return -1;
+        return mul * (new Date(a.deadline) - new Date(b.deadline));
+      }
+      return 0;
+    });
 
   return (
     <PageTransition>
@@ -443,6 +467,18 @@ function Opportunities() {
                 </button>
               ))}
             </div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-medium text-slate-400">Sort</span>
+              <select
+                value={sort}
+                onChange={(e) => setSort(e.target.value)}
+                className="flex-1 border border-slate-200 rounded-lg px-2 py-1.5 text-sm text-slate-700 bg-white focus:outline-none focus:ring-2 focus:ring-slate-300"
+              >
+                {OPP_SORT_OPTIONS.map(([value, label]) => (
+                  <option key={value} value={value}>{label}</option>
+                ))}
+              </select>
+            </div>
           </div>
 
           {loading ? (
@@ -459,9 +495,10 @@ function Opportunities() {
                   <motion.div
                     key={opp._id}
                     layout
-                    initial={isNew && !reduceMotion ? { scale: 0.88, opacity: 0, y: -20 } : false}
-                    animate={{ scale: 1, opacity: 1, y: 0 }}
-                    transition={{ type: "spring", stiffness: 260, damping: 22 }}
+                    initial={!reduceMotion ? { opacity: 0, y: 8 } : false}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={!reduceMotion ? { opacity: 0, y: -4 } : undefined}
+                    transition={{ layout: { duration: 0.2, ease: "easeOut" }, default: { duration: 0.15, ease: "easeOut" } }}
                     className="relative"
                   >
                     {isNew && !reduceMotion && (

@@ -383,7 +383,7 @@ function PillarCard({
         style={imgStyle}
         className="absolute inset-0 w-full h-full object-cover will-change-transform"
       />
-      <div className="absolute inset-0 bg-linear-to-t from-black/75 via-black/20 to-transparent" />
+      <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.55) 20%, rgba(0,0,0,0.28) 45%, rgba(0,0,0,0.08) 70%, rgba(0,0,0,0) 100%)" }} />
       <div className="relative z-10 p-6 text-white">
         <h3 className="text-2xl font-black tracking-tight">{title}</h3>
         <p className="text-sm text-white/70 mt-1 leading-relaxed">

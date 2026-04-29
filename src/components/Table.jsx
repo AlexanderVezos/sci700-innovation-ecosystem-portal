@@ -2,6 +2,17 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useMotion } from "@/context/MotionContext";
 
+const SORT_OPTIONS = [
+  ["createdAt-desc", "Listed: newest first"],
+  ["createdAt-asc", "Listed: oldest first"],
+  ["name-asc", "Name: A–Z"],
+  ["name-desc", "Name: Z–A"],
+  ["year-desc", "Founded: newest"],
+  ["year-asc", "Founded: oldest"],
+  ["employees-desc", "Employees: most"],
+  ["employees-asc", "Employees: fewest"],
+];
+
 const STAGES = ["Idea", "MVP", "Growth"];
 const TAGS = [
   "HealthTech",
@@ -222,9 +233,10 @@ function DirectoryCard({ entry, isNew }) {
   return (
     <motion.div
       layout
-      initial={isNew && !reduceMotion ? { scale: 0.88, opacity: 0, y: -20 } : false}
-      animate={{ scale: 1, opacity: 1, y: 0 }}
-      transition={{ type: "spring", stiffness: 260, damping: 22 }}
+      initial={!reduceMotion ? { opacity: 0, y: 8 } : false}
+      animate={{ opacity: 1, y: 0 }}
+      exit={!reduceMotion ? { opacity: 0, y: -4 } : undefined}
+      transition={{ layout: { duration: 0.2, ease: "easeOut" }, default: { duration: 0.15, ease: "easeOut" } }}
       className="relative bg-white rounded-2xl shadow-sm border border-slate-100 p-5 flex gap-4 items-start"
     >
       {/* Amber highlight ring that fades out on new entries */}
@@ -316,6 +328,7 @@ function Table({ showForm = true }) {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [filterTag, setFilterTag] = useState("All");
+  const [sort, setSort] = useState("createdAt-desc");
   const [newIds, setNewIds] = useState(new Set());
   const seenIds = useRef(null);
   const newIdTimer = useRef(null);
@@ -349,15 +362,25 @@ function Table({ showForm = true }) {
     };
   }, [fetchEntries]);
 
-  const visible = entries.filter((e) => {
-    const matchTag = filterTag === "All" || e.tag === filterTag;
-    const q = search.toLowerCase();
-    const matchSearch =
-      !q ||
-      e.name.toLowerCase().includes(q) ||
-      e.description.toLowerCase().includes(q);
-    return matchTag && matchSearch;
-  });
+  const visible = entries
+    .filter((e) => {
+      const matchTag = filterTag === "All" || e.tag === filterTag;
+      const q = search.toLowerCase();
+      const matchSearch =
+        !q ||
+        e.name.toLowerCase().includes(q) ||
+        e.description.toLowerCase().includes(q);
+      return matchTag && matchSearch;
+    })
+    .sort((a, b) => {
+      const [field, dir] = sort.split("-");
+      const mul = dir === "asc" ? 1 : -1;
+      if (field === "name") return mul * a.name.localeCompare(b.name);
+      if (field === "year") return mul * (a.year - b.year);
+      if (field === "employees") return mul * (a.employees - b.employees);
+      if (field === "createdAt") return mul * (new Date(a.createdAt) - new Date(b.createdAt));
+      return 0;
+    });
 
   if (loading) {
     return (
@@ -394,6 +417,18 @@ function Table({ showForm = true }) {
               {t}
             </button>
           ))}
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-medium text-slate-400">Sort</span>
+          <select
+            value={sort}
+            onChange={(e) => setSort(e.target.value)}
+            className="flex-1 border border-slate-200 rounded-lg px-2 py-1.5 text-sm text-slate-700 bg-white focus:outline-none focus:ring-2 focus:ring-slate-300"
+          >
+            {SORT_OPTIONS.map(([value, label]) => (
+              <option key={value} value={value}>{label}</option>
+            ))}
+          </select>
         </div>
       </div>
 
