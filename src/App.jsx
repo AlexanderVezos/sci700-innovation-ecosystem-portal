@@ -1,5 +1,5 @@
 import { AnimatePresence } from "framer-motion";
-import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import { useEffect, useRef } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -12,29 +12,8 @@ import PrivacyPolicy from "@/pages/PrivacyPolicy";
 import Terms from "@/pages/Terms";
 import EcosystemMap from "@/pages/EcosystemMap";
 
-const routes = [
-  "/",
-  "/directory",
-  "/events",
-  "/opportunities",
-  "/map",
-  "/resources",
-];
-
 function App() {
   const location = useLocation();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const onKey = (e) => {
-      const i = routes.indexOf(location.pathname);
-      if (e.key === "ArrowRight") navigate(routes[(i + 1) % routes.length]);
-      if (e.key === "ArrowLeft")
-        navigate(routes[(i - 1 + routes.length) % routes.length]);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [location.pathname, navigate]);
 
   const scrollRef = useRef(null);
 
