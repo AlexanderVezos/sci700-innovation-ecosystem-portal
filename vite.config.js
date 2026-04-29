@@ -15,7 +15,7 @@ export default defineConfig({
   },
   server: {
     port: 5174,
-    allowedHosts: ["startupsc.punkrecords.xyz"],
+    allowedHosts: true,
     proxy: {
       "/api": "http://localhost:3001",
     },
