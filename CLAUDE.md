@@ -64,16 +64,24 @@ Stack: React + Vite, Tailwind CSS, Framer Motion, React Router. Backend stub at 
 | Opportunities | Working | Opportunity cards (Pilot, Co-development, Challenge, Research, Other) with search + type filter. Add-opportunity form. |
 | Resources | Working | 9-card bento grid: Business Planning, Funding & Grants, Networks & Mentors, Legal & Compliance, Digital Tools, Market Research, Sustainability, Talent & Hiring, Accelerators. Expand-on-click. Copy is live. |
 
-### Current focus (post-demo priorities)
-1. **Rebrand to Silicon Coast** — pending stakeholder sign-off; would affect all branding, copy, and the `startupsc` Cloudflare subdomain.
-2. **Live map demo** — using the existing ecosystem map with live polling as the centrepiece for industry demos (iPad form → bubble appears on big screen).
-3. **User accounts** — if scope allows; would unlock saved profiles, personalised matchmaking, and posting under an identity.
+### Priority build list — due before May 20 live demo
+1. **Compound filtering** — multi-metric faceted filtering on the directory (tag + stage + year + employee count simultaneously). MongoDB handles this natively, no schema change needed.
+2. **Auto-approval / easy approval flow** — submissions currently land as `status: "pending"`. Need a simple admin approval UI or auto-approve toggle for the demo so entries appear immediately.
+3. **iPad sign-in / submission form** — simplified entry form for the live demo (iPad on a table → submission appears on the big screen). Ties into the existing live polling / ecosystem map flow.
+4. **ABR scraping** — scrape the Australian Business Register to seed the directory with real Sunshine Coast startups/businesses so the listing isn't empty at launch.
+5. **Event/startup data seeding** — populate the DB with real or realistic entries before the demo so it looks like a live product.
+
+### Out of scope for now (business/stakeholder decisions)
+- Resource page link population — content curation, not engineering
+- Rebrand to Silicon Coast — pending stakeholder sign-off; affects all copy, branding, and the `startupsc` Cloudflare subdomain
+- User accounts / profiles — would unlock matchmaking and personalised views; deferred until post-demo
 
 ### Not yet built
 1. **Matchmaking** — "find collaborators" flow to address the #3 most-wanted feature.
 2. **Profile pages** — individual startup/org profiles behind the "View Profile" button.
 
 ### Known issues
+- Server now runs on port `3002` (was `3001`) — update any hardcoded references if found.
 - `Directory.jsx` renders `<Table />` which calls `/api/startups` — requires `server/` running locally.
 
 ---
