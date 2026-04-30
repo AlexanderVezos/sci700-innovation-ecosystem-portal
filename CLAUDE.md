@@ -1,93 +1,145 @@
-# SCI700 Innovation Portal — Project Context
+# SCI700 Innovation Portal
 
 ## What this is
 
-A wireframe/prototype for the **Sunshine Coast Innovation Ecosystem Portal** — a web platform to connect startups, investors, researchers, corporates, and government in the Sunshine Coast region. Built as part of SCI700.
+A working prototype for the **Sunshine Coast Innovation Ecosystem Portal** — a web platform connecting startups, investors, researchers, corporates, and government in the Sunshine Coast region. Built as the capstone deliverable for SCI700 (Master's, UniSC, 2026).
 
-Stack: React + Vite, Tailwind CSS, Framer Motion, React Router. Backend stub at `server/` serving mock data from `localhost:3001`. Vite dev server proxies `/api` → `http://localhost:3001`, so all fetch calls use relative paths (`/api/...`). Run with `npm run dev` — `vite --host` is set, so the app is accessible on LAN.
+The demo is **20 May 2026** — a live event with an iPad on a table, a big screen, and real stakeholders in the room. Everything built until then is in service of that moment.
+
+---
+
+## Silicon Coast
+
+The platform may be rebranded to **Silicon Coast** — a brand identity for the Sunshine Coast's emerging tech ecosystem. This is pending stakeholder sign-off and affects all copy, branding assets, and the `startupsc` Cloudflare subdomain. Do not implement this until instructed. When it lands, it's a sweeping change across every page.
+
+---
+
+## Tech stack
+
+| Layer | Tech |
+|---|---|
+| Frontend | React 19 + Vite, React Router v7 |
+| Styling | Tailwind CSS v4 |
+| Animation | Framer Motion (with `MotionContext` for prefers-reduced-motion) |
+| Backend | Express 5, Node.js |
+| Database | MongoDB (cloud-hosted, MongoDB Atlas) |
+| Visualisation | D3 (force simulation on EcosystemMap) |
+
+**Running the project:** `npm run dev` starts Vite (`--host`, LAN-accessible) and nodemon concurrently.
+
+**API:** Vite proxies `/api` → `http://localhost:3002`. All fetch calls use relative paths (`/api/...`). Server runs on port **3002** (was 3001 — do not hardcode 3001 anywhere).
+
+---
+
+## Design system
+
+- **Accent colour:** Amber (`amber-400`) throughout — buttons, tags, highlights, active states
+- **Layout:** Desktop-first (~75% of surveyed users on desktop); mobile hamburger nav implemented in `Navbar.jsx`
+- **Motion:** Framer Motion for page transitions and card interactions; `MotionContext` provides a `useMotion()` hook that respects `prefers-reduced-motion`
+- **Feel:** The portal should feel like a place to *do things* — connect, post, discover — not just browse lists
+
+---
+
+## Pages
+
+| Page | Route | Status | Notes |
+|---|---|---|---|
+| Home | `/` | Working | Hero (video bg), animated phrase cycling, stat blobs, pillar cards |
+| Directory | `/directory` | Working | Startup table via `Table.jsx`, text search, tag filter, sort, add-startup form |
+| Events | `/events` | Working | List + calendar view, type filter, text search, sort, add-event form, real-time polling |
+| Opportunities | `/opportunities` | Working | Cards with type + sector filter, deadline sort, contact reveal, add-opportunity form, real-time polling |
+| Ecosystem Map | `/map` | Working | D3 force-simulation bubble map, tag filter, click-to-detail side panel, new node pulse animation |
+| Resources | `/resources` | Working | 10-card flip grid: Business Planning, Funding & Grants, Networks & Mentors, Legal & Compliance, Digital Tools, Market Research, Sustainability, Talent & Hiring, Accelerators, Co-working |
+| Privacy Policy | `/privacy` | Working | Static, April 2026 |
+| Terms | `/terms` | Working | Static, April 2026 |
+
+---
+
+## API routes
+
+All submissions land as `status: "pending"` and are invisible to public GET endpoints until approved.
+
+| Method | Route | Description |
+|---|---|---|
+| GET | `/api/startups` | All approved startups, sorted by name |
+| GET | `/api/startups/pending` | All pending startups (no frontend yet) |
+| POST | `/api/startups` | Submit a new startup (→ pending) |
+| PATCH | `/api/startups/:id` | Set status to `approved` or `rejected` |
+| GET | `/api/events` | All approved events, sorted by date |
+| GET | `/api/events/pending` | All pending events (no frontend yet) |
+| POST | `/api/events` | Submit a new event (→ pending) |
+| PATCH | `/api/events/:id` | Set status to `approved` or `rejected` |
+| GET | `/api/opportunities` | All approved opportunities, sorted by createdAt |
+| GET | `/api/opportunities/pending` | All pending opportunities (no frontend yet) |
+| POST | `/api/opportunities` | Submit a new opportunity (→ pending) |
+| PATCH | `/api/opportunities/:id` | Set status to `approved` or `rejected` |
+
+**Note:** PATCH endpoints are currently unauthenticated — fine for the prototype, not for production.
+
+---
+
+## Remaining work
+
+### Engineering tasks (owner: Alex)
+
+| Task | Priority | Notes |
+|---|---|---|
+| **Better filtering** | Demo-critical | Multi-tag compound filtering on Directory — tag + stage + year + employee count simultaneously. MongoDB handles natively, no schema change. |
+| **Easier approving** | Demo-critical | Admin UI or auto-approve toggle so submissions go live immediately. Backend pending endpoints + PATCH already exist — just needs a frontend. |
+| **iPad kiosk form** | Demo-critical | Dedicated full-screen submission form for the live demo. Submission should appear on the big screen in real-time (existing polling covers this). |
+| **ABR scraping** | Demo-critical | Scrape the Australian Business Register to seed real Sunshine Coast businesses into the directory. |
+| **Error toasts** | Demo-critical | API failures are silently caught — surface them as visible toast notifications, especially important on demo day with flaky wifi. |
+
+### Business / stakeholder tasks (not engineering)
+
+| Task | Notes |
+|---|---|
+| **Silicon Coast rebrand** | Pending stakeholder sign-off |
+| **Switch to Postgres** | Infrastructure decision, not yet decided |
+| **Make Resources useful** | Content curation — populate links, not engineering work |
+| **User accounts + matchmaking** | Deferred post-demo; matchmaking is the #3 most-wanted feature but requires auth first |
 
 ---
 
 ## Survey findings (33 respondents, April 2026)
 
-### Who the users are (Q1)
-- Startup founders / entrepreneurs — largest group (~29%)
-- Service providers, Corporate/Industry, Government (~15% each)
-- Scaleups/SMEs (~13%)
-- Research institutions, Incubators (~10% each)
-- Investors (~5%)
+### Who responded (Q1)
+- Startup founders / entrepreneurs ~29%
+- Service providers, Corporate/Industry, Government ~15% each
+- Scaleups/SMEs ~13%
+- Research institutions, Incubators ~10% each
+- Investors ~5%
 
 ### Most wanted features (Q2, ranked)
-1. Searchable directory of startups, scaleups, investors, research partners (~78%)
-2. Events calendar and networking opportunities (~76%)
-3. Matchmaking / recommendation tools (~70%)
-4. Funding, grants, incentives information (~60%)
-5. Ability to post opportunities — pilots, test & trial (~55%)
-6. Open innovation challenges / problem statements from industry (~45%)
-7. Ability to list your startup or VC fund (~45%)
+1. Searchable directory (~78%)
+2. Events calendar & networking (~76%)
+3. Matchmaking / recommendations (~70%)
+4. Funding, grants, incentives info (~60%)
+5. Post opportunities — pilots, test & trial (~55%)
+6. Open innovation challenges from industry (~45%)
+7. List your startup or VC fund (~45%)
 8. Case studies of successful collaborations (~45%)
 9. Co-working spaces (~40%)
-10. Accelerator program information (~38%)
+10. Accelerator program info (~38%)
 
-### Primary use cases (Q4, top 3 selections)
-1. Identifying startups, investors, or technology partners (~57%)
-2. Understanding available support, funding, or incentives (~55%)
+### Primary use cases (Q4)
+1. Identifying startups, investors, or tech partners (~57%)
+2. Understanding support, funding, or incentives (~55%)
 3. Discovering innovation opportunities or challenges (~50%)
 4. Finding pilot or co-development opportunities (~45%)
-5. Building new commercial or R&D partnerships (~42%)
+5. Building commercial or R&D partnerships (~42%)
 
 ### Access method (Q3)
-- Desktop / web browser — dominant (~75%)
-- Mobile device (~15%)
-- Email alerts / newsletters (~12%)
+- Desktop / web browser ~75%
+- Mobile ~15%
+- Email alerts / newsletters ~12%
 
 ### Key qualitative themes (Q5)
 - Information currency is critical — needs a clear ownership/curation model
 - AI matchmaking suggested (skills, availability, partner profiles)
-- Living ecosystem map / visual (respondent linked Canterbury Tech bubbles map as reference)
-- Tailored user profiles (startup vs investor vs corporate view)
+- Living ecosystem map / visual (Canterbury Tech bubbles map referenced)
+- Tailored views per user type (startup vs investor vs corporate)
 - Measure success by **connections made**, not page views
 - UniSC / research linkages valued
 - R&D job board suggested
-- "The value is not in the directory but in the actual collaborations, opportunities, and real push for progress"
-
----
-
-## Current implementation status
-
-### Pages built
-| Page | Status | Notes |
-|---|---|---|
-| Home | Working | Hero (video bg), stat blobs, pillar cards. Copy is live. |
-| Directory | Working | Card list from API with text search and type filter (tag chips). Add-startup form (`AddStartupForm`). Has View Profile + Say Hello buttons. |
-| Events | Working | Own event cards with date, location, organiser, type badge. Text search + event-type filter. Add-event form. |
-| Opportunities | Working | Opportunity cards (Pilot, Co-development, Challenge, Research, Other) with search + type filter. Add-opportunity form. |
-| Resources | Working | 9-card bento grid: Business Planning, Funding & Grants, Networks & Mentors, Legal & Compliance, Digital Tools, Market Research, Sustainability, Talent & Hiring, Accelerators. Expand-on-click. Copy is live. |
-
-### Priority build list — due before May 20 live demo
-1. **Compound filtering** — multi-metric faceted filtering on the directory (tag + stage + year + employee count simultaneously). MongoDB handles this natively, no schema change needed.
-2. **Auto-approval / easy approval flow** — submissions currently land as `status: "pending"`. Need a simple admin approval UI or auto-approve toggle for the demo so entries appear immediately.
-3. **iPad sign-in / submission form** — simplified entry form for the live demo (iPad on a table → submission appears on the big screen). Ties into the existing live polling / ecosystem map flow.
-4. **ABR scraping** — scrape the Australian Business Register to seed the directory with real Sunshine Coast startups/businesses so the listing isn't empty at launch.
-5. **Event/startup data seeding** — populate the DB with real or realistic entries before the demo so it looks like a live product.
-
-### Out of scope for now (business/stakeholder decisions)
-- Resource page link population — content curation, not engineering
-- Rebrand to Silicon Coast — pending stakeholder sign-off; affects all copy, branding, and the `startupsc` Cloudflare subdomain
-- User accounts / profiles — would unlock matchmaking and personalised views; deferred until post-demo
-
-### Not yet built
-1. **Matchmaking** — "find collaborators" flow to address the #3 most-wanted feature.
-2. **Profile pages** — individual startup/org profiles behind the "View Profile" button.
-
-### Known issues
-- Server now runs on port `3002` (was `3001`) — update any hardcoded references if found.
-- `Directory.jsx` renders `<Table />` which calls `/api/startups` — requires `server/` running locally.
-
----
-
-## Design intent
-- Desktop-first (matches ~75% desktop access finding); mobile hamburger nav is implemented in `Navbar.jsx`
-- Amber (`amber-400`) as the primary accent colour throughout
-- Framer Motion for page transitions and card interactions; reduce-motion support via `MotionContext`
-- The portal should feel like a place to *do things* (connect, post, match) not just browse lists
+- _"The value is not in the directory but in the actual collaborations, opportunities, and real push for progress"_
