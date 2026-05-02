@@ -560,7 +560,7 @@ function StartupsPanel({ showForm = true }) {
     <>
       <div className="h-2" />
       {/* Sticky bar — z-51 covers navbar shadow when docked */}
-      <div className="sticky top-14 z-51 bg-white border-b border-slate-200">
+      <div className="sticky top-14 lg:top-[72px] z-51 bg-white border-b border-slate-200">
         <div className="max-w-5xl mx-auto px-8 md:px-16 py-3 flex flex-col md:flex-row md:items-center gap-2">
           <div className="flex items-center gap-2 md:shrink-0">
             {showForm && (
@@ -612,7 +612,7 @@ function StartupsPanel({ showForm = true }) {
 
       <div className="px-8 md:px-16 py-8 max-w-5xl mx-auto">
         <div className="flex gap-6 items-start">
-          <div className="hidden md:block w-52 shrink-0 sticky top-32">
+          <div className="hidden md:block w-52 shrink-0 sticky top-32 lg:top-[136px]">
             <FilterPanel {...filterPanelProps} />
           </div>
           <div className="flex-1 min-w-0 flex flex-col gap-3">
