@@ -16,14 +16,14 @@ The platform may be rebranded to **Silicon Coast** — a brand identity for the 
 
 ## Tech stack
 
-| Layer | Tech |
-|---|---|
-| Frontend | React 19 + Vite, React Router v7 |
-| Styling | Tailwind CSS v4 |
-| Animation | Framer Motion (with `MotionContext` for prefers-reduced-motion) |
-| Backend | Express 5, Node.js |
-| Database | MongoDB (cloud-hosted, MongoDB Atlas) |
-| Visualisation | D3 (force simulation on EcosystemMap) |
+| Layer         | Tech                                                            |
+| ------------- | --------------------------------------------------------------- |
+| Frontend      | React 19 + Vite, React Router v7                                |
+| Styling       | Tailwind CSS v4                                                 |
+| Animation     | Framer Motion (with `MotionContext` for prefers-reduced-motion) |
+| Backend       | Express 5, Node.js                                              |
+| Database      | MongoDB (cloud-hosted, MongoDB Atlas)                           |
+| Visualisation | D3 (force simulation on EcosystemMap)                           |
 
 **Running the project:** `npm run dev` starts Vite (`--host`, LAN-accessible) and nodemon concurrently.
 
@@ -36,22 +36,22 @@ The platform may be rebranded to **Silicon Coast** — a brand identity for the 
 - **Accent colour:** Amber (`amber-400`) throughout — buttons, tags, highlights, active states
 - **Layout:** Desktop-first (~75% of surveyed users on desktop); mobile hamburger nav implemented in `Navbar.jsx`
 - **Motion:** Framer Motion for page transitions and card interactions; `MotionContext` provides a `useMotion()` hook that respects `prefers-reduced-motion`
-- **Feel:** The portal should feel like a place to *do things* — connect, post, discover — not just browse lists
+- **Feel:** The portal should feel like a place to _do things_ — connect, post, discover — not just browse lists
 
 ---
 
 ## Pages
 
-| Page | Route | Status | Notes |
-|---|---|---|---|
-| Home | `/` | Working | Hero (video bg), animated phrase cycling, stat blobs, pillar cards |
-| Directory | `/directory` | Working | Startup table via `Table.jsx`, text search, tag filter, sort, add-startup form |
-| Events | `/events` | Working | List + calendar view, type filter, text search, sort, add-event form, real-time polling |
-| Opportunities | `/opportunities` | Working | Cards with type + sector filter, deadline sort, contact reveal, add-opportunity form, real-time polling |
-| Ecosystem Map | `/map` | Working | D3 force-simulation bubble map, tag filter, click-to-detail side panel, new node pulse animation |
-| Resources | `/resources` | Working | 10-card flip grid: Business Planning, Funding & Grants, Networks & Mentors, Legal & Compliance, Digital Tools, Market Research, Sustainability, Talent & Hiring, Accelerators, Co-working |
-| Privacy Policy | `/privacy` | Working | Static, April 2026 |
-| Terms | `/terms` | Working | Static, April 2026 |
+| Page           | Route            | Status  | Notes                                                                                                                                                                                     |
+| -------------- | ---------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Home           | `/`              | Working | Hero (video bg), animated phrase cycling, stat blobs, pillar cards                                                                                                                        |
+| Directory      | `/directory`     | Working | Startup table via `Table.jsx`, text search, tag filter, sort, add-startup form                                                                                                            |
+| Events         | `/events`        | Working | List + calendar view, type filter, text search, sort, add-event form, real-time polling                                                                                                   |
+| Opportunities  | `/opportunities` | Working | Cards with type + sector filter, deadline sort, contact reveal, add-opportunity form, real-time polling                                                                                   |
+| Ecosystem Map  | `/map`           | Working | D3 force-simulation bubble map, tag filter, click-to-detail side panel, new node pulse animation                                                                                          |
+| Resources      | `/resources`     | Working | 10-card flip grid: Business Planning, Funding & Grants, Networks & Mentors, Legal & Compliance, Digital Tools, Market Research, Sustainability, Talent & Hiring, Accelerators, Co-working |
+| Privacy Policy | `/privacy`       | Working | Static, April 2026                                                                                                                                                                        |
+| Terms          | `/terms`         | Working | Static, April 2026                                                                                                                                                                        |
 
 ---
 
@@ -59,20 +59,20 @@ The platform may be rebranded to **Silicon Coast** — a brand identity for the 
 
 All submissions land as `status: "pending"` and are invisible to public GET endpoints until approved.
 
-| Method | Route | Description |
-|---|---|---|
-| GET | `/api/startups` | All approved startups, sorted by name |
-| GET | `/api/startups/pending` | All pending startups (no frontend yet) |
-| POST | `/api/startups` | Submit a new startup (→ pending) |
-| PATCH | `/api/startups/:id` | Set status to `approved` or `rejected` |
-| GET | `/api/events` | All approved events, sorted by date |
-| GET | `/api/events/pending` | All pending events (no frontend yet) |
-| POST | `/api/events` | Submit a new event (→ pending) |
-| PATCH | `/api/events/:id` | Set status to `approved` or `rejected` |
-| GET | `/api/opportunities` | All approved opportunities, sorted by createdAt |
-| GET | `/api/opportunities/pending` | All pending opportunities (no frontend yet) |
-| POST | `/api/opportunities` | Submit a new opportunity (→ pending) |
-| PATCH | `/api/opportunities/:id` | Set status to `approved` or `rejected` |
+| Method | Route                        | Description                                     |
+| ------ | ---------------------------- | ----------------------------------------------- |
+| GET    | `/api/startups`              | All approved startups, sorted by name           |
+| GET    | `/api/startups/pending`      | All pending startups (no frontend yet)          |
+| POST   | `/api/startups`              | Submit a new startup (→ pending)                |
+| PATCH  | `/api/startups/:id`          | Set status to `approved` or `rejected`          |
+| GET    | `/api/events`                | All approved events, sorted by date             |
+| GET    | `/api/events/pending`        | All pending events (no frontend yet)            |
+| POST   | `/api/events`                | Submit a new event (→ pending)                  |
+| PATCH  | `/api/events/:id`            | Set status to `approved` or `rejected`          |
+| GET    | `/api/opportunities`         | All approved opportunities, sorted by createdAt |
+| GET    | `/api/opportunities/pending` | All pending opportunities (no frontend yet)     |
+| POST   | `/api/opportunities`         | Submit a new opportunity (→ pending)            |
+| PATCH  | `/api/opportunities/:id`     | Set status to `approved` or `rejected`          |
 
 **Note:** PATCH endpoints are currently unauthenticated — fine for the prototype, not for production.
 
@@ -82,21 +82,19 @@ All submissions land as `status: "pending"` and are invisible to public GET endp
 
 ### Engineering tasks (owner: Alex)
 
-| Task | Priority | Notes |
-|---|---|---|
-| **Better filtering** | Demo-critical | Multi-tag compound filtering on Directory — tag + stage + year + employee count simultaneously. MongoDB handles natively, no schema change. |
-| **Easier approving** | Demo-critical | Admin UI or auto-approve toggle so submissions go live immediately. Backend pending endpoints + PATCH already exist — just needs a frontend. |
-| **iPad kiosk form** | Demo-critical | Dedicated full-screen submission form for the live demo. Submission should appear on the big screen in real-time (existing polling covers this). |
-| **ABR scraping** | Demo-critical | Scrape the Australian Business Register to seed real Sunshine Coast businesses into the directory. |
-| **Error toasts** | Demo-critical | API failures are silently caught — surface them as visible toast notifications, especially important on demo day with flaky wifi. |
+| Task                 | Priority      | Notes                                                                                                                                            |
+| -------------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Easier approving** | Demo-critical | Admin UI or auto-approve toggle so submissions go live immediately. Backend pending endpoints + PATCH already exist — just needs a frontend.     |
+| **iPad kiosk form**  | Demo-critical | Dedicated full-screen submission form for the live demo. Submission should appear on the big screen in real-time (existing polling covers this). |
+| **ABR scraping**     | Demo-critical | Scrape the Australian Business Register to seed real Sunshine Coast businesses into the directory.                                               |
 
 ### Business / stakeholder tasks (not engineering)
 
-| Task | Notes |
-|---|---|
-| **Silicon Coast rebrand** | Pending stakeholder sign-off |
-| **Switch to Postgres** | Infrastructure decision, not yet decided |
-| **Make Resources useful** | Content curation — populate links, not engineering work |
+| Task                            | Notes                                                                                 |
+| ------------------------------- | ------------------------------------------------------------------------------------- |
+| **Silicon Coast rebrand**       | Pending stakeholder sign-off                                                          |
+| **Switch to Postgres**          | Infrastructure decision, not yet decided                                              |
+| **Make Resources useful**       | Content curation — populate links, not engineering work                               |
 | **User accounts + matchmaking** | Deferred post-demo; matchmaking is the #3 most-wanted feature but requires auth first |
 
 ---
@@ -104,6 +102,7 @@ All submissions land as `status: "pending"` and are invisible to public GET endp
 ## Survey findings (33 respondents, April 2026)
 
 ### Who responded (Q1)
+
 - Startup founders / entrepreneurs ~29%
 - Service providers, Corporate/Industry, Government ~15% each
 - Scaleups/SMEs ~13%
@@ -111,6 +110,7 @@ All submissions land as `status: "pending"` and are invisible to public GET endp
 - Investors ~5%
 
 ### Most wanted features (Q2, ranked)
+
 1. Searchable directory (~78%)
 2. Events calendar & networking (~76%)
 3. Matchmaking / recommendations (~70%)
@@ -123,6 +123,7 @@ All submissions land as `status: "pending"` and are invisible to public GET endp
 10. Accelerator program info (~38%)
 
 ### Primary use cases (Q4)
+
 1. Identifying startups, investors, or tech partners (~57%)
 2. Understanding support, funding, or incentives (~55%)
 3. Discovering innovation opportunities or challenges (~50%)
@@ -130,11 +131,13 @@ All submissions land as `status: "pending"` and are invisible to public GET endp
 5. Building commercial or R&D partnerships (~42%)
 
 ### Access method (Q3)
+
 - Desktop / web browser ~75%
 - Mobile ~15%
 - Email alerts / newsletters ~12%
 
 ### Key qualitative themes (Q5)
+
 - Information currency is critical — needs a clear ownership/curation model
 - AI matchmaking suggested (skills, availability, partner profiles)
 - Living ecosystem map / visual (Canterbury Tech bubbles map referenced)

@@ -35,7 +35,9 @@ export function useTilt(reduceMotion) {
     ref,
     onMouseMove,
     onMouseLeave,
-    cardStyle: reduceMotion ? {} : { rotateX, rotateY, scale, transformPerspective: 800 },
+    cardStyle: reduceMotion
+      ? {}
+      : { rotateX, rotateY, scale, transformPerspective: 800 },
     imgStyle: reduceMotion ? {} : { x: imgX, y: imgY, scale: 1.15 },
   };
 }

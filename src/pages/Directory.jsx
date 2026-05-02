@@ -1,4 +1,4 @@
-import Table from "@/components/Table";
+import StartupsPanel from "@/components/StartupsPanel";
 import PageTransition from "@/components/PageTransition";
 
 function Directory() {
@@ -18,9 +18,7 @@ function Directory() {
             </p>
           </div>
         </div>
-        <div className="px-8 md:px-16 py-12 max-w-2xl mx-auto">
-          <Table />
-        </div>
+        <StartupsPanel />
       </div>
     </PageTransition>
   );

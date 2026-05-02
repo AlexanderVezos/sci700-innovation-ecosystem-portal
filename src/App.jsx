@@ -11,6 +11,7 @@ import Opportunities from "@/pages/Opportunities";
 import PrivacyPolicy from "@/pages/PrivacyPolicy";
 import Terms from "@/pages/Terms";
 import EcosystemMap from "@/pages/EcosystemMap";
+import Toaster from "@/components/Toast";
 
 function App() {
   const location = useLocation();
@@ -24,6 +25,7 @@ function App() {
   return (
     <div className="h-screen">
       <Navbar />
+      <Toaster />
       <div ref={scrollRef} className="overflow-y-auto h-full">
         <div className="min-h-full flex flex-col">
           <div className="flex-1">

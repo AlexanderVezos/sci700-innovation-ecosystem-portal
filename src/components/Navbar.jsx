@@ -22,6 +22,7 @@ function Navbar() {
   const { reduceMotion, toggleReduceMotion } = useMotion();
 
   const isHome = location.pathname === "/";
+  const hasStickyBar = ["/directory", "/events", "/opportunities"].includes(location.pathname);
 
   useEffect(() => {
     const activeIndex = links.findIndex((l) => l.to === location.pathname);
@@ -53,8 +54,8 @@ function Navbar() {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 lg:px-8 py-4 transition-all duration-300 ${
-        transparent ? "bg-transparent" : "bg-white shadow-sm"
+      className={`fixed top-0 left-0 right-0 z-52 flex items-center justify-between px-6 lg:px-8 py-4 transition-all duration-300 ${
+        transparent ? "bg-transparent" : hasStickyBar ? "bg-white" : "bg-white shadow-sm"
       }`}
     >
       {/* Logo — always links home */}
@@ -163,7 +164,9 @@ function Navbar() {
       <AnimatePresence>
         {menuOpen && (
           <motion.div
-            initial={reduceMotion ? false : { opacity: 0, y: -12, scaleY: 0.95 }}
+            initial={
+              reduceMotion ? false : { opacity: 0, y: -12, scaleY: 0.95 }
+            }
             animate={{ opacity: 1, y: 0, scaleY: 1 }}
             exit={{ opacity: 0, y: -8, scaleY: 0.97 }}
             transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
@@ -176,7 +179,11 @@ function Navbar() {
                   key={link.to}
                   initial={reduceMotion ? false : { opacity: 0, x: -16 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: reduceMotion ? 0 : i * 0.045, duration: 0.18, ease: "easeOut" }}
+                  transition={{
+                    delay: reduceMotion ? 0 : i * 0.045,
+                    duration: 0.18,
+                    ease: "easeOut",
+                  }}
                 >
                   <NavLink
                     to={link.to}

@@ -9,17 +9,21 @@ const resources = [
     title: "Business Planning",
     description:
       "Templates, frameworks, and guides to help you validate your idea and build a solid business case.",
-    detail1: "Covers lean canvas, financial modelling, and go-to-market planning.",
+    detail1:
+      "Covers lean canvas, financial modelling, and go-to-market planning.",
     detail2: "Suited to early-stage founders through to scaling ventures.",
-    image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&q=80",
+    image:
+      "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&q=80",
   },
   {
     title: "Funding & Grants",
     description:
       "Local, state, and federal funding opportunities, grants, and incentives for early-stage and growing ventures.",
-    detail1: "Includes Advance Queensland, CSIRO programmes, and private grant databases.",
+    detail1:
+      "Includes Advance Queensland, CSIRO programmes, and private grant databases.",
     detail2: "Updated regularly as new rounds open.",
-    image: "https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=800&q=80",
+    image:
+      "https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=800&q=80",
   },
   {
     title: "Networks & Mentors",
@@ -27,7 +31,8 @@ const resources = [
       "Connect with experienced founders, mentors, and industry leaders who have been where you are.",
     detail1: "Links to Sunshine Coast and broader Queensland mentor networks.",
     detail2: "Includes peer founder groups and industry-specific communities.",
-    image: "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=800&q=80",
+    image:
+      "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=800&q=80",
   },
   {
     title: "Legal & Compliance",
@@ -35,7 +40,8 @@ const resources = [
       "Plain-English guidance on business structures, IP, contracts, and regulatory requirements.",
     detail1: "Covers company registration, founder agreements, and IP basics.",
     detail2: "Links to Queensland Business and ACCC resources.",
-    image: "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=800&q=80",
+    image:
+      "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=800&q=80",
   },
   {
     title: "Digital Tools",
@@ -43,15 +49,18 @@ const resources = [
       "Recommended platforms and tools to help you build, manage, and scale your startup.",
     detail1: "Covers product, operations, marketing, and team collaboration.",
     detail2: "Includes free tiers and startup discount programmes.",
-    image: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80",
+    image:
+      "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80",
   },
   {
     title: "Market Research",
     description:
       "Tools and resources to understand your market, validate demand, and size your opportunity.",
-    detail1: "Includes ABS data, industry reports, and customer discovery frameworks.",
+    detail1:
+      "Includes ABS data, industry reports, and customer discovery frameworks.",
     detail2: "Useful for pitch preparation and investor due diligence.",
-    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80",
+    image:
+      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80",
   },
   {
     title: "Sustainability",
@@ -59,15 +68,18 @@ const resources = [
       "Frameworks and support for building environmental and social responsibility into your business from day one.",
     detail1: "Covers B Corp certification, carbon measurement, and ESG basics.",
     detail2: "Links to Queensland sustainability grants and programmes.",
-    image: "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=800&q=80",
+    image:
+      "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=800&q=80",
   },
   {
     title: "Talent & Hiring",
     description:
       "Find the right people, understand your obligations as an employer, and build a team that lasts.",
-    detail1: "Covers Fair Work obligations, equity agreements, and hiring platforms.",
+    detail1:
+      "Covers Fair Work obligations, equity agreements, and hiring platforms.",
     detail2: "Links to UniSC graduate networks and regional talent pipelines.",
-    image: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=800&q=80",
+    image:
+      "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=800&q=80",
   },
   {
     title: "Accelerators",
@@ -75,7 +87,8 @@ const resources = [
       "Structured programmes offering mentorship, funding pathways, and networks to accelerate your growth.",
     detail1: "Includes local, national, and sector-specific accelerators.",
     detail2: "Covers application tips and what to expect from each programme.",
-    image: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&q=80",
+    image:
+      "https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&q=80",
   },
   {
     title: "Working Spaces",
@@ -83,13 +96,16 @@ const resources = [
       "Hot desks, dedicated offices, and collaborative environments across the Sunshine Coast.",
     detail1: "From beachside hubs to university precincts and CBD co-working.",
     detail2: "Includes day pass options through to long-term leases.",
-    image: "https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=800&q=80",
+    image:
+      "https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=800&q=80",
   },
 ];
 
 function ResourceCard({ resource, reduceMotion }) {
   const [flipped, setFlipped] = useState(false);
-  const { ref, onMouseMove, onMouseLeave, cardStyle, imgStyle } = useTilt(reduceMotion || flipped);
+  const { ref, onMouseMove, onMouseLeave, cardStyle, imgStyle } = useTilt(
+    reduceMotion || flipped,
+  );
 
   return (
     <motion.div
@@ -147,9 +163,15 @@ function ResourceCard({ resource, reduceMotion }) {
               {resource.description}
             </p>
             <div className="h-px bg-slate-100 shrink-0" />
-            <p className="text-sm text-slate-500 leading-relaxed line-clamp-2">{resource.detail1}</p>
-            <p className="text-sm text-slate-500 leading-relaxed line-clamp-2">{resource.detail2}</p>
-            <p className="text-xs text-slate-300 font-medium mt-auto">Tap to close</p>
+            <p className="text-sm text-slate-500 leading-relaxed line-clamp-2">
+              {resource.detail1}
+            </p>
+            <p className="text-sm text-slate-500 leading-relaxed line-clamp-2">
+              {resource.detail2}
+            </p>
+            <p className="text-xs text-slate-300 font-medium mt-auto">
+              Tap to close
+            </p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -180,7 +202,11 @@ function Resources() {
         <div className="px-8 md:px-16 py-12">
           <div className="max-w-7xl mx-auto grid grid-cols-2 xl:grid-cols-5 gap-3 xl:gap-4">
             {resources.map((r) => (
-              <ResourceCard key={r.title} resource={r} reduceMotion={reduceMotion} />
+              <ResourceCard
+                key={r.title}
+                resource={r}
+                reduceMotion={reduceMotion}
+              />
             ))}
           </div>
         </div>

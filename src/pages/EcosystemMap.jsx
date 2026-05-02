@@ -67,7 +67,8 @@ function initials(name) {
 
 function bubbleR(employees, viewportMin) {
   // Normalise employee count to 0–1, then map to a viewport-relative radius range
-  const t = (Math.min(65, Math.sqrt(Math.max(employees || 1, 1)) * 9) - 30) / 35;
+  const t =
+    (Math.min(65, Math.sqrt(Math.max(employees || 1, 1)) * 9) - 30) / 35;
   const minR = viewportMin * 0.028;
   const maxR = viewportMin * 0.065;
   return minR + Math.max(0, t) * (maxR - minR);
@@ -217,8 +218,12 @@ function EcosystemMap() {
   const skipRebuild = useRef(false);
   const newNodeTimer = useRef(null);
 
-  useEffect(() => { dimsRef.current = dims; }, [dims]);
-  useEffect(() => { filterTagRef.current = filterTag; }, [filterTag]);
+  useEffect(() => {
+    dimsRef.current = dims;
+  }, [dims]);
+  useEffect(() => {
+    filterTagRef.current = filterTag;
+  }, [filterTag]);
 
   const visibleSelected =
     selected && (filterTag === "All" || selected.tag === filterTag)
@@ -247,12 +252,20 @@ function EcosystemMap() {
               y: h / 2 + (Math.random() - 0.5) * 100,
             }));
             sim.nodes([...existingNodes, ...newSimNodes]);
-            sim.force("collide", forceCollide((d) => d.r + 6).strength(0.9).iterations(6));
+            sim.force(
+              "collide",
+              forceCollide((d) => d.r + 6)
+                .strength(0.9)
+                .iterations(6),
+            );
             applyForces(sim, w, h, filterTagRef.current);
             sim.alpha(0.6).restart();
             clearTimeout(newNodeTimer.current);
             setNewNodeIds(new Set(brandNew.map((s) => s._id)));
-            newNodeTimer.current = setTimeout(() => setNewNodeIds(new Set()), 3500);
+            newNodeTimer.current = setTimeout(
+              () => setNewNodeIds(new Set()),
+              3500,
+            );
           }
         }
         setStartups(data);
@@ -263,7 +276,10 @@ function EcosystemMap() {
   useEffect(() => {
     fetchStartups();
     const interval = setInterval(fetchStartups, POLL_INTERVAL);
-    return () => { clearInterval(interval); clearTimeout(newNodeTimer.current); };
+    return () => {
+      clearInterval(interval);
+      clearTimeout(newNodeTimer.current);
+    };
   }, [fetchStartups]);
 
   useEffect(() => {
@@ -281,7 +297,10 @@ function EcosystemMap() {
 
   useEffect(() => {
     if (!startups.length) return;
-    if (skipRebuild.current) { skipRebuild.current = false; return; }
+    if (skipRebuild.current) {
+      skipRebuild.current = false;
+      return;
+    }
     simRef.current?.stop();
 
     const { w, h } = dimsRef.current;
@@ -346,7 +365,12 @@ function EcosystemMap() {
     for (const n of sim.nodes()) {
       n.r = bubbleR(n.employees, vMin);
     }
-    sim.force("collide", forceCollide((d) => d.r + 6).strength(0.9).iterations(6));
+    sim.force(
+      "collide",
+      forceCollide((d) => d.r + 6)
+        .strength(0.9)
+        .iterations(6),
+    );
     applyForces(sim, dims.w, dims.h, filterTagRef.current);
     sim.alpha(0.3).restart();
   }, [dims]);
@@ -452,20 +476,38 @@ function EcosystemMap() {
                 <g
                   key={node._id ?? node.id}
                   transform={`translate(${node.x},${node.y})`}
-                  onClick={(e) => { e.stopPropagation(); handleBubbleClick(node); }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleBubbleClick(node);
+                  }}
                   onMouseEnter={() => setHovered(node.id)}
                   onMouseLeave={() => setHovered(null)}
-                  style={{ cursor: "pointer", opacity: dimmed ? 0.2 : 1, transition: "opacity 0.35s" }}
-                  filter={(isHovered || isSelected) ? `url(#glow-${node.tag ?? "Other"})` : undefined}
+                  style={{
+                    cursor: "pointer",
+                    opacity: dimmed ? 0.2 : 1,
+                    transition: "opacity 0.35s",
+                  }}
+                  filter={
+                    isHovered || isSelected
+                      ? `url(#glow-${node.tag ?? "Other"})`
+                      : undefined
+                  }
                 >
                   <motion.g
                     initial={isNew ? { scale: 0, opacity: 0 } : false}
-                    animate={{ scale: isHovered && !isSelected ? 1.06 : 1, opacity: 1 }}
-                    transition={isNew
-                      ? { type: "spring", stiffness: 280, damping: 20 }
-                      : { duration: 0.15 }
+                    animate={{
+                      scale: isHovered && !isSelected ? 1.06 : 1,
+                      opacity: 1,
+                    }}
+                    transition={
+                      isNew
+                        ? { type: "spring", stiffness: 280, damping: 20 }
+                        : { duration: 0.15 }
                     }
-                    style={{ transformBox: "fill-box", transformOrigin: "center" }}
+                    style={{
+                      transformBox: "fill-box",
+                      transformOrigin: "center",
+                    }}
                   >
                     {isNew && (
                       <motion.circle
@@ -475,7 +517,11 @@ function EcosystemMap() {
                         strokeWidth={2.5}
                         initial={{ opacity: 0.9 }}
                         animate={{ opacity: 0 }}
-                        transition={{ duration: 2.5, delay: 0.5, ease: "easeOut" }}
+                        transition={{
+                          duration: 2.5,
+                          delay: 0.5,
+                          ease: "easeOut",
+                        }}
                       />
                     )}
                     <circle
@@ -505,9 +551,15 @@ function EcosystemMap() {
                         fontSize={node.r * 0.2}
                         fontWeight="600"
                         fontFamily="inherit"
-                        style={{ pointerEvents: "none", userSelect: "none", opacity: 0.7 }}
+                        style={{
+                          pointerEvents: "none",
+                          userSelect: "none",
+                          opacity: 0.7,
+                        }}
                       >
-                        {node.name.length > 13 ? node.name.slice(0, 12) + "…" : node.name}
+                        {node.name.length > 13
+                          ? node.name.slice(0, 12) + "…"
+                          : node.name}
                       </text>
                     )}
                   </motion.g>
