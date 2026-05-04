@@ -18,6 +18,7 @@ const client = new MongoClient(process.env.MONGO_URI);
 await client.connect();
 const db = client.db("innovation-portal");
 
+app.use("/api/admin", (await import("./routes/admin.js")).default(db));
 app.use("/api/startups", (await import("./routes/startups.js")).default(db));
 app.use("/api/events", (await import("./routes/events.js")).default(db));
 app.use(

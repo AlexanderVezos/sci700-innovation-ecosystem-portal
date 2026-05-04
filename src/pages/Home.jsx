@@ -421,7 +421,7 @@ function Home() {
         .catch(() => {});
     };
     fetchStats();
-    const interval = setInterval(fetchStats, 3000);
+    const interval = setInterval(fetchStats, 1000);
     return () => clearInterval(interval);
   }, []);
 

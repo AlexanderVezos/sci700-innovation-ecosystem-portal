@@ -11,16 +11,22 @@ import Opportunities from "@/pages/Opportunities";
 import PrivacyPolicy from "@/pages/PrivacyPolicy";
 import Terms from "@/pages/Terms";
 import EcosystemMap from "@/pages/EcosystemMap";
+import Admin from "@/pages/Admin";
+import Kiosk from "@/pages/Kiosk";
 import Toaster from "@/components/Toast";
 
 function App() {
   const location = useLocation();
-
   const scrollRef = useRef(null);
+  const isAdmin = location.pathname === "/admin";
+  const isKiosk = location.pathname === "/kiosk";
 
   useEffect(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = 0;
   }, [location.pathname]);
+
+  if (isAdmin) return <><Toaster /><Admin /></>;
+  if (isKiosk) return <><Toaster /><Kiosk /></>;
 
   return (
     <div className="h-screen">

@@ -1,5 +1,6 @@
 import express from "express";
 import { ObjectId } from "mongodb";
+import { getAutoApprove } from "../adminState.js";
 
 const GIBBERISH = /^(.)\1{4,}$|^[^aeiouy\s]{7,}$/i;
 
@@ -42,7 +43,7 @@ export default function (db) {
       type,
       organizer,
       rsvpUrl: rsvpUrl || null,
-      status: "pending",
+      status: getAutoApprove() ? "approved" : "pending",
       createdAt: new Date(),
     });
     res.status(201).json(result);

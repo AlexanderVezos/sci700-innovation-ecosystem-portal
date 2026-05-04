@@ -82,11 +82,9 @@ All submissions land as `status: "pending"` and are invisible to public GET endp
 
 ### Engineering tasks (owner: Alex)
 
-| Task                 | Priority      | Notes                                                                                                                                            |
-| -------------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Easier approving** | Demo-critical | Admin UI or auto-approve toggle so submissions go live immediately. Backend pending endpoints + PATCH already exist — just needs a frontend.     |
-| **iPad kiosk form**  | Demo-critical | Dedicated full-screen submission form for the live demo. Submission should appear on the big screen in real-time (existing polling covers this). |
-| **ABR scraping**     | Demo-critical | Scrape the Australian Business Register to seed real Sunshine Coast businesses into the directory.                                               |
+| Task             | Priority      | Notes                                                                                              |
+| ---------------- | ------------- | -------------------------------------------------------------------------------------------------- |
+| **ABR scraping** | Demo-critical | Scrape the Australian Business Register to seed real Sunshine Coast businesses into the directory. |
 
 ### Business / stakeholder tasks (not engineering)
 

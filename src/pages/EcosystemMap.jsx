@@ -201,7 +201,7 @@ function applyForces(sim, w, h, tag) {
   );
 }
 
-const POLL_INTERVAL = 3000;
+const POLL_INTERVAL = 1000;
 
 function EcosystemMap() {
   const [startups, setStartups] = useState([]);
@@ -501,7 +501,7 @@ function EcosystemMap() {
                     }}
                     transition={
                       isNew
-                        ? { type: "spring", stiffness: 280, damping: 20 }
+                        ? { type: "spring", stiffness: 300, damping: 18 }
                         : { duration: 0.15 }
                     }
                     style={{
@@ -509,27 +509,24 @@ function EcosystemMap() {
                       transformOrigin: "center",
                     }}
                   >
-                    {isNew && (
-                      <motion.circle
-                        r={node.r + 6}
-                        fill="none"
-                        stroke="#fbbf24"
-                        strokeWidth={2.5}
-                        initial={{ opacity: 0.9 }}
-                        animate={{ opacity: 0 }}
-                        transition={{
-                          duration: 2.5,
-                          delay: 0.5,
-                          ease: "easeOut",
-                        }}
-                      />
-                    )}
                     <circle
                       r={node.r}
                       fill={s.bg}
                       stroke={isSelected ? "#f59e0b" : s.stroke}
                       strokeWidth={isSelected ? 4 : 1.5}
                     />
+                    {isNew && (
+                      <motion.circle
+                        r={node.r}
+                        fill="none"
+                        stroke="#f59e0b"
+                        strokeWidth={4}
+                        initial={{ opacity: 1 }}
+                        animate={{ opacity: 0 }}
+                        transition={{ duration: 3.5, delay: 0.2, ease: "easeOut" }}
+                        style={{ pointerEvents: "none" }}
+                      />
+                    )}
                     <text
                       textAnchor="middle"
                       dominantBaseline="central"

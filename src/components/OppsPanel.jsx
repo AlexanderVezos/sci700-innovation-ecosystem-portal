@@ -62,7 +62,7 @@ function Field({ label, optional, className, children }) {
 }
 const EMPTY_FORM = { title: "", description: "", type: "", organisation: "", sector: "", deadline: "", email: "", website: "" };
 const CURRENT_YEAR  = new Date().getFullYear();
-const POLL_INTERVAL = 3000;
+const POLL_INTERVAL = 1000;
 
 // ─── OpportunityCard ──────────────────────────────────────────────────────────
 
@@ -409,9 +409,9 @@ export default function OppsPanel() {
                       className="relative">
                       {isNew && !reduceMotion && (
                         <motion.div className="absolute inset-0 rounded-2xl pointer-events-none"
-                          style={{ boxShadow: "0 0 0 2px #fbbf24, 0 0 24px 4px #fbbf2440" }}
-                          initial={{ opacity: 1 }} animate={{ opacity: 0 }}
-                          transition={{ duration: 2.5, delay: 0.4, ease: "easeOut" }} />
+                          style={{ boxShadow: "0 0 0 1.5px #94a3b8, 0 0 10px 2px #94a3b828" }}
+                          initial={{ opacity: 0.7 }} animate={{ opacity: 0 }}
+                          transition={{ duration: 1.8, delay: 0.3, ease: "easeOut" }} />
                       )}
                       <OpportunityCard opp={opp} />
                     </motion.div>

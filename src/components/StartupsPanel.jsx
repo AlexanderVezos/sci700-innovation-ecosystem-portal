@@ -10,6 +10,8 @@ import {
   MobileFilterButton,
 } from "@/components/FilterShared";
 import Modal from "@/components/Modal";
+import { TAGS, STAGES, isValidPhone, isValidEmail, isValidWebsite } from "@/lib/startupConstants";
+import { PhoneField, EmailField, WebsiteField } from "@/components/PhoneField";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -24,15 +26,6 @@ const SORT_OPTIONS = [
   ["employees-asc", "Employees: fewest"],
 ];
 
-const STAGES = ["Idea", "MVP", "Growth"];
-const TAGS = [
-  "HealthTech",
-  "EdTech",
-  "CleanTech",
-  "FinTech",
-  "AgriTech",
-  "Other",
-];
 
 const TAG_COLOURS = {
   HealthTech: "bg-blue-100 text-blue-700",
@@ -73,7 +66,7 @@ const EMPTY_FILTERS = {
   founded: [YEAR_MIN, YEAR_MAX],
 };
 const CURRENT_YEAR  = new Date().getFullYear();
-const POLL_INTERVAL = 3000;
+const POLL_INTERVAL = 1000;
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -91,30 +84,6 @@ function initials(name) {
     .join("");
 }
 
-function formatPhone(value) {
-  const raw = value.replace(/[^\d+]/g, "").replace(/(?!^\+)\+/g, "");
-  if (raw.startsWith("+61")) {
-    const nat = raw.slice(3);
-    let out = "+61";
-    if (nat.length > 0) out += " " + nat.slice(0, 3);
-    if (nat.length > 3) out += " " + nat.slice(3, 6);
-    if (nat.length > 6) out += " " + nat.slice(6, 9);
-    return out;
-  }
-  if (raw.startsWith("04")) {
-    let out = raw.slice(0, 4);
-    if (raw.length > 4) out += " " + raw.slice(4, 7);
-    if (raw.length > 7) out += " " + raw.slice(7, 10);
-    return out;
-  }
-  if (raw.startsWith("0") && raw.length >= 2) {
-    let out = "(" + raw.slice(0, 2) + ")";
-    if (raw.length > 2) out += " " + raw.slice(2, 6);
-    if (raw.length > 6) out += " " + raw.slice(6, 10);
-    return out;
-  }
-  return raw;
-}
 
 const INPUT =
   "border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-300";
@@ -240,6 +209,18 @@ function AddStartupForm({ open, onClose, onAdded }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!isValidPhone(form.phone)) {
+      toast.error("Invalid phone number", "Enter a complete Australian number or leave it blank.");
+      return;
+    }
+    if (!isValidEmail(form.email)) {
+      toast.error("Invalid email", "Check the email address and try again.");
+      return;
+    }
+    if (!isValidWebsite(form.website)) {
+      toast.error("Invalid website", "Enter a full URL starting with https://");
+      return;
+    }
     setSubmitting(true);
     const res = await fetch("/api/startups", {
       method: "POST",
@@ -292,13 +273,13 @@ function AddStartupForm({ open, onClose, onAdded }) {
             </select>
           </Field>
           <Field label="Email" optional>
-            <input type="email" value={form.email} onChange={set("email")} placeholder="hello@example.com" className={INPUT} />
+            <EmailField value={form.email} onChange={(v) => setForm((f) => ({ ...f, email: v }))} className={INPUT} />
           </Field>
           <Field label="Website" optional>
-            <input type="url" value={form.website} onChange={set("website")} placeholder="https://example.com" pattern="https?://.+" title="Must start with http:// or https://" className={INPUT} />
+            <WebsiteField value={form.website} onChange={(v) => setForm((f) => ({ ...f, website: v }))} className={INPUT} />
           </Field>
           <Field label="Phone" optional>
-            <input type="tel" value={form.phone} onChange={(e) => setForm((f) => ({ ...f, phone: formatPhone(e.target.value) }))} placeholder="0412 345 678" className={INPUT} />
+            <PhoneField value={form.phone} onChange={(v) => setForm((f) => ({ ...f, phone: v }))} className={INPUT} />
           </Field>
         </div>
         <div className="sticky bottom-0 bg-white border-t border-slate-100 mt-6 px-6 py-4 flex items-center justify-end gap-3">
@@ -360,10 +341,10 @@ function DirectoryCard({ entry, isNew }) {
       {isNew && !reduceMotion && (
         <motion.div
           className="absolute inset-0 rounded-2xl pointer-events-none"
-          style={{ boxShadow: "0 0 0 2px #fbbf24, 0 0 24px 4px #fbbf2440" }}
-          initial={{ opacity: 1 }}
+          style={{ boxShadow: "0 0 0 1.5px #94a3b8, 0 0 10px 2px #94a3b828" }}
+          initial={{ opacity: 0.7 }}
           animate={{ opacity: 0 }}
-          transition={{ duration: 2.5, delay: 0.4, ease: "easeOut" }}
+          transition={{ duration: 1.8, delay: 0.3, ease: "easeOut" }}
         />
       )}
       <div
