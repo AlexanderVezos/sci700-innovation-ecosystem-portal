@@ -82,9 +82,12 @@ All submissions land as `status: "pending"` and are invisible to public GET endp
 
 ### Engineering tasks (owner: Alex)
 
-| Task             | Priority      | Notes                                                                                              |
-| ---------------- | ------------- | -------------------------------------------------------------------------------------------------- |
-| **ABR scraping** | Demo-critical | Scrape the Australian Business Register to seed real Sunshine Coast businesses into the directory. |
+| Task                      | Priority      | Notes                                                                                                                                 |
+| ------------------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| **Scraping**              | Demo-critical | Scrape the Australian Business Register and calendars of events to seed real Sunshine Coast businesses and events into the directory. |
+| **Make Resources useful** |               | Content curation populate links, using LevelUps help                                                                                  |
+| **News Tab**              |               | List success stories                                                                                                                  |
+| **More directories**      |               | List inventors and more insetad of just startups                                                                                      |
 
 ### Business / stakeholder tasks (not engineering)
 
@@ -92,7 +95,6 @@ All submissions land as `status: "pending"` and are invisible to public GET endp
 | ------------------------------- | ------------------------------------------------------------------------------------- |
 | **Silicon Coast rebrand**       | Pending stakeholder sign-off                                                          |
 | **Switch to Postgres**          | Infrastructure decision, not yet decided                                              |
-| **Make Resources useful**       | Content curation — populate links, not engineering work                               |
 | **User accounts + matchmaking** | Deferred post-demo; matchmaking is the #3 most-wanted feature but requires auth first |
 
 ---
