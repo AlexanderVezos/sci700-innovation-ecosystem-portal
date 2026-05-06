@@ -87,7 +87,7 @@ All submissions land as `status: "pending"` and are invisible to public GET endp
 | **Scraping**              | Demo-critical | Scrape the Australian Business Register and calendars of events to seed real Sunshine Coast businesses and events into the directory. |
 | **Make Resources useful** |               | Content curation populate links, using LevelUps help                                                                                  |
 | **News Tab**              |               | List success stories                                                                                                                  |
-| **More directories**      |               | List inventors and more insetad of just startups                                                                                      |
+| **Better directory**      |               | List inventors and more instead of just startups and allow for defining themselves as more than just one tag                          |
 
 ### Business / stakeholder tasks (not engineering)
 
