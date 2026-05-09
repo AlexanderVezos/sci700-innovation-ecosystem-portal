@@ -11,7 +11,14 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config();
 
 const app = express();
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+      "img-src": ["'self'", "data:", "https://images.unsplash.com"],
+    },
+  },
+}));
 app.use(cors({ origin: process.env.CORS_ORIGIN || "https://startupsc.punkrecords.xyz" }));
 app.use(express.json());
 
