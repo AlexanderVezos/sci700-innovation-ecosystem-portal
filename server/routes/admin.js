@@ -1,7 +1,10 @@
 import express from "express";
+import rateLimit from "express-rate-limit";
 import { generateToken, revokeToken, getAutoApprove, setAutoApprove } from "../adminState.js";
 import requireAdmin from "../requireAdmin.js";
 import { ObjectId } from "mongodb";
+
+const loginLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 5, standardHeaders: true, legacyHeaders: false });
 
 export default function (db) {
   const router = express.Router();
@@ -11,7 +14,7 @@ export default function (db) {
 
   // ── Auth ──────────────────────────────────────────────────────────────────
 
-  router.post("/login", (req, res) => {
+  router.post("/login", loginLimiter, (req, res) => {
     const { username, password } = req.body;
     if (username !== process.env.ADMIN_USER || password !== process.env.ADMIN_PASS) {
       return res.status(401).json({ error: "Invalid credentials" });
@@ -40,6 +43,7 @@ export default function (db) {
   router.patch("/startups/:id", requireAdmin, async (req, res) => {
     const { status } = req.body;
     if (!["approved", "rejected"].includes(status)) return res.status(400).json({ error: "Invalid status" });
+    if (!ObjectId.isValid(req.params.id)) return res.status(400).json({ error: "Invalid id" });
     const result = await startups.updateOne({ _id: new ObjectId(req.params.id) }, { $set: { status } });
     if (result.matchedCount === 0) return res.status(404).json({ error: "Not found" });
     res.json({ ok: true });
@@ -48,6 +52,7 @@ export default function (db) {
   router.patch("/events/:id", requireAdmin, async (req, res) => {
     const { status } = req.body;
     if (!["approved", "rejected"].includes(status)) return res.status(400).json({ error: "Invalid status" });
+    if (!ObjectId.isValid(req.params.id)) return res.status(400).json({ error: "Invalid id" });
     const result = await events.updateOne({ _id: new ObjectId(req.params.id) }, { $set: { status } });
     if (result.matchedCount === 0) return res.status(404).json({ error: "Not found" });
     res.json({ ok: true });
@@ -56,6 +61,7 @@ export default function (db) {
   router.patch("/opportunities/:id", requireAdmin, async (req, res) => {
     const { status } = req.body;
     if (!["approved", "rejected"].includes(status)) return res.status(400).json({ error: "Invalid status" });
+    if (!ObjectId.isValid(req.params.id)) return res.status(400).json({ error: "Invalid id" });
     const result = await opps.updateOne({ _id: new ObjectId(req.params.id) }, { $set: { status } });
     if (result.matchedCount === 0) return res.status(404).json({ error: "Not found" });
     res.json({ ok: true });

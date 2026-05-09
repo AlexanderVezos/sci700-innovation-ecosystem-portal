@@ -1,6 +1,6 @@
 import express from "express";
-import { ObjectId } from "mongodb";
 import { getAutoApprove } from "../adminState.js";
+import requireAdmin from "../requireAdmin.js";
 
 const GIBBERISH = /^(.)\1{4,}$|^[^aeiouy\s]{7,}$/i;
 
@@ -22,7 +22,7 @@ export default function (db) {
     );
   });
 
-  router.get("/pending", async (_req, res) => {
+  router.get("/pending", requireAdmin, async (_req, res) => {
     res.json(await events.find({ status: "pending" }).toArray());
   });
 
@@ -47,22 +47,6 @@ export default function (db) {
       createdAt: new Date(),
     });
     res.status(201).json(result);
-  });
-
-  router.patch("/:id", async (req, res) => {
-    const { status } = req.body;
-    if (!["approved", "rejected"].includes(status)) {
-      return res
-        .status(400)
-        .json({ error: "status must be 'approved' or 'rejected'" });
-    }
-    const result = await events.updateOne(
-      { _id: new ObjectId(req.params.id) },
-      { $set: { status } },
-    );
-    if (result.matchedCount === 0)
-      return res.status(404).json({ error: "Not found" });
-    res.json({ ok: true });
   });
 
   return router;
