@@ -11,16 +11,16 @@ import PageTransition from "@/components/PageTransition";
 import { TAGS } from "@/lib/startupConstants";
 
 const TAG_STYLE = {
-  HealthTech:             { bg: "rgba(59,130,246,0.15)",  stroke: "#3b82f6", text: "#93c5fd",  glow: "#3b82f6" },
-  EdTech:                 { bg: "rgba(139,92,246,0.15)",  stroke: "#8b5cf6", text: "#c4b5fd",  glow: "#8b5cf6" },
-  CleanTech:              { bg: "rgba(16,185,129,0.15)",  stroke: "#10b981", text: "#6ee7b7",  glow: "#10b981" },
-  FinTech:                { bg: "rgba(245,158,11,0.15)",  stroke: "#f59e0b", text: "#fcd34d",  glow: "#f59e0b" },
-  AgriTech:               { bg: "rgba(132,204,22,0.15)",  stroke: "#84cc16", text: "#bef264",  glow: "#84cc16" },
-  "Creative Industries":  { bg: "rgba(236,72,153,0.15)",  stroke: "#ec4899", text: "#f9a8d4",  glow: "#ec4899" },
-  Manufacturing:          { bg: "rgba(249,115,22,0.15)",  stroke: "#f97316", text: "#fdba74",  glow: "#f97316" },
-  "Professional Services":{ bg: "rgba(99,102,241,0.15)",  stroke: "#6366f1", text: "#a5b4fc",  glow: "#6366f1" },
-  "Tourism & Hospitality":{ bg: "rgba(14,165,233,0.15)",  stroke: "#0ea5e9", text: "#7dd3fc",  glow: "#0ea5e9" },
-  Other:                  { bg: "rgba(100,116,139,0.15)", stroke: "#64748b", text: "#94a3b8",  glow: "#64748b" },
+  AgriTech:               { bg: "rgba(74,222,128,0.15)",  stroke: "#4ade80", text: "#bbf7d0", glow: "#4ade80" },
+  CleanTech:              { bg: "rgba(52,211,153,0.15)",  stroke: "#34d399", text: "#a7f3d0", glow: "#34d399" },
+  "Creative Industries":  { bg: "rgba(45,212,191,0.15)",  stroke: "#2dd4bf", text: "#99f6e4", glow: "#2dd4bf" },
+  EdTech:                 { bg: "rgba(34,211,238,0.15)",  stroke: "#22d3ee", text: "#a5f3fc", glow: "#22d3ee" },
+  FinTech:                { bg: "rgba(56,189,248,0.15)",  stroke: "#38bdf8", text: "#bae6fd", glow: "#38bdf8" },
+  HealthTech:             { bg: "rgba(96,165,250,0.15)",  stroke: "#60a5fa", text: "#bfdbfe", glow: "#60a5fa" },
+  Manufacturing:          { bg: "rgba(129,140,248,0.15)", stroke: "#818cf8", text: "#c7d2fe", glow: "#818cf8" },
+  "Professional Services":{ bg: "rgba(167,139,250,0.15)", stroke: "#a78bfa", text: "#ddd6fe", glow: "#a78bfa" },
+  "Tourism & Hospitality":{ bg: "rgba(232,121,249,0.15)", stroke: "#e879f9", text: "#f5d0fe", glow: "#e879f9" },
+  Other:                  { bg: "rgba(244,114,182,0.15)", stroke: "#f472b6", text: "#fbcfe8", glow: "#f472b6" },
 };
 
 const DEFAULT_STYLE = TAG_STYLE.Other;

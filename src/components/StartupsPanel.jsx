@@ -34,38 +34,39 @@ const SORT_OPTIONS = [
   ["employees-asc", "Employees: fewest"],
 ];
 
+// Single rainbow across all 15 items — types first (filter order), then tags
+const TYPE_COLOURS = {
+  "Startup":              { dot: "bg-red-400",     badge: "bg-red-100 text-red-700",         card: "bg-white border-l-4 border-l-red-400 border-slate-100"     },
+  "Investor":             { dot: "bg-orange-400",  badge: "bg-orange-100 text-orange-700",   card: "bg-white border-l-4 border-l-orange-400 border-slate-100"  },
+  "Research Institution": { dot: "bg-amber-400",   badge: "bg-amber-100 text-amber-700",     card: "bg-white border-l-4 border-l-amber-400 border-slate-100"   },
+  "Industry Partner":     { dot: "bg-yellow-400",  badge: "bg-yellow-100 text-yellow-700",   card: "bg-white border-l-4 border-l-yellow-400 border-slate-100"  },
+  "Government":           { dot: "bg-lime-400",    badge: "bg-lime-100 text-lime-700",       card: "bg-white border-l-4 border-l-lime-400 border-slate-100"    },
+};
+
 const TAG_COLOURS = {
-  HealthTech: "bg-blue-100 text-blue-700",
-  EdTech: "bg-violet-100 text-violet-700",
-  CleanTech: "bg-emerald-100 text-emerald-700",
-  FinTech: "bg-amber-100 text-amber-700",
-  AgriTech: "bg-lime-100 text-lime-700",
-  "Creative Industries": "bg-pink-100 text-pink-700",
-  Manufacturing: "bg-orange-100 text-orange-700",
-  "Professional Services": "bg-indigo-100 text-indigo-700",
-  "Tourism & Hospitality": "bg-sky-100 text-sky-700",
-  Other: "bg-slate-100 text-slate-500",
+  AgriTech:                "bg-green-100 text-green-700",
+  CleanTech:               "bg-emerald-100 text-emerald-700",
+  "Creative Industries":   "bg-teal-100 text-teal-700",
+  EdTech:                  "bg-cyan-100 text-cyan-700",
+  FinTech:                 "bg-sky-100 text-sky-700",
+  HealthTech:              "bg-blue-100 text-blue-700",
+  Manufacturing:           "bg-indigo-100 text-indigo-700",
+  "Professional Services": "bg-violet-100 text-violet-700",
+  "Tourism & Hospitality": "bg-fuchsia-100 text-fuchsia-700",
+  Other:                   "bg-pink-100 text-pink-700",
 };
 
 const TAG_DOT = {
-  HealthTech: "bg-blue-400",
-  EdTech: "bg-violet-400",
-  CleanTech: "bg-emerald-400",
-  FinTech: "bg-amber-400",
-  AgriTech: "bg-lime-400",
-  "Creative Industries": "bg-pink-400",
-  Manufacturing: "bg-orange-400",
-  "Professional Services": "bg-indigo-400",
-  "Tourism & Hospitality": "bg-sky-400",
-  Other: "bg-slate-400",
-};
-
-const TYPE_COLOURS = {
-  "Startup":              { dot: "bg-cyan-400",    badge: "bg-cyan-100 text-cyan-700",       card: "bg-white border-l-4 border-l-cyan-400 border-slate-100"    },
-  "Investor":             { dot: "bg-teal-400",    badge: "bg-teal-100 text-teal-700",       card: "bg-white border-l-4 border-l-teal-400 border-slate-100"    },
-  "Research Institution": { dot: "bg-fuchsia-400", badge: "bg-fuchsia-100 text-fuchsia-700", card: "bg-white border-l-4 border-l-fuchsia-400 border-slate-100" },
-  "Industry Partner":     { dot: "bg-red-400",     badge: "bg-red-100 text-red-700",         card: "bg-white border-l-4 border-l-red-400 border-slate-100"     },
-  "Government":           { dot: "bg-yellow-400",  badge: "bg-yellow-100 text-yellow-700",   card: "bg-white border-l-4 border-l-yellow-400 border-slate-100"  },
+  AgriTech:                "bg-green-400",
+  CleanTech:               "bg-emerald-400",
+  "Creative Industries":   "bg-teal-400",
+  EdTech:                  "bg-cyan-400",
+  FinTech:                 "bg-sky-400",
+  HealthTech:              "bg-blue-400",
+  Manufacturing:           "bg-indigo-400",
+  "Professional Services": "bg-violet-400",
+  "Tourism & Hospitality": "bg-fuchsia-400",
+  Other:                   "bg-pink-400",
 };
 
 const AVATAR_COLOURS = [
