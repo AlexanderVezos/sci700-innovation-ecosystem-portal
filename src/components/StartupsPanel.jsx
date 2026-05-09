@@ -61,11 +61,11 @@ const TAG_DOT = {
 };
 
 const TYPE_CARD = {
-  "Startup":              "bg-white border-slate-100",
-  "Investor":             "bg-blue-50 border-blue-100",
-  "Research Institution": "bg-violet-50 border-violet-100",
-  "Industry Partner":     "bg-emerald-50 border-emerald-100",
-  "Government":           "bg-slate-50 border-slate-200",
+  "Startup":              "bg-white border-l-4 border-l-amber-400 border-slate-100",
+  "Investor":             "bg-white border-l-4 border-l-blue-400 border-slate-100",
+  "Research Institution": "bg-white border-l-4 border-l-violet-400 border-slate-100",
+  "Industry Partner":     "bg-white border-l-4 border-l-emerald-400 border-slate-100",
+  "Government":           "bg-white border-l-4 border-l-slate-400 border-slate-100",
 };
 
 const AVATAR_COLOURS = [
