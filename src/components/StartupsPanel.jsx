@@ -600,8 +600,16 @@ function StartupsPanel({ showForm = true }) {
       const [field, dir] = sort.split("-");
       const mul = dir === "asc" ? 1 : -1;
       if (field === "name") return mul * a.name.localeCompare(b.name);
-      if (field === "year") return mul * (a.year - b.year);
-      if (field === "employees") return mul * (a.employees - b.employees);
+      if (field === "year") {
+        const ay = a.year ?? (dir === "asc" ? Infinity : -Infinity);
+        const by = b.year ?? (dir === "asc" ? Infinity : -Infinity);
+        return mul * (ay - by);
+      }
+      if (field === "employees") {
+        const ae = a.employees ?? (dir === "asc" ? Infinity : -Infinity);
+        const be = b.employees ?? (dir === "asc" ? Infinity : -Infinity);
+        return mul * (ae - be);
+      }
       if (field === "createdAt")
         return mul * (new Date(a.createdAt) - new Date(b.createdAt));
       return 0;
