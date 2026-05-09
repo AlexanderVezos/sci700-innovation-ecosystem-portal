@@ -60,12 +60,12 @@ const TAG_DOT = {
   Other: "bg-slate-400",
 };
 
-const TYPE_CARD = {
-  "Startup":              "bg-white border-l-4 border-l-amber-400 border-slate-100",
-  "Investor":             "bg-white border-l-4 border-l-blue-400 border-slate-100",
-  "Research Institution": "bg-white border-l-4 border-l-violet-400 border-slate-100",
-  "Industry Partner":     "bg-white border-l-4 border-l-emerald-400 border-slate-100",
-  "Government":           "bg-white border-l-4 border-l-slate-400 border-slate-100",
+const TYPE_COLOURS = {
+  "Startup":              { dot: "bg-cyan-400",    badge: "bg-cyan-100 text-cyan-700",       card: "bg-white border-l-4 border-l-cyan-400 border-slate-100"    },
+  "Investor":             { dot: "bg-teal-400",    badge: "bg-teal-100 text-teal-700",       card: "bg-white border-l-4 border-l-teal-400 border-slate-100"    },
+  "Research Institution": { dot: "bg-fuchsia-400", badge: "bg-fuchsia-100 text-fuchsia-700", card: "bg-white border-l-4 border-l-fuchsia-400 border-slate-100" },
+  "Industry Partner":     { dot: "bg-red-400",     badge: "bg-red-100 text-red-700",         card: "bg-white border-l-4 border-l-red-400 border-slate-100"     },
+  "Government":           { dot: "bg-yellow-400",  badge: "bg-yellow-100 text-yellow-700",   card: "bg-white border-l-4 border-l-yellow-400 border-slate-100"  },
 };
 
 const AVATAR_COLOURS = [
@@ -160,6 +160,7 @@ function FilterPanel({ filters, setFilters, toggle, clearAll, entries }) {
             checked={filters.types.has(type)}
             onChange={() => toggle("types", type)}
             label={type}
+            dot={TYPE_COLOURS[type]?.dot}
             count={typeCount(type)}
           />
         ))}
@@ -420,7 +421,7 @@ function DirectoryCard({ entry, isNew }) {
         layout: { duration: 0.2, ease: "easeOut" },
         default: { duration: 0.15, ease: "easeOut" },
       }}
-      className={`relative rounded-2xl shadow-sm border p-5 flex gap-4 items-start ${TYPE_CARD[entry.type] ?? "bg-white border-slate-100"}`}
+      className={`relative rounded-2xl shadow-sm border p-5 flex gap-4 items-start ${TYPE_COLOURS[entry.type]?.card ?? "bg-white border-slate-100"}`}
     >
       {isNew && !reduceMotion && (
         <motion.div
@@ -438,7 +439,7 @@ function DirectoryCard({ entry, isNew }) {
         <div className="flex items-center gap-2 flex-wrap">
           <span className="font-semibold text-slate-800 text-base">{entry.name}</span>
           {entry.type && (
-            <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-slate-100 text-slate-500">
+            <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${TYPE_COLOURS[entry.type]?.badge ?? "bg-slate-100 text-slate-500"}`}>
               {entry.type}
             </span>
           )}
