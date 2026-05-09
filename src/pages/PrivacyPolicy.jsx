@@ -133,6 +133,23 @@ function PrivacyPolicy() {
 
           <section className="mb-8">
             <h2 className="text-lg font-bold text-slate-800 mb-2">
+              7. External Links
+            </h2>
+            <p className="text-slate-600 leading-relaxed">
+              The Platform contains links to external websites, including the
+              LevelUp Sunshine Coast Business Upgrades programme operated by
+              Sunshine Coast Council. This portal was developed as a research
+              prototype at the request of Sunshine Coast Council and is not an
+              official Council product or service. Linked external sites operate
+              under their own privacy policies, and we are not responsible for
+              their privacy practices. We encourage you to review the privacy
+              policy of any external site before providing personal information
+              to it.
+            </p>
+          </section>
+
+          <section className="mb-8">
+            <h2 className="text-lg font-bold text-slate-800 mb-2">
               8. Changes to This Policy
             </h2>
             <p className="text-slate-600 leading-relaxed">

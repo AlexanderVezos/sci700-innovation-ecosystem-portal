@@ -69,7 +69,9 @@ $ for path in /admin /kiosk /api/admin/settings /.env /robots.txt /sitemap.xml; 
 Checking the HTML source of the page revealed something unexpected. The following scripts were being injected into every page load:
 
 ```html
-<script type="module">import { injectIntoGlobalHook } from "/@react-refresh";</script>
+<script type="module">
+  import { injectIntoGlobalHook } from "/@react-refresh";
+</script>
 <script type="module" src="/@vite/client"></script>
 <script type="module" src="/src/main.jsx"></script>
 ```
@@ -158,18 +160,18 @@ The server responded with no authentication challenge at all. The `404` means th
 
 ## 2. Key findings
 
-| # | Finding | Severity |
-|---|---|---|
-| 1 | Production site running development server, full source code publicly readable | Critical |
-| 2 | Default admin credentials (admin/admin) confirmed working on live site | Critical |
-| 3 | Unauthenticated write endpoints, any submission can be approved or rejected without login | High |
-| 4 | No rate limiting on login endpoint | High |
-| 5 | Admin session tokens never expire | High |
-| 6 | Pending queues publicly accessible, exposes submitter contact data | Medium |
-| 7 | Malicious URLs accepted on website field, stored XSS vector in admin panel | Medium |
-| 8 | Permissive CORS policy, any external site can make requests | Medium |
-| 9 | No HTTP security headers at origin | Low |
-| 10 | Malformed request IDs cause a server error instead of a clean rejection | Low |
+| #   | Finding                                                                                   | Severity |
+| --- | ----------------------------------------------------------------------------------------- | -------- |
+| 1   | Production site running development server, full source code publicly readable            | Critical |
+| 2   | Default admin credentials (admin/admin) confirmed working on live site                    | Critical |
+| 3   | Unauthenticated write endpoints, any submission can be approved or rejected without login | High     |
+| 4   | No rate limiting on login endpoint                                                        | High     |
+| 5   | Admin session tokens never expire                                                         | High     |
+| 6   | Pending queues publicly accessible, exposes submitter contact data                        | Medium   |
+| 7   | Malicious URLs accepted on website field, stored XSS vector in admin panel                | Medium   |
+| 8   | Permissive CORS policy, any external site can make requests                               | Medium   |
+| 9   | No HTTP security headers at origin                                                        | Low      |
+| 10  | Malformed request IDs cause a server error instead of a clean rejection                   | Low      |
 
 ---
 
@@ -229,11 +231,11 @@ CORS (Cross-Origin Resource Sharing) controls which external websites are allowe
 
 Several standard security headers that browsers use to enforce safe behaviour are not set by the application server. Cloudflare adds a couple of these automatically at the edge, partially covering the gap, but some remain absent:
 
-| Header | What it does |
-|---|---|
+| Header                    | What it does                                                                                     |
+| ------------------------- | ------------------------------------------------------------------------------------------------ |
 | `Content-Security-Policy` | Tells the browser which scripts are allowed to run, reducing the impact of any XSS vulnerability |
-| `X-Frame-Options` | Prevents the site from being embedded inside another page, blocking clickjacking attacks |
-| `Referrer-Policy` | Controls what URL information is sent to third-party services when a user navigates away |
+| `X-Frame-Options`         | Prevents the site from being embedded inside another page, blocking clickjacking attacks         |
+| `Referrer-Policy`         | Controls what URL information is sent to third-party services when a user navigates away         |
 
 ### 3.10 Malformed request IDs cause server errors (Low)
 
@@ -257,15 +259,15 @@ The API endpoints that look up records by ID will crash with an unhandled error 
 
 ### Must fix before going to production
 
-| Priority | Recommendation |
-|---|---|
-| 1 | **Switch to a production build.** Run `npm run build` and serve the compiled `dist/` folder instead of the development server. This alone closes the source code exposure and removes the foundation for several other findings. |
-| 2 | **Change the admin credentials** from `admin / admin` to a strong, unique passphrase before the demo. |
-| 3 | **Remove the unauthenticated write endpoints** in the startup, event, and opportunity route files. The admin panel already has protected versions of these. |
-| 4 | **Add a login rate limit** of around 5 attempts per 15 minutes per IP address. |
-| 5 | **Set session tokens to expire** after 8 hours of issue. |
-| 6 | **Require login to view pending submissions.** |
-| 7 | **Validate the website field** to only accept addresses starting with `http://` or `https://` before storing. |
-| 8 | **Add `helmet()`** to the Express server for a baseline set of security headers in one line. |
-| 9 | **Restrict the CORS policy** to only accept requests from the portal's own domain. |
-| 10 | **Handle invalid record IDs gracefully** with a proper 400 response rather than an unhandled crash. |
+| Priority | Recommendation                                                                                                                                                                                                                   |
+| -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1        | **Switch to a production build.** Run `npm run build` and serve the compiled `dist/` folder instead of the development server. This alone closes the source code exposure and removes the foundation for several other findings. |
+| 2        | **Change the admin credentials** from `admin / admin` to a strong, unique passphrase before the demo.                                                                                                                            |
+| 3        | **Remove the unauthenticated write endpoints** in the startup, event, and opportunity route files. The admin panel already has protected versions of these.                                                                      |
+| 4        | **Add a login rate limit** of around 5 attempts per 15 minutes per IP address.                                                                                                                                                   |
+| 5        | **Set session tokens to expire** after 8 hours of issue.                                                                                                                                                                         |
+| 6        | **Require login to view pending submissions.**                                                                                                                                                                                   |
+| 7        | **Validate the website field** to only accept addresses starting with `http://` or `https://` before storing.                                                                                                                    |
+| 8        | **Add `helmet()`** to the Express server for a baseline set of security headers in one line.                                                                                                                                     |
+| 9        | **Restrict the CORS policy** to only accept requests from the portal's own domain.                                                                                                                                               |
+| 10       | **Handle invalid record IDs gracefully** with a proper 400 response rather than an unhandled crash.                                                                                                                              |
