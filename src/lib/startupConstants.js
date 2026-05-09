@@ -1,4 +1,15 @@
-export const TAGS = ["HealthTech", "EdTech", "CleanTech", "FinTech", "AgriTech", "Other"];
+export const TAGS = [
+  "AgriTech",
+  "CleanTech",
+  "Creative Industries",
+  "EdTech",
+  "FinTech",
+  "HealthTech",
+  "Manufacturing",
+  "Professional Services",
+  "Tourism & Hospitality",
+  "Other",
+];
 
 export function isValidPhone(v) {
   if (!v) return true;

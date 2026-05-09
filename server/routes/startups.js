@@ -30,8 +30,10 @@ export default function (db) {
 
   router.post("/", async (req, res) => {
     const {
+      type,
       name,
       tag,
+      tags,
       description,
       year,
       employees,
@@ -46,19 +48,22 @@ export default function (db) {
     const reason = moderate({ name, description });
     if (reason) return res.status(422).json({ error: reason });
 
-    const result = await startups.insertOne({
+    const doc = {
+      type,
       name,
-      tag,
+      tags: Array.isArray(tags) ? tags : (tag ? [tag] : []),
       description,
-      year: Number(year),
-      employees: Number(employees),
       stage,
       email,
       website: safeUrl(website),
       phone,
       status: getAutoApprove() ? "approved" : "pending",
       createdAt: new Date(),
-    });
+    };
+    if (year) doc.year = Number(year);
+    if (employees) doc.employees = Number(employees);
+
+    const result = await startups.insertOne(doc);
     res.status(201).json(result);
   });
 

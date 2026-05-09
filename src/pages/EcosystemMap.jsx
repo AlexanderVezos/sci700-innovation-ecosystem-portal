@@ -8,90 +8,79 @@ import {
 } from "d3-force";
 import { AnimatePresence, motion } from "framer-motion";
 import PageTransition from "@/components/PageTransition";
-
-const TAGS = [
-  "HealthTech",
-  "EdTech",
-  "CleanTech",
-  "FinTech",
-  "AgriTech",
-  "Other",
-];
+import { TAGS } from "@/lib/startupConstants";
 
 const TAG_STYLE = {
-  HealthTech: {
-    bg: "rgba(59,130,246,0.15)",
-    stroke: "#3b82f6",
-    text: "#93c5fd",
-    glow: "#3b82f6",
-  },
-  EdTech: {
-    bg: "rgba(139,92,246,0.15)",
-    stroke: "#8b5cf6",
-    text: "#c4b5fd",
-    glow: "#8b5cf6",
-  },
-  CleanTech: {
-    bg: "rgba(16,185,129,0.15)",
-    stroke: "#10b981",
-    text: "#6ee7b7",
-    glow: "#10b981",
-  },
-  FinTech: {
-    bg: "rgba(245,158,11,0.15)",
-    stroke: "#f59e0b",
-    text: "#fcd34d",
-    glow: "#f59e0b",
-  },
-  AgriTech: {
-    bg: "rgba(132,204,22,0.15)",
-    stroke: "#84cc16",
-    text: "#bef264",
-    glow: "#84cc16",
-  },
-  Other: {
-    bg: "rgba(100,116,139,0.15)",
-    stroke: "#64748b",
-    text: "#94a3b8",
-    glow: "#64748b",
-  },
+  HealthTech:             { bg: "rgba(59,130,246,0.15)",  stroke: "#3b82f6", text: "#93c5fd",  glow: "#3b82f6" },
+  EdTech:                 { bg: "rgba(139,92,246,0.15)",  stroke: "#8b5cf6", text: "#c4b5fd",  glow: "#8b5cf6" },
+  CleanTech:              { bg: "rgba(16,185,129,0.15)",  stroke: "#10b981", text: "#6ee7b7",  glow: "#10b981" },
+  FinTech:                { bg: "rgba(245,158,11,0.15)",  stroke: "#f59e0b", text: "#fcd34d",  glow: "#f59e0b" },
+  AgriTech:               { bg: "rgba(132,204,22,0.15)",  stroke: "#84cc16", text: "#bef264",  glow: "#84cc16" },
+  "Creative Industries":  { bg: "rgba(236,72,153,0.15)",  stroke: "#ec4899", text: "#f9a8d4",  glow: "#ec4899" },
+  Manufacturing:          { bg: "rgba(249,115,22,0.15)",  stroke: "#f97316", text: "#fdba74",  glow: "#f97316" },
+  "Professional Services":{ bg: "rgba(99,102,241,0.15)",  stroke: "#6366f1", text: "#a5b4fc",  glow: "#6366f1" },
+  "Tourism & Hospitality":{ bg: "rgba(14,165,233,0.15)",  stroke: "#0ea5e9", text: "#7dd3fc",  glow: "#0ea5e9" },
+  Other:                  { bg: "rgba(100,116,139,0.15)", stroke: "#64748b", text: "#94a3b8",  glow: "#64748b" },
 };
 
-function initials(name) {
-  return name
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((w) => w[0]?.toUpperCase() ?? "")
-    .join("");
+const DEFAULT_STYLE = TAG_STYLE.Other;
+
+function getNodeTags(node) {
+  if (Array.isArray(node.tags) && node.tags.length > 0) return node.tags;
+  if (node.tag) return [node.tag];
+  return [];
 }
 
-function bubbleR(employees, viewportMin) {
-  // Normalise employee count to 0–1, then map to a viewport-relative radius range
-  const t =
-    (Math.min(65, Math.sqrt(Math.max(employees || 1, 1)) * 9) - 30) / 35;
-  const minR = viewportMin * 0.028;
-  const maxR = viewportMin * 0.065;
+function primaryStyle(node) {
+  const tags = getNodeTags(node);
+  return TAG_STYLE[tags[0]] ?? DEFAULT_STYLE;
+}
+
+function gradientId(tags) {
+  return `grad-${tags.join("-").replace(/[^a-zA-Z]/g, "")}`;
+}
+
+function initials(name) {
+  return name.split(/\s+/).slice(0, 2).map((w) => w[0]?.toUpperCase() ?? "").join("");
+}
+
+function bubbleR(employees, viewportMin, nodeCount = 1) {
+  const scale = Math.max(0.7, 1 - Math.max(0, nodeCount - 20) / 520);
+  const minR = viewportMin * 0.028 * scale;
+  const maxR = viewportMin * 0.065 * scale;
+  const t = (Math.min(65, Math.sqrt(Math.max(employees || 12, 1)) * 9) - 30) / 35;
   return minR + Math.max(0, t) * (maxR - minR);
 }
 
+function nodeMatchesFilter(node, filterTag) {
+  if (filterTag === "All") return true;
+  return getNodeTags(node).includes(filterTag);
+}
+
+function applyForces(sim, w, h, tag) {
+  const cx = w / 2;
+  const cy = h / 2;
+  const outerR = Math.min(w, h) * 0.58;
+  sim.force("center", forceCenter(cx, cy).strength(0.004));
+  sim.force(
+    "radial",
+    forceRadial(
+      (d) => (nodeMatchesFilter(d, tag) ? 0 : outerR),
+      cx,
+      cy,
+    ).strength((d) => (nodeMatchesFilter(d, tag) ? 0.12 : 0.15)),
+  );
+}
+
+const POLL_INTERVAL = 1000;
+
 function DetailPanel({ node, onClose }) {
-  const s = TAG_STYLE[node.tag] ?? TAG_STYLE.Other;
+  const s = primaryStyle(node);
+  const tags = getNodeTags(node);
   const contacts = [
-    node.email && {
-      label: "Email",
-      href: `mailto:${node.email}`,
-      value: node.email,
-    },
-    node.website && {
-      label: "Website",
-      href: node.website,
-      value: node.website,
-    },
-    node.phone && {
-      label: "Phone",
-      href: `tel:${node.phone}`,
-      value: node.phone,
-    },
+    node.email   && { label: "Email",   href: `mailto:${node.email}`,   value: node.email },
+    node.website && { label: "Website", href: node.website,              value: node.website },
+    node.phone   && { label: "Phone",   href: `tel:${node.phone}`,       value: node.phone },
   ].filter(Boolean);
 
   return (
@@ -102,76 +91,54 @@ function DetailPanel({ node, onClose }) {
       exit={{ opacity: 0, x: 32 }}
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
       className="absolute right-5 top-5 bottom-5 rounded-2xl shadow-2xl flex flex-col overflow-hidden z-20"
-      style={{
-        background: "rgba(15,23,42,0.95)",
-        border: `1px solid ${s.stroke}40`,
-        width: "260px",
-      }}
+      style={{ background: "rgba(15,23,42,0.95)", border: `1px solid ${s.stroke}40`, width: "260px" }}
     >
       <div className="p-5 flex flex-col gap-3 flex-1 overflow-y-auto">
-        <button
-          onClick={onClose}
-          className="self-end text-slate-500 hover:text-slate-300 transition-colors text-xs"
-        >
+        <button onClick={onClose} className="self-end text-slate-500 hover:text-slate-300 transition-colors text-xs">
           ✕ Close
         </button>
 
         <div
           className="w-14 h-14 rounded-xl flex items-center justify-center font-black text-xl select-none shrink-0"
-          style={{
-            background: s.bg,
-            color: s.text,
-            border: `1.5px solid ${s.stroke}`,
-          }}
+          style={{ background: s.bg, color: s.text, border: `1.5px solid ${s.stroke}` }}
         >
           {initials(node.name)}
         </div>
 
         <div>
-          <h2 className="font-black text-white text-base leading-tight">
-            {node.name}
-          </h2>
-          <span
-            className="text-xs font-medium px-2 py-0.5 rounded-full mt-1 inline-block"
-            style={{ background: s.bg, color: s.text }}
-          >
-            {node.tag}
-          </span>
+          <h2 className="font-black text-white text-base leading-tight">{node.name}</h2>
+          {node.type && (
+            <span className="text-xs text-slate-500 mt-0.5 block">{node.type}</span>
+          )}
+          <div className="flex flex-wrap gap-1 mt-1.5">
+            {tags.map((tag) => {
+              const ts = TAG_STYLE[tag] ?? DEFAULT_STYLE;
+              return (
+                <span key={tag} className="text-xs font-medium px-2 py-0.5 rounded-full" style={{ background: ts.bg, color: ts.text }}>
+                  {tag}
+                </span>
+              );
+            })}
+          </div>
         </div>
 
-        <p className="text-sm leading-relaxed" style={{ color: "#94a3b8" }}>
-          {node.description}
-        </p>
+        <p className="text-sm leading-relaxed" style={{ color: "#94a3b8" }}>{node.description}</p>
 
-        <div
-          className="flex flex-col gap-1 text-xs"
-          style={{ color: "#64748b" }}
-        >
-          <span>Est. {node.year}</span>
-          <span>{node.employees} people</span>
-          <span>{node.stage}</span>
+        <div className="flex flex-col gap-1 text-xs" style={{ color: "#64748b" }}>
+          {node.year      && <span>Est. {node.year}</span>}
+          {node.employees && <span>{node.employees} people</span>}
+          {node.stage     && <span>{node.stage}</span>}
         </div>
 
         {contacts.length > 0 && (
-          <div
-            className="pt-3 border-t flex flex-col gap-1.5"
-            style={{ borderColor: "#1e293b" }}
-          >
+          <div className="pt-3 border-t flex flex-col gap-1.5" style={{ borderColor: "#1e293b" }}>
             {contacts.map(({ label, href, value }) => (
               <div key={label} className="flex items-center gap-2 text-xs">
-                <span
-                  className="w-14 font-semibold uppercase tracking-wide shrink-0"
-                  style={{ color: "#475569" }}
-                >
+                <span className="w-14 font-semibold uppercase tracking-wide shrink-0" style={{ color: "#475569" }}>
                   {label}
                 </span>
-                <a
-                  href={href}
-                  target={label === "Website" ? "_blank" : undefined}
-                  rel="noreferrer"
-                  className="truncate hover:underline"
-                  style={{ color: "#f59e0b" }}
-                >
+                <a href={href} target={label === "Website" ? "_blank" : undefined} rel="noreferrer"
+                  className="truncate hover:underline" style={{ color: "#f59e0b" }}>
                   {value}
                 </a>
               </div>
@@ -182,26 +149,6 @@ function DetailPanel({ node, onClose }) {
     </motion.div>
   );
 }
-
-// Applies center + radial forces for the current dims and active filter.
-// Called by both the resize and filter effects so they stay in sync.
-function applyForces(sim, w, h, tag) {
-  const cx = w / 2;
-  const cy = h / 2;
-  // Non-matching nodes are pushed to an outer ring clearly past the centre cluster.
-  const outerR = Math.min(w, h) * 0.58;
-  sim.force("center", forceCenter(cx, cy).strength(0.004));
-  sim.force(
-    "radial",
-    forceRadial(
-      (d) => (tag === "All" || d.tag === tag ? 0 : outerR),
-      cx,
-      cy,
-    ).strength((d) => (tag === "All" || d.tag === tag ? 0.12 : 0.15)),
-  );
-}
-
-const POLL_INTERVAL = 1000;
 
 function EcosystemMap() {
   const [startups, setStartups] = useState([]);
@@ -218,15 +165,11 @@ function EcosystemMap() {
   const skipRebuild = useRef(false);
   const newNodeTimer = useRef(null);
 
-  useEffect(() => {
-    dimsRef.current = dims;
-  }, [dims]);
-  useEffect(() => {
-    filterTagRef.current = filterTag;
-  }, [filterTag]);
+  useEffect(() => { dimsRef.current = dims; }, [dims]);
+  useEffect(() => { filterTagRef.current = filterTag; }, [filterTag]);
 
   const visibleSelected =
-    selected && (filterTag === "All" || selected.tag === filterTag)
+    selected && (filterTag === "All" || nodeMatchesFilter(selected, filterTag))
       ? selected
       : null;
 
@@ -236,7 +179,6 @@ function EcosystemMap() {
       .then((data) => {
         const sim = simRef.current;
         if (sim && sim.nodes().length > 0) {
-          // Sim is already running — always skip the rebuild effect
           skipRebuild.current = true;
           const existingIds = new Set(sim.nodes().map((n) => n._id));
           const brandNew = data.filter((s) => !existingIds.has(s._id));
@@ -244,28 +186,21 @@ function EcosystemMap() {
             const { w, h } = dimsRef.current;
             const vMin = Math.min(w, h);
             const existingNodes = sim.nodes();
+            const total = existingNodes.length + brandNew.length;
             const newSimNodes = brandNew.map((s, i) => ({
               ...s,
               id: existingNodes.length + i,
-              r: bubbleR(s.employees, vMin),
+              r: bubbleR(s.employees, vMin, total),
               x: w / 2 + (Math.random() - 0.5) * 100,
               y: h / 2 + (Math.random() - 0.5) * 100,
             }));
             sim.nodes([...existingNodes, ...newSimNodes]);
-            sim.force(
-              "collide",
-              forceCollide((d) => d.r + 6)
-                .strength(0.9)
-                .iterations(6),
-            );
+            sim.force("collide", forceCollide((d) => d.r + 4).strength(0.9).iterations(8));
             applyForces(sim, w, h, filterTagRef.current);
             sim.alpha(0.6).restart();
             clearTimeout(newNodeTimer.current);
             setNewNodeIds(new Set(brandNew.map((s) => s._id)));
-            newNodeTimer.current = setTimeout(
-              () => setNewNodeIds(new Set()),
-              3500,
-            );
+            newNodeTimer.current = setTimeout(() => setNewNodeIds(new Set()), 3500);
           }
         }
         setStartups(data);
@@ -276,19 +211,14 @@ function EcosystemMap() {
   useEffect(() => {
     fetchStartups();
     const interval = setInterval(fetchStartups, POLL_INTERVAL);
-    return () => {
-      clearInterval(interval);
-      clearTimeout(newNodeTimer.current);
-    };
+    return () => { clearInterval(interval); clearTimeout(newNodeTimer.current); };
   }, [fetchStartups]);
 
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
     const obs = new ResizeObserver(([e]) => {
-      const w = e.contentRect.width;
-      const h = e.contentRect.height;
-      setDims({ w, h });
+      setDims({ w: e.contentRect.width, h: e.contentRect.height });
     });
     obs.observe(el);
     setDims({ w: el.offsetWidth, h: el.offsetHeight });
@@ -297,22 +227,19 @@ function EcosystemMap() {
 
   useEffect(() => {
     if (!startups.length) return;
-    if (skipRebuild.current) {
-      skipRebuild.current = false;
-      return;
-    }
+    if (skipRebuild.current) { skipRebuild.current = false; return; }
     simRef.current?.stop();
 
     const { w, h } = dimsRef.current;
-    const viewportMin = Math.min(w, h);
-    // Spread initial positions evenly around a wider ring to prevent spawn collisions
+    const vMin = Math.min(w, h);
+    const total = startups.length;
     const initial = startups.map((s, i) => {
-      const angle = (i / startups.length) * Math.PI * 2;
-      const r = viewportMin * (0.3 + Math.random() * 0.15);
+      const angle = (i / total) * Math.PI * 2;
+      const r = vMin * (0.3 + Math.random() * 0.15);
       return {
         ...s,
         id: i,
-        r: bubbleR(s.employees, viewportMin),
+        r: bubbleR(s.employees, vMin, total),
         x: w / 2 + Math.cos(angle) * r,
         y: h / 2 + Math.sin(angle) * r,
       };
@@ -320,13 +247,8 @@ function EcosystemMap() {
 
     let tick = 0;
     const sim = forceSimulation(initial)
-      .force("charge", forceManyBody().strength(-20))
-      .force(
-        "collide",
-        forceCollide((d) => d.r + 6)
-          .strength(0.9)
-          .iterations(6),
-      )
+      .force("charge", forceManyBody().strength(-25))
+      .force("collide", forceCollide((d) => d.r + 4).strength(0.9).iterations(8))
       .alphaDecay(0.016)
       .alphaTarget(0)
       .velocityDecay(0.38)
@@ -336,46 +258,34 @@ function EcosystemMap() {
           n.x = Math.max(n.r + 4, Math.min(cw - n.r - 4, n.x));
           n.y = Math.max(n.r + 4, Math.min(ch - n.r - 4, n.y));
         }
-        // Update React state every 3rd tick — sim still runs at full speed internally
-        if (++tick % 3 === 0) {
-          setNodes(sim.nodes().map((n) => ({ ...n })));
-        }
+        if (++tick % 3 === 0) setNodes(sim.nodes().map((n) => ({ ...n })));
       })
       .on("end", () => setNodes(sim.nodes().map((n) => ({ ...n }))));
 
     applyForces(sim, w, h, filterTagRef.current);
 
-    // Pre-settle silently so the first rendered frame is already spread out
-    sim.tick(120);
+    const preTicks = Math.min(80 + total * 1.2, 300);
+    sim.tick(preTicks);
     for (const n of sim.nodes()) {
       n.x = Math.max(n.r + 4, Math.min(w - n.r - 4, n.x));
       n.y = Math.max(n.r + 4, Math.min(h - n.r - 4, n.y));
     }
     setNodes(sim.nodes().map((n) => ({ ...n })));
-
     simRef.current = sim;
     return () => sim.stop();
   }, [startups]);
 
-  // On resize: update node radii, re-apply collision + center forces
   useEffect(() => {
     const sim = simRef.current;
     if (!sim || !dims.w) return;
     const vMin = Math.min(dims.w, dims.h);
-    for (const n of sim.nodes()) {
-      n.r = bubbleR(n.employees, vMin);
-    }
-    sim.force(
-      "collide",
-      forceCollide((d) => d.r + 6)
-        .strength(0.9)
-        .iterations(6),
-    );
+    const total = sim.nodes().length;
+    for (const n of sim.nodes()) n.r = bubbleR(n.employees, vMin, total);
+    sim.force("collide", forceCollide((d) => d.r + 4).strength(0.9).iterations(8));
     applyForces(sim, dims.w, dims.h, filterTagRef.current);
     sim.alpha(0.3).restart();
   }, [dims]);
 
-  // On filter change: re-apply forces with the new tag
   useEffect(() => {
     const sim = simRef.current;
     if (!sim) return;
@@ -388,16 +298,25 @@ function EcosystemMap() {
     setSelected((prev) => (prev?.id === node.id ? null : node));
   }, []);
 
+  // Collect unique multi-tag combos for gradient defs
+  const gradientCombos = [];
+  const seenGrads = new Set();
+  for (const node of nodes) {
+    const tags = getNodeTags(node);
+    if (tags.length >= 2) {
+      const id = gradientId(tags);
+      if (!seenGrads.has(id)) {
+        seenGrads.add(id);
+        gradientCombos.push(tags);
+      }
+    }
+  }
+
   return (
     <PageTransition>
-      <div
-        className="flex flex-col"
-        style={{ background: "#080f1e", minHeight: "100vh" }}
-      >
+      <div className="flex flex-col" style={{ background: "#080f1e", minHeight: "100vh" }}>
         <div className="px-8 md:px-16 pt-28 pb-5 flex flex-col gap-4 shrink-0">
-          <h1 className="text-4xl font-black tracking-tighter text-white">
-            Ecosystem Map
-          </h1>
+          <h1 className="text-4xl font-black tracking-tighter text-white">Ecosystem Map</h1>
           <div className="flex gap-2 flex-wrap">
             {["All", ...TAGS].map((t) => (
               <button
@@ -407,11 +326,7 @@ function EcosystemMap() {
                 style={
                   filterTag === t
                     ? { background: "#f59e0b", color: "#1c1917" }
-                    : {
-                        background: "rgba(255,255,255,0.07)",
-                        color: "rgba(255,255,255,0.5)",
-                        border: "1px solid rgba(255,255,255,0.1)",
-                      }
+                    : { background: "rgba(255,255,255,0.07)", color: "rgba(255,255,255,0.5)", border: "1px solid rgba(255,255,255,0.1)" }
                 }
               >
                 {t}
@@ -420,143 +335,85 @@ function EcosystemMap() {
           </div>
         </div>
 
-        <div
-          ref={containerRef}
-          className="flex-1 relative motion-exempt"
-          style={{ minHeight: "500px" }}
-        >
-          <svg
-            width="100%"
-            height="100%"
-            className="absolute inset-0"
-            style={{ overflow: "visible" }}
-            onClick={() => setSelected(null)}
-          >
+        <div ref={containerRef} className="flex-1 relative motion-exempt" style={{ minHeight: "500px" }}>
+          <svg width="100%" height="100%" className="absolute inset-0" style={{ overflow: "visible" }} onClick={() => setSelected(null)}>
             <defs>
               {TAGS.map((tag) => {
-                const s = TAG_STYLE[tag];
+                const s = TAG_STYLE[tag] ?? DEFAULT_STYLE;
                 return (
-                  <filter
-                    key={tag}
-                    id={`glow-${tag}`}
-                    x="-50%"
-                    y="-50%"
-                    width="200%"
-                    height="200%"
-                  >
+                  <filter key={tag} id={`glow-${tag.replace(/[^a-zA-Z]/g, "")}`} x="-50%" y="-50%" width="200%" height="200%">
                     <feGaussianBlur stdDeviation="6" result="blur" />
-                    <feFlood
-                      floodColor={s.glow}
-                      floodOpacity="0.5"
-                      result="color"
-                    />
-                    <feComposite
-                      in="color"
-                      in2="blur"
-                      operator="in"
-                      result="glow"
-                    />
-                    <feMerge>
-                      <feMergeNode in="glow" />
-                      <feMergeNode in="SourceGraphic" />
-                    </feMerge>
+                    <feFlood floodColor={s.glow} floodOpacity="0.5" result="color" />
+                    <feComposite in="color" in2="blur" operator="in" result="glow" />
+                    <feMerge><feMergeNode in="glow" /><feMergeNode in="SourceGraphic" /></feMerge>
                   </filter>
+                );
+              })}
+              {gradientCombos.map((tags) => {
+                const s0 = TAG_STYLE[tags[0]] ?? DEFAULT_STYLE;
+                const s1 = TAG_STYLE[tags[1]] ?? DEFAULT_STYLE;
+                return (
+                  <linearGradient key={gradientId(tags)} id={gradientId(tags)} x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%"   stopColor={s0.stroke} stopOpacity="0.35" />
+                    <stop offset="46%"  stopColor={s0.stroke} stopOpacity="0.28" />
+                    <stop offset="54%"  stopColor={s1.stroke} stopOpacity="0.28" />
+                    <stop offset="100%" stopColor={s1.stroke} stopOpacity="0.35" />
+                  </linearGradient>
                 );
               })}
             </defs>
 
             {nodes.map((node) => {
-              const s = TAG_STYLE[node.tag] ?? TAG_STYLE.Other;
-              const dimmed = filterTag !== "All" && node.tag !== filterTag;
+              const tags = getNodeTags(node);
+              const s = primaryStyle(node);
+              const isMulti = tags.length >= 2;
+              const fill = isMulti ? `url(#${gradientId(tags)})` : s.bg;
+              const dimmed = !nodeMatchesFilter(node, filterTag);
               const isSelected = visibleSelected?.id === node.id;
               const isHovered = hovered === node.id;
               const isNew = newNodeIds.has(node._id);
+              const glowTag = (tags[0] ?? "Other").replace(/[^a-zA-Z]/g, "");
 
               return (
                 <g
                   key={node._id ?? node.id}
                   transform={`translate(${node.x},${node.y})`}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleBubbleClick(node);
-                  }}
+                  onClick={(e) => { e.stopPropagation(); handleBubbleClick(node); }}
                   onMouseEnter={() => setHovered(node.id)}
                   onMouseLeave={() => setHovered(null)}
-                  style={{
-                    cursor: "pointer",
-                    opacity: dimmed ? 0.2 : 1,
-                    transition: "opacity 0.35s",
-                  }}
-                  filter={
-                    isHovered || isSelected
-                      ? `url(#glow-${node.tag ?? "Other"})`
-                      : undefined
-                  }
+                  style={{ cursor: "pointer", opacity: dimmed ? 0.15 : 1, transition: "opacity 0.35s" }}
+                  filter={isHovered || isSelected ? `url(#glow-${glowTag})` : undefined}
                 >
                   <motion.g
                     initial={isNew ? { scale: 0, opacity: 0 } : false}
-                    animate={{
-                      scale: isHovered && !isSelected ? 1.06 : 1,
-                      opacity: 1,
-                    }}
-                    transition={
-                      isNew
-                        ? { type: "spring", stiffness: 300, damping: 18 }
-                        : { duration: 0.15 }
-                    }
-                    style={{
-                      transformBox: "fill-box",
-                      transformOrigin: "center",
-                    }}
+                    animate={{ scale: isHovered && !isSelected ? 1.06 : 1, opacity: 1 }}
+                    transition={isNew ? { type: "spring", stiffness: 300, damping: 18 } : { duration: 0.15 }}
+                    style={{ transformBox: "fill-box", transformOrigin: "center" }}
                   >
-                    <circle
-                      r={node.r}
-                      fill={s.bg}
-                      stroke={isSelected ? "#f59e0b" : s.stroke}
-                      strokeWidth={isSelected ? 4 : 1.5}
-                    />
+                    <circle r={node.r} fill={fill} stroke={isSelected ? "#f59e0b" : s.stroke} strokeWidth={isSelected ? 4 : 1.5} />
+                    {isMulti && (
+                      <circle r={node.r} fill="none" stroke={TAG_STYLE[tags[1]]?.stroke ?? s.stroke} strokeWidth="1.5" strokeDasharray="4 3" opacity="0.75" />
+                    )}
                     {isNew && (
-                      <motion.circle
-                        r={node.r}
-                        fill="none"
-                        stroke="#f59e0b"
-                        strokeWidth={4}
-                        initial={{ opacity: 1 }}
-                        animate={{ opacity: 0 }}
+                      <motion.circle r={node.r} fill="none" stroke="#f59e0b" strokeWidth={4}
+                        initial={{ opacity: 1 }} animate={{ opacity: 0 }}
                         transition={{ duration: 3.5, delay: 0.2, ease: "easeOut" }}
                         style={{ pointerEvents: "none" }}
                       />
                     )}
-                    <text
-                      textAnchor="middle"
-                      dominantBaseline="central"
+                    <text textAnchor="middle" dominantBaseline="central"
                       y={node.r > 42 ? -node.r * 0.18 : 0}
-                      fill={s.text}
-                      fontSize={node.r * 0.44}
-                      fontWeight="800"
-                      fontFamily="inherit"
+                      fill={s.text} fontSize={node.r * 0.44} fontWeight="800" fontFamily="inherit"
                       style={{ pointerEvents: "none", userSelect: "none" }}
                     >
                       {initials(node.name)}
                     </text>
                     {node.r > 42 && (
-                      <text
-                        textAnchor="middle"
-                        dominantBaseline="central"
-                        y={node.r * 0.32}
-                        fill={s.text}
-                        fontSize={node.r * 0.2}
-                        fontWeight="600"
-                        fontFamily="inherit"
-                        style={{
-                          pointerEvents: "none",
-                          userSelect: "none",
-                          opacity: 0.7,
-                        }}
+                      <text textAnchor="middle" dominantBaseline="central" y={node.r * 0.32}
+                        fill={s.text} fontSize={node.r * 0.2} fontWeight="600" fontFamily="inherit"
+                        style={{ pointerEvents: "none", userSelect: "none", opacity: 0.7 }}
                       >
-                        {node.name.length > 13
-                          ? node.name.slice(0, 12) + "…"
-                          : node.name}
+                        {node.name.length > 13 ? node.name.slice(0, 12) + "…" : node.name}
                       </text>
                     )}
                   </motion.g>
@@ -567,22 +424,13 @@ function EcosystemMap() {
 
           <AnimatePresence>
             {visibleSelected && (
-              <DetailPanel
-                key={visibleSelected.id}
-                node={visibleSelected}
-                onClose={() => setSelected(null)}
-              />
+              <DetailPanel key={visibleSelected.id} node={visibleSelected} onClose={() => setSelected(null)} />
             )}
           </AnimatePresence>
 
           {nodes.length === 0 && (
             <div className="absolute inset-0 flex items-center justify-center">
-              <p
-                className="text-sm"
-                style={{ color: "rgba(255,255,255,0.25)" }}
-              >
-                No startups found.
-              </p>
+              <p className="text-sm" style={{ color: "rgba(255,255,255,0.25)" }}>No listings found.</p>
             </div>
           )}
         </div>
