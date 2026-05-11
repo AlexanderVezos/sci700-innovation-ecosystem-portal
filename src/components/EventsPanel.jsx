@@ -19,7 +19,7 @@ const SORT_OPTIONS = [
   ["date-desc",      "Event date: latest"],
 ];
 
-const EVENT_TYPES = ["Networking", "Workshop", "Pitch Night", "Conference", "Webinar", "Other"];
+const EVENT_TYPES = ["Networking", "Workshop", "Pitch Night", "Conference", "Webinar", "Roadshow", "Expo", "Other"];
 
 const TYPE_COLOURS = {
   Networking:    "bg-blue-100 text-blue-700",
@@ -27,6 +27,8 @@ const TYPE_COLOURS = {
   "Pitch Night": "bg-amber-100 text-amber-700",
   Conference:    "bg-emerald-100 text-emerald-700",
   Webinar:       "bg-cyan-100 text-cyan-700",
+  Roadshow:      "bg-orange-100 text-orange-700",
+  Expo:          "bg-pink-100 text-pink-700",
   Other:         "bg-slate-100 text-slate-500",
 };
 
@@ -36,6 +38,8 @@ const TYPE_DOT = {
   "Pitch Night": "bg-amber-400",
   Conference:    "bg-emerald-400",
   Webinar:       "bg-cyan-400",
+  Roadshow:      "bg-orange-400",
+  Expo:          "bg-pink-400",
   Other:         "bg-slate-400",
 };
 
@@ -100,21 +104,27 @@ function DateBlock({ iso }) {
 
 function EventCard({ event }) {
   const typeColour = TYPE_COLOURS[event.type] ?? TYPE_COLOURS.Other;
+  const isPast = event.date && new Date(event.date) < new Date();
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 flex gap-4 items-start w-full">
+    <div className={`bg-white rounded-2xl shadow-sm border p-6 flex gap-5 items-start w-full transition-opacity ${isPast ? "opacity-50 border-slate-100" : "border-slate-100"}`}>
       <DateBlock iso={event.date} />
       <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2 flex-wrap">
-          <span className="font-semibold text-slate-800 text-base">{event.title}</span>
-          <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${typeColour}`}>{event.type}</span>
+        <div className="flex items-start gap-2 flex-wrap">
+          <span className="font-bold text-slate-800 text-lg leading-snug">{event.title}</span>
+          <div className="flex items-center gap-1.5 flex-wrap mt-0.5">
+            <span className={`text-xs font-medium px-2.5 py-0.5 rounded-full ${typeColour}`}>{event.type}</span>
+            {isPast && (
+              <span className="text-xs font-medium px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-400">Past</span>
+            )}
+          </div>
         </div>
-        <p className="text-sm text-slate-500 mt-1 leading-snug line-clamp-2 whitespace-pre-line">{event.description}</p>
-        <div className="flex gap-4 mt-2 flex-wrap">
-          <span className="text-xs text-slate-400">{event.location}</span>
-          <span className="text-xs text-slate-400">by {event.organizer}</span>
-          {event.rsvpUrl && (
+        <p className="text-sm text-slate-500 mt-2 leading-relaxed line-clamp-3">{event.description}</p>
+        <div className="flex items-center gap-4 mt-3 flex-wrap">
+          {event.location && <span className="text-xs text-slate-400">{event.location}</span>}
+          {event.organizer && <span className="text-xs text-slate-400">{event.organizer}</span>}
+          {event.rsvpUrl && !isPast && (
             <a href={event.rsvpUrl} target="_blank" rel="noreferrer"
-              className="ml-auto text-xs font-medium px-3 py-1 rounded-lg bg-amber-400 text-stone-900 hover:bg-amber-300 transition-colors">
+              className="ml-auto text-xs font-bold px-4 py-1.5 rounded-lg bg-amber-400 text-stone-900 hover:bg-amber-300 transition-colors">
               RSVP
             </a>
           )}
@@ -428,7 +438,7 @@ export default function EventsPanel() {
   const [loading, setLoading]             = useState(true);
   const [search, setSearch]               = useState("");
   const [filters, setFilters]             = useState(EMPTY_FILTERS);
-  const [sort, setSort]                   = useState("createdAt-desc");
+  const [sort, setSort]                   = useState("date-asc");
   const [view, setView]                   = useState("list");
   const [newIds, setNewIds]               = useState(new Set());
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
@@ -555,7 +565,7 @@ export default function EventsPanel() {
           </Modal>
 
           {/* Main column */}
-          <div className="flex-1 min-w-0 flex flex-col gap-3">
+          <div className="flex-1 min-w-0 flex flex-col gap-5">
 
             {loading ? (
               Array.from({ length: 3 }, (_, i) => <SkeletonEventCard key={i} />)
@@ -578,7 +588,7 @@ export default function EventsPanel() {
                             animate={{ opacity: 1, y: 0 }}
                             exit={!reduceMotion ? { opacity: 0, y: -4 } : undefined}
                             transition={{ layout: { duration: 0.2, ease: "easeOut" }, default: { duration: 0.15, ease: "easeOut" } }}
-                            className="relative">
+                            className="relative mb-4">
                             {isNew && !reduceMotion && (
                               <motion.div className="absolute inset-0 rounded-2xl pointer-events-none"
                                 style={{ boxShadow: "0 0 0 1.5px #94a3b8, 0 0 10px 2px #94a3b828" }}

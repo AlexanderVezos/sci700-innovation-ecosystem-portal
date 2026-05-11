@@ -3,6 +3,8 @@ import rateLimit from "express-rate-limit";
 import { generateToken, revokeToken, getAutoApprove, setAutoApprove } from "../adminState.js";
 import requireAdmin from "../requireAdmin.js";
 import { ObjectId } from "mongodb";
+import { scrapeMefsc } from "../scrapers/mefsc.js";
+import { scrapeSunshineCoast } from "../scrapers/sunshinecoast.js";
 
 const loginLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 5, standardHeaders: true, legacyHeaders: false });
 
@@ -50,10 +52,13 @@ export default function (db) {
   });
 
   router.patch("/events/:id", requireAdmin, async (req, res) => {
-    const { status } = req.body;
+    const { status, type, organizer } = req.body;
     if (!["approved", "rejected"].includes(status)) return res.status(400).json({ error: "Invalid status" });
     if (!ObjectId.isValid(req.params.id)) return res.status(400).json({ error: "Invalid id" });
-    const result = await events.updateOne({ _id: new ObjectId(req.params.id) }, { $set: { status } });
+    const update = { status };
+    if (type) update.type = type;
+    if (typeof organizer === "string") update.organizer = organizer;
+    const result = await events.updateOne({ _id: new ObjectId(req.params.id) }, { $set: update });
     if (result.matchedCount === 0) return res.status(404).json({ error: "Not found" });
     res.json({ ok: true });
   });
@@ -65,6 +70,33 @@ export default function (db) {
     const result = await opps.updateOne({ _id: new ObjectId(req.params.id) }, { $set: { status } });
     if (result.matchedCount === 0) return res.status(404).json({ error: "Not found" });
     res.json({ ok: true });
+  });
+
+  // ── Scrape events ─────────────────────────────────────────────────────────
+
+  router.post("/scrape-events", requireAdmin, async (_req, res) => {
+    const results = { added: 0, skipped: 0, errors: [] };
+
+    const scrapers = [
+      { name: "MEFSC", fn: scrapeMefsc },
+      { name: "Sunshine Coast Council", fn: scrapeSunshineCoast },
+    ];
+
+    for (const { name, fn } of scrapers) {
+      try {
+        const scraped = await fn();
+        for (const ev of scraped) {
+          const exists = await events.findOne({ sourceUrl: ev.sourceUrl });
+          if (exists) { results.skipped++; continue; }
+          await events.insertOne({ ...ev, status: "pending", createdAt: new Date() });
+          results.added++;
+        }
+      } catch (err) {
+        results.errors.push(`${name}: ${err.message}`);
+      }
+    }
+
+    res.json(results);
   });
 
   // ── Settings ──────────────────────────────────────────────────────────────

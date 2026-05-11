@@ -91,15 +91,24 @@ function LoginScreen({ onLogin }) {
 
 // ─── Pending item card ────────────────────────────────────────────────────────
 
+const EVENT_TYPES_ADMIN = ["Networking", "Workshop", "Pitch Night", "Conference", "Webinar", "Roadshow", "Expo", "Other"];
+
 function PendingCard({ item, type, token, onDecision }) {
-  const [busy, setBusy] = useState(null);
+  const [busy, setBusy]           = useState(null);
+  const [eventType, setEventType] = useState(item.type || "");
+  const [organizer, setOrganizer] = useState(item.organizer || "");
 
   async function decide(status) {
     setBusy(status);
+    const body = { status };
+    if (type === "events") {
+      if (eventType) body.type = eventType;
+      if (organizer.trim()) body.organizer = organizer.trim();
+    }
     try {
       await apiFetch(`/api/admin/${type}/${item._id}`, token, {
         method: "PATCH",
-        body: JSON.stringify({ status }),
+        body: JSON.stringify(body),
       });
       onDecision(item._id);
     } catch {
@@ -108,8 +117,8 @@ function PendingCard({ item, type, token, onDecision }) {
   }
 
   const name = item.name || item.title;
-  const sub = [item.tag, item.type, item.organizer, item.organisation].find(Boolean);
-  const date = item.date || (item.deadline ? `Deadline: ${item.deadline}` : null);
+  const fmtDate = (d) => d && new Date(d).toLocaleString("en-AU", { day: "numeric", month: "short", year: "numeric" });
+  const date = item.date ? fmtDate(item.date) : item.deadline ? `Deadline: ${item.deadline}` : null;
   const submitted = item.createdAt
     ? new Date(item.createdAt).toLocaleString("en-AU", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })
     : null;
@@ -118,11 +127,11 @@ function PendingCard({ item, type, token, onDecision }) {
     <div className="bg-slate-800 rounded-xl border border-slate-700 p-4 flex flex-col gap-3">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="font-bold text-white text-sm leading-snug truncate">{name}</p>
+          <p className="font-bold text-white text-sm leading-snug">{name}</p>
           <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-            {sub && (
-              <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400 bg-amber-400/10 px-1.5 py-0.5 rounded-md">
-                {sub}
+            {item.source && (
+              <span className="text-[10px] font-bold uppercase tracking-wider text-sky-400 bg-sky-400/10 px-1.5 py-0.5 rounded-md">
+                {item.source}
               </span>
             )}
             {date && <span className="text-xs text-slate-400">{date}</span>}
@@ -133,19 +142,44 @@ function PendingCard({ item, type, token, onDecision }) {
 
       <p className="text-xs text-slate-400 leading-relaxed line-clamp-3">{item.description}</p>
 
-      {(item.email || item.website || item.location) && (
+      {(item.location || item.rsvpUrl || item.email || item.website) && (
         <div className="flex flex-wrap gap-x-4 gap-y-1">
           {item.location && <span className="text-[11px] text-slate-500">📍 {item.location}</span>}
           {item.email && <span className="text-[11px] text-slate-500">✉ {item.email}</span>}
-          {item.website && (
-            <a href={item.website} target="_blank" rel="noreferrer" className="text-[11px] text-cyan-400 hover:text-cyan-300 truncate max-w-[200px]">
-              🔗 {item.website}
+          {(item.rsvpUrl || item.website) && (
+            <a href={item.rsvpUrl || item.website} target="_blank" rel="noreferrer" className="text-[11px] text-cyan-400 hover:text-cyan-300 truncate max-w-[200px]">
+              🔗 {item.rsvpUrl ? "View event" : item.website}
             </a>
           )}
         </div>
       )}
 
-      <div className="flex gap-2 pt-1">
+      {type === "events" && (
+        <div className="flex gap-2 pt-1 border-t border-slate-700">
+          <div className="flex flex-col gap-1 flex-1">
+            <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Type</label>
+            <select
+              value={eventType}
+              onChange={(e) => setEventType(e.target.value)}
+              className="bg-slate-700 border border-slate-600 rounded-lg px-2 py-1.5 text-xs text-white focus:outline-none focus:ring-1 focus:ring-amber-400/50"
+            >
+              <option value="">— pick one —</option>
+              {EVENT_TYPES_ADMIN.map(t => <option key={t} value={t}>{t}</option>)}
+            </select>
+          </div>
+          <div className="flex flex-col gap-1 flex-1">
+            <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Organizer</label>
+            <input
+              value={organizer}
+              onChange={(e) => setOrganizer(e.target.value)}
+              placeholder="e.g. MEFSC"
+              className="bg-slate-700 border border-slate-600 rounded-lg px-2 py-1.5 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-amber-400/50"
+            />
+          </div>
+        </div>
+      )}
+
+      <div className="flex gap-2">
         <button
           onClick={() => decide("approved")}
           disabled={!!busy}
@@ -450,6 +484,8 @@ function Dashboard({ token, onLogout }) {
   const [data, setData] = useState({ startups: [], events: [], opportunities: [] });
   const [autoApprove, setAutoApproveState] = useState(false);
   const [toggling, setToggling] = useState(false);
+  const [scraping, setScraping] = useState(false);
+  const [scrapeResult, setScrapeResult] = useState(null);
   const pollRef = useRef(null);
 
   const fetchAll = useCallback(async () => {
@@ -477,6 +513,19 @@ function Dashboard({ token, onLogout }) {
       events: prev.events.filter((x) => x._id !== id),
       opportunities: prev.opportunities.filter((x) => x._id !== id),
     }));
+  }
+
+  async function scrapeEvents() {
+    setScraping(true);
+    setScrapeResult(null);
+    try {
+      const res = await apiFetch("/api/admin/scrape-events", token, { method: "POST" });
+      setScrapeResult(await res.json());
+    } catch {
+      setScrapeResult({ errors: ["Could not reach server."] });
+    } finally {
+      setScraping(false);
+    }
   }
 
   async function toggleAutoApprove() {
@@ -541,6 +590,14 @@ function Dashboard({ token, onLogout }) {
           </button>
 
           <button
+            onClick={scrapeEvents}
+            disabled={scraping}
+            className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-slate-700 text-slate-300 text-xs font-bold tracking-wide uppercase hover:border-amber-400 hover:text-amber-400 transition-colors disabled:opacity-40"
+          >
+            {scraping ? "Scraping…" : "Scrape Events"}
+          </button>
+
+          <button
             onClick={logout}
             className="text-xs text-slate-500 hover:text-slate-300 transition-colors font-medium"
           >
@@ -548,6 +605,20 @@ function Dashboard({ token, onLogout }) {
           </button>
         </div>
       </div>
+
+      {/* Scrape result banner */}
+      {scrapeResult && (
+        <div className={`px-6 py-2 text-xs text-center font-semibold border-b ${
+          scrapeResult.errors?.length
+            ? "bg-red-500/10 border-red-500/20 text-red-400"
+            : "bg-cyan-500/10 border-cyan-500/20 text-cyan-400"
+        }`}>
+          {scrapeResult.errors?.length
+            ? scrapeResult.errors.join(" · ")
+            : `Scrape complete — ${scrapeResult.added} new event${scrapeResult.added !== 1 ? "s" : ""} added, ${scrapeResult.skipped} already existed`}
+          <button onClick={() => setScrapeResult(null)} className="ml-3 opacity-50 hover:opacity-100">✕</button>
+        </div>
+      )}
 
       {/* Auto-approve banner */}
       {autoApprove && (
