@@ -53,7 +53,7 @@ const TAG_COLOURS = {
   Manufacturing:           "bg-indigo-100 text-indigo-700",
   "Professional Services": "bg-violet-100 text-violet-700",
   "Tourism & Hospitality": "bg-fuchsia-100 text-fuchsia-700",
-  Other:                   "bg-pink-100 text-pink-700",
+  Other:                   "bg-slate-100 text-slate-500",
 };
 
 const TAG_DOT = {
@@ -66,7 +66,7 @@ const TAG_DOT = {
   Manufacturing:           "bg-indigo-400",
   "Professional Services": "bg-violet-400",
   "Tourism & Hospitality": "bg-fuchsia-400",
-  Other:                   "bg-pink-400",
+  Other:                   "bg-slate-400",
 };
 
 const AVATAR_COLOURS = [

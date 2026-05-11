@@ -22,24 +22,24 @@ const SORT_OPTIONS = [
 const EVENT_TYPES = ["Networking", "Workshop", "Pitch Night", "Conference", "Webinar", "Roadshow", "Expo", "Other"];
 
 const TYPE_COLOURS = {
-  Networking:    "bg-blue-100 text-blue-700",
-  Workshop:      "bg-violet-100 text-violet-700",
+  Networking:    "bg-red-100 text-red-700",
+  Workshop:      "bg-orange-100 text-orange-700",
   "Pitch Night": "bg-amber-100 text-amber-700",
-  Conference:    "bg-emerald-100 text-emerald-700",
-  Webinar:       "bg-cyan-100 text-cyan-700",
-  Roadshow:      "bg-orange-100 text-orange-700",
-  Expo:          "bg-pink-100 text-pink-700",
+  Conference:    "bg-green-100 text-green-700",
+  Webinar:       "bg-teal-100 text-teal-700",
+  Roadshow:      "bg-sky-100 text-sky-700",
+  Expo:          "bg-violet-100 text-violet-700",
   Other:         "bg-slate-100 text-slate-500",
 };
 
 const TYPE_DOT = {
-  Networking:    "bg-blue-400",
-  Workshop:      "bg-violet-400",
+  Networking:    "bg-red-400",
+  Workshop:      "bg-orange-400",
   "Pitch Night": "bg-amber-400",
-  Conference:    "bg-emerald-400",
-  Webinar:       "bg-cyan-400",
-  Roadshow:      "bg-orange-400",
-  Expo:          "bg-pink-400",
+  Conference:    "bg-green-400",
+  Webinar:       "bg-teal-400",
+  Roadshow:      "bg-sky-400",
+  Expo:          "bg-violet-400",
   Other:         "bg-slate-400",
 };
 

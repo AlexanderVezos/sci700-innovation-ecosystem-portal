@@ -20,31 +20,51 @@ const SORT_OPTIONS = [
 ];
 
 const OPP_TYPES = ["Pilot", "Co-development", "Challenge", "Research", "Other"];
-const SECTORS   = ["HealthTech", "EdTech", "CleanTech", "FinTech", "AgriTech", "Other"];
+const SECTORS   = [
+  "AgriTech", "CleanTech", "Creative Industries", "EdTech", "FinTech",
+  "HealthTech", "Manufacturing", "Professional Services", "Tourism & Hospitality", "Other",
+];
 
 const TYPE_COLOURS = {
-  Pilot:            "bg-amber-100 text-amber-700",
-  "Co-development": "bg-blue-100 text-blue-700",
-  Challenge:        "bg-rose-100 text-rose-700",
+  Pilot:            "bg-red-100 text-red-700",
+  "Co-development": "bg-amber-100 text-amber-700",
+  Challenge:        "bg-sky-100 text-sky-700",
   Research:         "bg-violet-100 text-violet-700",
   Other:            "bg-slate-100 text-slate-500",
 };
 
 const TYPE_DOT = {
-  Pilot:            "bg-amber-400",
-  "Co-development": "bg-blue-400",
-  Challenge:        "bg-rose-400",
+  Pilot:            "bg-red-400",
+  "Co-development": "bg-amber-400",
+  Challenge:        "bg-sky-400",
   Research:         "bg-violet-400",
   Other:            "bg-slate-400",
 };
 
 const SECTOR_DOT = {
-  HealthTech: "bg-blue-400",
-  EdTech:     "bg-violet-400",
-  CleanTech:  "bg-emerald-400",
-  FinTech:    "bg-amber-400",
-  AgriTech:   "bg-lime-400",
-  Other:      "bg-slate-400",
+  AgriTech:                "bg-green-400",
+  CleanTech:               "bg-emerald-400",
+  "Creative Industries":   "bg-teal-400",
+  EdTech:                  "bg-cyan-400",
+  FinTech:                 "bg-sky-400",
+  HealthTech:              "bg-blue-400",
+  Manufacturing:           "bg-indigo-400",
+  "Professional Services": "bg-violet-400",
+  "Tourism & Hospitality": "bg-fuchsia-400",
+  Other:                   "bg-slate-400",
+};
+
+const SECTOR_COLOURS = {
+  AgriTech:                "bg-green-100 text-green-700",
+  CleanTech:               "bg-emerald-100 text-emerald-700",
+  "Creative Industries":   "bg-teal-100 text-teal-700",
+  EdTech:                  "bg-cyan-100 text-cyan-700",
+  FinTech:                 "bg-sky-100 text-sky-700",
+  HealthTech:              "bg-blue-100 text-blue-700",
+  Manufacturing:           "bg-indigo-100 text-indigo-700",
+  "Professional Services": "bg-violet-100 text-violet-700",
+  "Tourism & Hospitality": "bg-fuchsia-100 text-fuchsia-700",
+  Other:                   "bg-slate-100 text-slate-500",
 };
 
 const EMPTY_FILTERS = { types: new Set(), sectors: new Set(), deadlineFrom: "", deadlineTo: "" };
@@ -84,7 +104,7 @@ function OpportunityCard({ opp }) {
             <span className="font-semibold text-slate-800 text-base">{opp.title}</span>
             <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${typeColour}`}>{opp.type}</span>
             {opp.sector && (
-              <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-slate-100 text-slate-500">{opp.sector}</span>
+              <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${SECTOR_COLOURS[opp.sector] ?? "bg-slate-100 text-slate-500"}`}>{opp.sector}</span>
             )}
           </div>
           <p className="text-sm text-slate-500 mt-1 leading-snug">{opp.description}</p>
