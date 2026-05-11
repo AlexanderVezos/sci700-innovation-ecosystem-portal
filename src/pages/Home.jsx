@@ -5,6 +5,21 @@ import PageTransition from "@/components/PageTransition";
 import { useMotion } from "@/context/MotionContext";
 import { useTilt } from "@/hooks/useTilt";
 
+function fmtDate(iso) {
+  if (!iso) return "";
+  return new Date(iso).toLocaleDateString("en-AU", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+}
+
+function blurb(body, max = 180) {
+  if (!body) return "";
+  const flat = body.replace(/\n+/g, " ");
+  return flat.length > max ? flat.slice(0, max).trimEnd() + "…" : flat;
+}
+
 const CYCLING_PHRASES = [
   "Your Idea",
   "Your Next Partner",
@@ -400,6 +415,123 @@ function PillarCard({
   );
 }
 
+function StoryFeature({ story, index, reduceMotion }) {
+  const reversed = index % 2 === 1;
+
+  return (
+    <motion.div
+      className={`group relative flex flex-col md:flex-row items-center gap-10 md:gap-20 cursor-pointer ${reversed ? "md:flex-row-reverse" : ""}`}
+      initial={reduceMotion ? false : { opacity: 0, x: reversed ? 40 : -40 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      viewport={{ once: true, amount: 0.25 }}
+      transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+    >
+      <Link
+        to={`/stories/${story._id}`}
+        className="absolute inset-0 z-10"
+        aria-label={story.title}
+      />
+      <div className="w-full md:w-[42%] shrink-0 rounded-[2.5rem] overflow-hidden aspect-3/4 bg-slate-800">
+        {story.imageUrl ? (
+          <img
+            src={story.imageUrl}
+            alt={story.title}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="w-full h-full bg-linear-to-br from-slate-700 to-slate-900" />
+        )}
+      </div>
+
+      <div className="flex-1 min-w-0">
+        <div className="flex flex-col gap-4">
+          <span className="text-xs font-bold tracking-widest uppercase text-amber-400">
+            {fmtDate(story.publishedAt)}
+          </span>
+          <h2
+            className="font-black tracking-tighter text-white leading-tight transition-colors duration-200 group-hover:text-amber-400"
+            style={{ fontSize: "clamp(1.75rem, 3.5vw, 3rem)" }}
+          >
+            {story.title}
+          </h2>
+          <p className="text-slate-400 leading-relaxed text-base max-w-sm">
+            {blurb(story.body)}
+          </p>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+function StoriesSection({ reduceMotion }) {
+  const [stories, setStories] = useState([]);
+
+  useEffect(() => {
+    fetch("/api/stories")
+      .then((r) => r.json())
+      .then((data) => {
+        if (!Array.isArray(data)) return setStories([]);
+        const featured = data.filter((s) => s.featured);
+        const rest = data.filter((s) => !s.featured);
+        setStories([...featured, ...rest].slice(0, 3));
+      })
+      .catch(() => {});
+  }, []);
+
+  if (stories.length === 0) return null;
+
+  return (
+    <section className="bg-slate-950 px-8 md:px-16 py-24">
+      <div className="max-w-5xl mx-auto">
+        <motion.div
+          className="flex items-end justify-between mb-16"
+          initial={reduceMotion ? false : { opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.4, ease: "easeOut" }}
+        >
+          <div>
+            <p className="text-xs font-bold tracking-widest uppercase text-amber-400 mb-2">
+              From the coast
+            </p>
+            <h2 className="text-4xl md:text-5xl font-black tracking-tighter text-white leading-none">
+              What's happening
+              <br />
+              on the coast.
+            </h2>
+          </div>
+          <Link
+            to="/stories"
+            className="hidden md:inline-flex text-sm font-bold text-slate-400 hover:text-white transition-colors shrink-0 ml-8"
+          >
+            All stories →
+          </Link>
+        </motion.div>
+
+        <div className="flex flex-col gap-24">
+          {stories.map((s, i) => (
+            <StoryFeature
+              key={s._id}
+              story={s}
+              index={i}
+              reduceMotion={reduceMotion}
+            />
+          ))}
+        </div>
+
+        <div className="mt-16 md:hidden">
+          <Link
+            to="/stories"
+            className="text-sm font-bold text-slate-400 hover:text-white transition-colors"
+          >
+            All stories →
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function Home() {
   const { reduceMotion } = useMotion();
   const [stats, setStats] = useState(DEFAULT_STATS);
@@ -430,14 +562,8 @@ function Home() {
       <div className="bg-stone-50">
         <Hero stats={stats} />
 
-        {/* Mission pull quote */}
-        <section className="px-8 py-20 max-w-5xl mx-auto">
-          <p className="text-3xl md:text-4xl font-black text-stone-800 leading-snug tracking-tight max-w-3xl"></p>
-          <p className="text-stone-400 mt-4 text-sm"></p>
-        </section>
-
         {/* Pillars */}
-        <section className="px-8 pb-20">
+        <section className="px-8 pt-20 pb-20">
           <div className="max-w-5xl mx-auto">
             <motion.p
               initial={reduceMotion ? false : { opacity: 0, y: 16 }}
@@ -461,6 +587,8 @@ function Home() {
             </div>
           </div>
         </section>
+
+        <StoriesSection reduceMotion={reduceMotion} />
       </div>
     </PageTransition>
   );

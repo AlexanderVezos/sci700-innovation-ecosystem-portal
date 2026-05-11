@@ -11,6 +11,8 @@ import Opportunities from "@/pages/Opportunities";
 import PrivacyPolicy from "@/pages/PrivacyPolicy";
 import Terms from "@/pages/Terms";
 import EcosystemMap from "@/pages/EcosystemMap";
+import Stories from "@/pages/Stories";
+import StoryDetail from "@/pages/StoryDetail";
 import Admin from "@/pages/Admin";
 import Kiosk from "@/pages/Kiosk";
 import Toaster from "@/components/Toast";
@@ -20,6 +22,7 @@ function App() {
   const scrollRef = useRef(null);
   const isAdmin = location.pathname === "/admin";
   const isKiosk = location.pathname === "/kiosk";
+  const isStoryDetail = /^\/stories\/.+/.test(location.pathname);
 
   useEffect(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = 0;
@@ -32,9 +35,9 @@ function App() {
     <div className="h-screen">
       <Navbar />
       <Toaster />
-      <div ref={scrollRef} className="overflow-y-auto h-full">
-        <div className="min-h-full flex flex-col">
-          <div className="flex-1">
+      <div ref={scrollRef} className={`h-full ${isStoryDetail ? "overflow-hidden" : "overflow-y-auto"}`}>
+        <div className={isStoryDetail ? "h-full" : "min-h-full flex flex-col"}>
+          <div className={isStoryDetail ? "h-full" : "flex-1"}>
             <AnimatePresence mode="wait">
               <Routes location={location} key={location.pathname}>
                 <Route path="/" element={<Home />} />
@@ -43,12 +46,14 @@ function App() {
                 <Route path="/opportunities" element={<Opportunities />} />
                 <Route path="/resources" element={<Resources />} />
                 <Route path="/map" element={<EcosystemMap />} />
+                <Route path="/stories" element={<Stories />} />
+                <Route path="/stories/:id" element={<StoryDetail />} />
                 <Route path="/privacy" element={<PrivacyPolicy />} />
                 <Route path="/terms" element={<Terms />} />
               </Routes>
             </AnimatePresence>
           </div>
-          <Footer />
+          {!isStoryDetail && <Footer />}
         </div>
       </div>
     </div>

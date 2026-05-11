@@ -15,7 +15,7 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       ...helmet.contentSecurityPolicy.getDefaultDirectives(),
-      "img-src": ["'self'", "data:", "https://images.unsplash.com"],
+      "img-src": ["'self'", "data:", "https://images.unsplash.com", "https://res.cloudinary.com"],
     },
   },
 }));
@@ -38,6 +38,8 @@ app.use(
   "/api/opportunities",
   (await import("./routes/opportunities.js")).default(db),
 );
+app.use("/api/stories", (await import("./routes/stories.js")).default(db));
+app.use("/api/upload",  (await import("./routes/upload.js")).default());
 
 app.use(express.static(path.join(__dirname, "../dist")));
 app.get("/{*path}", (_req, res) => res.sendFile(path.join(__dirname, "../dist/index.html")));
