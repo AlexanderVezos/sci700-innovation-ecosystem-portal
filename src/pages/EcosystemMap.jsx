@@ -20,7 +20,7 @@ const TAG_STYLE = {
   Manufacturing:          { bg: "rgba(129,140,248,0.15)", stroke: "#818cf8", text: "#c7d2fe", glow: "#818cf8" },
   "Professional Services":{ bg: "rgba(167,139,250,0.15)", stroke: "#a78bfa", text: "#ddd6fe", glow: "#a78bfa" },
   "Tourism & Hospitality":{ bg: "rgba(232,121,249,0.15)", stroke: "#e879f9", text: "#f5d0fe", glow: "#e879f9" },
-  Other:                  { bg: "rgba(244,114,182,0.15)", stroke: "#f472b6", text: "#fbcfe8", glow: "#f472b6" },
+  Other:                  { bg: "rgba(148,163,184,0.15)", stroke: "#94a3b8", text: "#cbd5e1", glow: "#94a3b8" },
 };
 
 const DEFAULT_STYLE = TAG_STYLE.Other;
