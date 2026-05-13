@@ -45,7 +45,7 @@ export function PhoneField({ value, onChange, className }) {
       placeholder="0412 345 678"
       className={className}
       isValid={isValid}
-      hint="Enter a full Australian number — e.g. 0412 345 678 or +61 2 1234 5678"
+      hint="Enter a full Australian number, e.g. 0412 345 678 or +61 2 1234 5678"
     />
   );
 }
@@ -65,7 +65,7 @@ export function EmailField({ value, onChange, className }) {
       placeholder="hello@example.com"
       className={className}
       isValid={isValid}
-      hint="Must include an @ and a domain — e.g. hello@example.com"
+      hint="Must include an @ and a domain, e.g. hello@example.com"
     />
   );
 }
@@ -90,7 +90,7 @@ export function WebsiteField({ value, onChange, className }) {
       placeholder="https://example.com"
       className={className}
       isValid={isValid}
-      hint="Must be a valid URL — leaving the field will auto-add https://"
+      hint="Must be a valid URL. Leaving the field will auto-add https://"
     />
   );
 }

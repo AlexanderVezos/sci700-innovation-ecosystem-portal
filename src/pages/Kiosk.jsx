@@ -25,7 +25,9 @@ function Field({ label, optional, children, className }) {
   return (
     <div className={["flex flex-col gap-2", className].filter(Boolean).join(" ")}>
       <label className="text-sm font-bold text-slate-600 uppercase tracking-wider">
-        {label}{optional && <span className="text-slate-400 font-normal normal-case tracking-normal ml-1">— optional</span>}
+        {label}
+        {!optional && <span className="text-amber-400 ml-0.5 font-black normal-case tracking-normal">*</span>}
+        {optional && <span className="text-slate-400 font-normal normal-case tracking-normal ml-1">(optional)</span>}
       </label>
       {children}
     </div>
@@ -88,11 +90,11 @@ export default function Kiosk() {
       return;
     }
     if (!isValidPhone(form.phone)) {
-      setError("Phone number is incomplete — enter a full Australian number or leave it blank.");
+      setError("Phone number is incomplete. Enter a full Australian number or leave it blank.");
       return;
     }
     if (!isValidEmail(form.email)) {
-      setError("Email address looks wrong — check it and try again.");
+      setError("Email address looks wrong. Check it and try again.");
       return;
     }
     if (!isValidWebsite(form.website)) {
@@ -126,7 +128,7 @@ export default function Kiosk() {
         setForm(EMPTY);
       } else {
         const resBody = await res.json().catch(() => ({}));
-        setError(resBody.error ?? "Something went wrong — please try again.");
+        setError(resBody.error ?? "Something went wrong. Please try again.");
       }
     } catch {
       setError("Could not reach the server.");
@@ -198,21 +200,21 @@ export default function Kiosk() {
 
               <Field label="Description">
                 <textarea required minLength={20} maxLength={500} value={form.description} onChange={set("description")}
-                  placeholder="Describe what you do. (20–500 characters)" rows={3} className={`${INPUT} resize-none`} />
+                  placeholder="What you do and why it matters" rows={3} className={`${INPUT} resize-none`} />
                 <span className="text-xs text-slate-400 text-right">{form.description.length}/500</span>
               </Field>
 
               {isStartup && (
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-                  <Field label="Founded Year">
+                  <Field label="Founded Year" optional>
                     <input type="number" value={form.year} onChange={set("year")}
                       placeholder={String(CURRENT_YEAR)} min={1990} max={CURRENT_YEAR} className={INPUT} />
                   </Field>
-                  <Field label="Team Size">
+                  <Field label="Team Size" optional>
                     <input type="number" value={form.employees} onChange={set("employees")}
                       placeholder="1" min={1} max={100000} className={INPUT} />
                   </Field>
-                  <Field label="Stage">
+                  <Field label="Stage" optional>
                     <select value={form.stage} onChange={set("stage")} className={INPUT}>
                       <option value="">Select…</option>
                       {STAGES.map((s) => <option key={s}>{s}</option>)}
