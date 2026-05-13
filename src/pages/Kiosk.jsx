@@ -143,7 +143,7 @@ export default function Kiosk() {
         <span className="text-2xl font-black tracking-tighter text-slate-900">
           STARTUP<span className="text-cyan-600">SC</span>
         </span>
-        <span className="text-sm font-semibold text-slate-400 uppercase tracking-widest">Sunshine Coast Innovation Ecosystem</span>
+        <span className="text-sm font-semibold text-slate-400 uppercase tracking-widest text-right">Sunshine Coast Innovation Ecosystem</span>
       </div>
 
       <AnimatePresence mode="wait">
