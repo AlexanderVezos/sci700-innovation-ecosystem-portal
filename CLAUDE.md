@@ -82,10 +82,9 @@ All submissions land as `status: "pending"` and are invisible to public GET endp
 
 ### Engineering tasks (owner: Alex)
 
-| Task         | Priority      | Notes                                                                                                                                 |
-| ------------ | ------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| **Scraping** | Demo-critical | Scrape the Australian Business Register and calendars of events to seed real Sunshine Coast businesses and events into the directory. |
-| **News Tab** |               | List success stories                                                                                                                  |
+| Task         | Priority      | Notes                                                                                              |
+| ------------ | ------------- | -------------------------------------------------------------------------------------------------- |
+| **Scraping** | Demo-critical | Scrape the Australian Business Register to seed real Sunshine Coast businesses into the directory. |
 
 ### Business / stakeholder tasks (not engineering)
 
