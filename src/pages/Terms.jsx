@@ -195,8 +195,8 @@ function Terms() {
             </h2>
             <p className="text-slate-600 leading-relaxed">
               The Resources section of the Platform includes links to
-              third-party websites operated by Sunshine Coast Council,
-              including the{" "}
+              third-party websites operated by Sunshine Coast Council, including
+              the{" "}
               <a
                 href="https://levelup.sunshinecoast.qld.gov.au/business-upgrades"
                 target="_blank"
@@ -210,9 +210,9 @@ function Terms() {
             </p>
             <p className="text-slate-600 leading-relaxed mt-3">
               StartupSC does not control, endorse, or take responsibility for
-              the content, accuracy, or availability of any third-party
-              website. Visiting an external link is at your own discretion and
-              subject to that website's own terms and privacy policy.
+              the content, accuracy, or availability of any third-party website.
+              Visiting an external link is at your own discretion and subject to
+              that website's own terms and privacy policy.
             </p>
             <p className="text-slate-600 leading-relaxed mt-3">
               LevelUp Sunshine Coast is a programme of Sunshine Coast Council.

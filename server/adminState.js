@@ -13,7 +13,10 @@ export function generateToken() {
 export function validateToken(token) {
   const issuedAt = tokens.get(token);
   if (!issuedAt) return false;
-  if (Date.now() - issuedAt > TTL) { tokens.delete(token); return false; }
+  if (Date.now() - issuedAt > TTL) {
+    tokens.delete(token);
+    return false;
+  }
   return true;
 }
 

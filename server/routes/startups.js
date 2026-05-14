@@ -51,7 +51,7 @@ export default function (db) {
     const doc = {
       type,
       name,
-      tags: Array.isArray(tags) ? tags : (tag ? [tag] : []),
+      tags: Array.isArray(tags) ? tags : tag ? [tag] : [],
       description,
       stage,
       email,

@@ -10,7 +10,13 @@ import {
   MobileFilterButton,
 } from "@/components/FilterShared";
 import Modal from "@/components/Modal";
-import { TAGS, STAGES, isValidPhone, isValidEmail, isValidWebsite } from "@/lib/startupConstants";
+import {
+  TAGS,
+  STAGES,
+  isValidPhone,
+  isValidEmail,
+  isValidWebsite,
+} from "@/lib/startupConstants";
 import { PhoneField, EmailField, WebsiteField } from "@/components/PhoneField";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -36,37 +42,57 @@ const SORT_OPTIONS = [
 
 // Single rainbow across all 15 items — types first (filter order), then tags
 const TYPE_COLOURS = {
-  "Startup":              { dot: "bg-red-400",     badge: "bg-red-100 text-red-700",         card: "bg-white border-l-4 border-l-red-400 border-slate-100"     },
-  "Investor":             { dot: "bg-orange-400",  badge: "bg-orange-100 text-orange-700",   card: "bg-white border-l-4 border-l-orange-400 border-slate-100"  },
-  "Research Institution": { dot: "bg-amber-400",   badge: "bg-amber-100 text-amber-700",     card: "bg-white border-l-4 border-l-amber-400 border-slate-100"   },
-  "Industry Partner":     { dot: "bg-yellow-400",  badge: "bg-yellow-100 text-yellow-700",   card: "bg-white border-l-4 border-l-yellow-400 border-slate-100"  },
-  "Government":           { dot: "bg-lime-400",    badge: "bg-lime-100 text-lime-700",       card: "bg-white border-l-4 border-l-lime-400 border-slate-100"    },
+  Startup: {
+    dot: "bg-red-400",
+    badge: "bg-red-100 text-red-700",
+    card: "bg-white border-l-4 border-l-red-400 border-slate-100",
+  },
+  Investor: {
+    dot: "bg-orange-400",
+    badge: "bg-orange-100 text-orange-700",
+    card: "bg-white border-l-4 border-l-orange-400 border-slate-100",
+  },
+  "Research Institution": {
+    dot: "bg-amber-400",
+    badge: "bg-amber-100 text-amber-700",
+    card: "bg-white border-l-4 border-l-amber-400 border-slate-100",
+  },
+  "Industry Partner": {
+    dot: "bg-yellow-400",
+    badge: "bg-yellow-100 text-yellow-700",
+    card: "bg-white border-l-4 border-l-yellow-400 border-slate-100",
+  },
+  Government: {
+    dot: "bg-lime-400",
+    badge: "bg-lime-100 text-lime-700",
+    card: "bg-white border-l-4 border-l-lime-400 border-slate-100",
+  },
 };
 
 const TAG_COLOURS = {
-  AgriTech:                "bg-green-100 text-green-700",
-  CleanTech:               "bg-emerald-100 text-emerald-700",
-  "Creative Industries":   "bg-teal-100 text-teal-700",
-  EdTech:                  "bg-cyan-100 text-cyan-700",
-  FinTech:                 "bg-sky-100 text-sky-700",
-  HealthTech:              "bg-blue-100 text-blue-700",
-  Manufacturing:           "bg-indigo-100 text-indigo-700",
+  AgriTech: "bg-green-100 text-green-700",
+  CleanTech: "bg-emerald-100 text-emerald-700",
+  "Creative Industries": "bg-teal-100 text-teal-700",
+  EdTech: "bg-cyan-100 text-cyan-700",
+  FinTech: "bg-sky-100 text-sky-700",
+  HealthTech: "bg-blue-100 text-blue-700",
+  Manufacturing: "bg-indigo-100 text-indigo-700",
   "Professional Services": "bg-violet-100 text-violet-700",
   "Tourism & Hospitality": "bg-fuchsia-100 text-fuchsia-700",
-  Other:                   "bg-slate-100 text-slate-500",
+  Other: "bg-slate-100 text-slate-500",
 };
 
 const TAG_DOT = {
-  AgriTech:                "bg-green-400",
-  CleanTech:               "bg-emerald-400",
-  "Creative Industries":   "bg-teal-400",
-  EdTech:                  "bg-cyan-400",
-  FinTech:                 "bg-sky-400",
-  HealthTech:              "bg-blue-400",
-  Manufacturing:           "bg-indigo-400",
+  AgriTech: "bg-green-400",
+  CleanTech: "bg-emerald-400",
+  "Creative Industries": "bg-teal-400",
+  EdTech: "bg-cyan-400",
+  FinTech: "bg-sky-400",
+  HealthTech: "bg-blue-400",
+  Manufacturing: "bg-indigo-400",
   "Professional Services": "bg-violet-400",
   "Tourism & Hospitality": "bg-fuchsia-400",
-  Other:                   "bg-slate-400",
+  Other: "bg-slate-400",
 };
 
 const AVATAR_COLOURS = [
@@ -91,7 +117,7 @@ const EMPTY_FILTERS = {
   founded: [YEAR_MIN, YEAR_MAX],
 };
 const CURRENT_YEAR = new Date().getFullYear();
-const POLL_INTERVAL = 1000;
+const POLL_INTERVAL = 5000;
 
 const STARTUP_TYPES = new Set(["Startup"]);
 const HAS_METRICS_TYPES = new Set(["Startup", "Research Institution"]);
@@ -125,7 +151,9 @@ const OPT = (
 
 function Field({ label, optional, className, children }) {
   return (
-    <div className={["flex flex-col gap-1", className].filter(Boolean).join(" ")}>
+    <div
+      className={["flex flex-col gap-1", className].filter(Boolean).join(" ")}
+    >
       <label className={LABEL}>
         {label} {optional && OPT}
       </label>
@@ -138,7 +166,8 @@ function Field({ label, optional, className, children }) {
 
 function FilterPanel({ filters, setFilters, toggle, clearAll, entries }) {
   const typeCount = (type) => entries.filter((e) => e.type === type).length;
-  const tagCount = (tag) => entries.filter((e) => entryTags(e).includes(tag)).length;
+  const tagCount = (tag) =>
+    entries.filter((e) => entryTags(e).includes(tag)).length;
   const stageCount = (stage) => entries.filter((e) => e.stage === stage).length;
 
   const teamActive =
@@ -272,7 +301,10 @@ function AddListingForm({ open, onClose, onAdded }) {
       return;
     }
     if (!isValidPhone(form.phone)) {
-      toast.error("Invalid phone number", "Enter a complete Australian number or leave it blank.");
+      toast.error(
+        "Invalid phone number",
+        "Enter a complete Australian number or leave it blank.",
+      );
       return;
     }
     if (!isValidEmail(form.email)) {
@@ -309,7 +341,10 @@ function AddListingForm({ open, onClose, onAdded }) {
       onAdded();
     } else {
       const resBody = await res.json().catch(() => ({}));
-      toast.error("Failed to submit listing", resBody.error ?? `Server error ${res.status}`);
+      toast.error(
+        "Failed to submit listing",
+        resBody.error ?? `Server error ${res.status}`,
+      );
     }
     setSubmitting(false);
   };
@@ -319,19 +354,37 @@ function AddListingForm({ open, onClose, onAdded }) {
       <form onSubmit={handleSubmit}>
         <div className="px-6 pt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Field label="Type">
-            <select required value={form.type} onChange={set("type")} className={INPUT}>
+            <select
+              required
+              value={form.type}
+              onChange={set("type")}
+              className={INPUT}
+            >
               <option value="">Select…</option>
-              {ENTITY_TYPES.map((t) => <option key={t}>{t}</option>)}
+              {ENTITY_TYPES.map((t) => (
+                <option key={t}>{t}</option>
+              ))}
             </select>
           </Field>
           <Field label="Name">
-            <input required minLength={2} maxLength={100} value={form.name} onChange={set("name")} placeholder="Organisation or venture name" className={INPUT} />
+            <input
+              required
+              minLength={2}
+              maxLength={100}
+              value={form.name}
+              onChange={set("name")}
+              placeholder="Organisation or venture name"
+              className={INPUT}
+            />
           </Field>
 
           <Field label="Sectors" className="sm:col-span-2">
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-2.5 mt-1">
               {TAGS.map((tag) => (
-                <label key={tag} className="flex items-center gap-2 text-sm cursor-pointer select-none">
+                <label
+                  key={tag}
+                  className="flex items-center gap-2 text-sm cursor-pointer select-none"
+                >
                   <input
                     type="checkbox"
                     checked={form.tags.includes(tag)}
@@ -343,55 +396,141 @@ function AddListingForm({ open, onClose, onAdded }) {
               ))}
             </div>
             {form.tags.length === 0 && (
-              <p className="text-xs text-slate-400 mt-1.5">Select at least one sector.</p>
+              <p className="text-xs text-slate-400 mt-1.5">
+                Select at least one sector.
+              </p>
             )}
           </Field>
 
           <Field label="Description" className="sm:col-span-2">
-            <textarea required minLength={20} maxLength={500} value={form.description} onChange={set("description")}
-              placeholder="Describe what you do. (20–500 characters)" rows={3} className={`${INPUT} resize-none`} />
-            <span className="text-xs text-slate-400 text-right">{form.description.length}/500</span>
+            <textarea
+              required
+              minLength={20}
+              maxLength={500}
+              value={form.description}
+              onChange={set("description")}
+              placeholder="Describe what you do. (20–500 characters)"
+              rows={3}
+              className={`${INPUT} resize-none`}
+            />
+            <span className="text-xs text-slate-400 text-right">
+              {form.description.length}/500
+            </span>
           </Field>
 
           {isStartup && (
             <Field label="Stage">
-              <select required value={form.stage} onChange={set("stage")} className={INPUT}>
+              <select
+                required
+                value={form.stage}
+                onChange={set("stage")}
+                className={INPUT}
+              >
                 <option value="">Select…</option>
-                {STAGES.map((s) => <option key={s}>{s}</option>)}
+                {STAGES.map((s) => (
+                  <option key={s}>{s}</option>
+                ))}
               </select>
             </Field>
           )}
 
           {hasMetrics && (
             <>
-              <Field label={isStartup ? "Founded Year" : "Established Year"} optional={!isStartup}>
-                <input type="number" value={form.year} onChange={set("year")} placeholder={String(CURRENT_YEAR)} min={1990} max={CURRENT_YEAR} className={INPUT} />
+              <Field
+                label={isStartup ? "Founded Year" : "Established Year"}
+                optional={!isStartup}
+              >
+                <input
+                  type="number"
+                  value={form.year}
+                  onChange={set("year")}
+                  placeholder={String(CURRENT_YEAR)}
+                  min={1990}
+                  max={CURRENT_YEAR}
+                  className={INPUT}
+                />
               </Field>
               <Field label="Team Size" optional={!isStartup}>
-                <input type="number" value={form.employees} onChange={set("employees")} placeholder="1" min={1} max={100000} className={INPUT} />
+                <input
+                  type="number"
+                  value={form.employees}
+                  onChange={set("employees")}
+                  placeholder="1"
+                  min={1}
+                  max={100000}
+                  className={INPUT}
+                />
               </Field>
             </>
           )}
 
           <Field label="Email" optional>
-            <EmailField value={form.email} onChange={(v) => setForm((f) => ({ ...f, email: v }))} className={INPUT} />
+            <EmailField
+              value={form.email}
+              onChange={(v) => setForm((f) => ({ ...f, email: v }))}
+              className={INPUT}
+            />
           </Field>
           <Field label="Website" optional>
-            <WebsiteField value={form.website} onChange={(v) => setForm((f) => ({ ...f, website: v }))} className={INPUT} />
+            <WebsiteField
+              value={form.website}
+              onChange={(v) => setForm((f) => ({ ...f, website: v }))}
+              className={INPUT}
+            />
           </Field>
           <Field label="Phone" optional>
-            <PhoneField value={form.phone} onChange={(v) => setForm((f) => ({ ...f, phone: v }))} className={INPUT} />
+            <PhoneField
+              value={form.phone}
+              onChange={(v) => setForm((f) => ({ ...f, phone: v }))}
+              className={INPUT}
+            />
           </Field>
         </div>
-        <div className="sticky bottom-0 bg-white border-t border-slate-100 mt-6 px-6 py-4 flex items-center justify-end gap-3">
-          <button type="button" onClick={onClose}
-            className="text-sm font-semibold px-4 py-2 rounded-xl text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition-colors">
-            Cancel
-          </button>
-          <button type="submit" disabled={submitting}
-            className="bg-amber-400 text-stone-900 font-bold text-sm px-6 py-2.5 rounded-xl hover:bg-amber-300 transition-colors disabled:opacity-50">
-            {submitting ? "Submitting…" : "Submit Listing"}
-          </button>
+        <div className="sticky bottom-0 bg-white border-t border-slate-100 mt-6 px-6 py-4 flex flex-col gap-3">
+          <label className="flex items-start gap-2.5 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              required
+              className="mt-0.5 w-4 h-4 rounded border-slate-300 text-amber-400 focus:ring-amber-300 shrink-0"
+            />
+            <span className="text-xs text-slate-500">
+              I have read and agree to the{" "}
+              <a
+                href="/terms"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-slate-700 underline hover:text-amber-600"
+              >
+                Terms and Conditions
+              </a>{" "}
+              and{" "}
+              <a
+                href="/privacy"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-slate-700 underline hover:text-amber-600"
+              >
+                Privacy Policy
+              </a>
+              .
+            </span>
+          </label>
+          <div className="flex items-center justify-end gap-3">
+            <button
+              type="button"
+              onClick={onClose}
+              className="text-sm font-semibold px-4 py-2 rounded-xl text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={submitting}
+              className="bg-amber-400 text-stone-900 font-bold text-sm px-6 py-2.5 rounded-xl hover:bg-amber-300 transition-colors disabled:opacity-50"
+            >
+              {submitting ? "Submitting…" : "Submit Listing"}
+            </button>
+          </div>
         </div>
       </form>
     </Modal>
@@ -407,9 +546,24 @@ function DirectoryCard({ entry, isNew }) {
   const tags = entryTags(entry);
 
   const contacts = [
-    entry.email && { label: "Email", href: `mailto:${entry.email}`, value: entry.email, newTab: false },
-    entry.website && { label: "Website", href: entry.website, value: entry.website, newTab: true },
-    entry.phone && { label: "Phone", href: `tel:${entry.phone}`, value: entry.phone, newTab: false },
+    entry.email && {
+      label: "Email",
+      href: `mailto:${entry.email}`,
+      value: entry.email,
+      newTab: false,
+    },
+    entry.website && {
+      label: "Website",
+      href: entry.website,
+      value: entry.website,
+      newTab: true,
+    },
+    entry.phone && {
+      label: "Phone",
+      href: `tel:${entry.phone}`,
+      value: entry.phone,
+      newTab: false,
+    },
   ].filter(Boolean);
 
   return (
@@ -433,28 +587,47 @@ function DirectoryCard({ entry, isNew }) {
           transition={{ duration: 1.8, delay: 0.3, ease: "easeOut" }}
         />
       )}
-      <div className={`w-14 h-14 rounded-xl shrink-0 flex items-center justify-center font-bold text-lg select-none ${av}`}>
+      <div
+        className={`w-14 h-14 rounded-xl shrink-0 flex items-center justify-center font-bold text-lg select-none ${av}`}
+      >
         {initials(entry.name)}
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="font-semibold text-slate-800 text-base">{entry.name}</span>
+          <span className="font-semibold text-slate-800 text-base">
+            {entry.name}
+          </span>
           {entry.type && (
-            <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${TYPE_COLOURS[entry.type]?.badge ?? "bg-slate-100 text-slate-500"}`}>
+            <span
+              className={`text-xs font-medium px-2 py-0.5 rounded-full ${TYPE_COLOURS[entry.type]?.badge ?? "bg-slate-100 text-slate-500"}`}
+            >
               {entry.type}
             </span>
           )}
           {tags.map((tag) => (
-            <span key={tag} className={`text-xs font-medium px-2 py-0.5 rounded-full ${TAG_COLOURS[tag] ?? TAG_COLOURS.Other}`}>
+            <span
+              key={tag}
+              className={`text-xs font-medium px-2 py-0.5 rounded-full ${TAG_COLOURS[tag] ?? TAG_COLOURS.Other}`}
+            >
               {tag}
             </span>
           ))}
         </div>
-        <p className="text-sm text-slate-500 mt-1 leading-snug">{entry.description}</p>
+        <p className="text-sm text-slate-500 mt-1 leading-snug">
+          {entry.description}
+        </p>
         <div className="flex items-center gap-4 mt-2 flex-wrap">
-          {entry.year && <span className="text-xs text-slate-400">Est. {entry.year}</span>}
-          {entry.employees && <span className="text-xs text-slate-400">{entry.employees} people</span>}
-          {entry.stage && <span className="text-xs text-slate-400">{entry.stage}</span>}
+          {entry.year && (
+            <span className="text-xs text-slate-400">Est. {entry.year}</span>
+          )}
+          {entry.employees && (
+            <span className="text-xs text-slate-400">
+              {entry.employees} people
+            </span>
+          )}
+          {entry.stage && (
+            <span className="text-xs text-slate-400">{entry.stage}</span>
+          )}
           {contacts.length > 0 && (
             <button
               onClick={() => setContactOpen((o) => !o)}
@@ -479,7 +652,12 @@ function DirectoryCard({ entry, isNew }) {
                     <span className="w-14 font-semibold text-slate-400 uppercase tracking-wide shrink-0">
                       {label}
                     </span>
-                    <a href={href} target={newTab ? "_blank" : undefined} rel="noreferrer" className="text-amber-600 hover:underline truncate">
+                    <a
+                      href={href}
+                      target={newTab ? "_blank" : undefined}
+                      rel="noreferrer"
+                      className="text-amber-600 hover:underline truncate"
+                    >
                       {value}
                     </a>
                   </div>
@@ -525,6 +703,7 @@ function StartupsPanel({ showForm = true }) {
   const [newIds, setNewIds] = useState(new Set());
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [formOpen, setFormOpen] = useState(false);
+  // null on first fetch; skip the "new item" highlight so initial load doesn't flash everything.
   const seenIds = useRef(null);
   const newIdTimer = useRef(null);
   const { toast } = useToast();
@@ -547,7 +726,13 @@ function StartupsPanel({ showForm = true }) {
         setEntries(data);
         setLoading(false);
       })
-      .catch(() => toast.error("Could not load directory", "Check your connection", "poll-startups"));
+      .catch(() =>
+        toast.error(
+          "Could not load directory",
+          "Check your connection",
+          "poll-startups",
+        ),
+      );
   }, [toast]);
 
   useEffect(() => {
@@ -587,12 +772,22 @@ function StartupsPanel({ showForm = true }) {
         if (!tags.some((t) => filters.tags.has(t))) return false;
       }
       if (filters.stages.size > 0 && !filters.stages.has(e.stage)) return false;
-      if (teamActive && (e.employees < filters.teamSize[0] || e.employees > filters.teamSize[1]))
+      if (
+        teamActive &&
+        (e.employees < filters.teamSize[0] || e.employees > filters.teamSize[1])
+      )
         return false;
-      if (yearActive && (e.year < filters.founded[0] || e.year > filters.founded[1]))
+      if (
+        yearActive &&
+        (e.year < filters.founded[0] || e.year > filters.founded[1])
+      )
         return false;
       const q = search.toLowerCase();
-      if (q && !e.name.toLowerCase().includes(q) && !e.description.toLowerCase().includes(q))
+      if (
+        q &&
+        !e.name.toLowerCase().includes(q) &&
+        !e.description.toLowerCase().includes(q)
+      )
         return false;
       return true;
     })
@@ -601,6 +796,7 @@ function StartupsPanel({ showForm = true }) {
       const mul = dir === "asc" ? 1 : -1;
       if (field === "name") return mul * a.name.localeCompare(b.name);
       if (field === "year") {
+        // Entries without a value sort to the end regardless of direction.
         const ay = a.year ?? (dir === "asc" ? Infinity : -Infinity);
         const by = b.year ?? (dir === "asc" ? Infinity : -Infinity);
         return mul * (ay - by);
@@ -652,7 +848,9 @@ function StartupsPanel({ showForm = true }) {
               className="shrink-0 border border-slate-200 rounded-lg px-2 py-2 text-sm text-slate-700 bg-white focus:outline-none focus:ring-2 focus:ring-slate-300"
             >
               {SORT_OPTIONS.map(([value, label]) => (
-                <option key={value} value={value}>{label}</option>
+                <option key={value} value={value}>
+                  {label}
+                </option>
               ))}
             </select>
             <span className="shrink-0 text-xs text-slate-400 whitespace-nowrap tabular-nums">
@@ -676,7 +874,11 @@ function StartupsPanel({ showForm = true }) {
             <FilterPanel {...filterPanelProps} />
           </div>
           <div className="flex-1 min-w-0 flex flex-col gap-3">
-            <Modal open={mobileFiltersOpen} onClose={() => setMobileFiltersOpen(false)} variant="sheet">
+            <Modal
+              open={mobileFiltersOpen}
+              onClose={() => setMobileFiltersOpen(false)}
+              variant="sheet"
+            >
               <div className="px-4 py-2">
                 <FilterPanel {...filterPanelProps} />
               </div>
@@ -685,18 +887,26 @@ function StartupsPanel({ showForm = true }) {
                   onClick={() => setMobileFiltersOpen(false)}
                   className="w-full bg-slate-800 text-white font-bold text-sm py-3 rounded-xl hover:bg-slate-700 transition-colors"
                 >
-                  {visible.length === 1 ? "Show 1 result" : `Show ${visible.length} results`}
+                  {visible.length === 1
+                    ? "Show 1 result"
+                    : `Show ${visible.length} results`}
                 </button>
               </div>
             </Modal>
             {loading ? (
               Array.from({ length: 4 }, (_, i) => <SkeletonCard key={i} />)
             ) : visible.length === 0 ? (
-              <p className="text-sm text-slate-400 text-center py-8">No listings match your filters.</p>
+              <p className="text-sm text-slate-400 text-center py-8">
+                No listings match your filters.
+              </p>
             ) : (
               <AnimatePresence>
                 {visible.map((entry) => (
-                  <DirectoryCard key={entry._id} entry={entry} isNew={newIds.has(entry._id)} />
+                  <DirectoryCard
+                    key={entry._id}
+                    entry={entry}
+                    isNew={newIds.has(entry._id)}
+                  />
                 ))}
               </AnimatePresence>
             )}

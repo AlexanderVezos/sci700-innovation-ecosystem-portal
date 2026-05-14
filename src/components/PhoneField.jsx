@@ -1,12 +1,31 @@
 import { useState } from "react";
-import { formatPhone, isValidPhone, isValidEmail, isValidWebsite, autoFormatWebsite } from "@/lib/startupConstants";
+import {
+  formatPhone,
+  isValidPhone,
+  isValidEmail,
+  isValidWebsite,
+  autoFormatWebsite,
+} from "@/lib/startupConstants";
 
 // ─── Shared validation UI ─────────────────────────────────────────────────────
 
-function ValidatedInput({ value, onChange, onBlur, placeholder, type = "text", className, isValid, hint }) {
+function ValidatedInput({
+  value,
+  onChange,
+  onBlur,
+  placeholder,
+  type = "text",
+  className,
+  isValid,
+  hint,
+}) {
   const showValid = isValid === true;
   const showInvalid = isValid === false;
-  const ringClass = showValid ? "ring-1 ring-emerald-400" : showInvalid ? "ring-1 ring-red-400" : "";
+  const ringClass = showValid
+    ? "ring-1 ring-emerald-400"
+    : showInvalid
+      ? "ring-1 ring-red-400"
+      : "";
 
   return (
     <div className="flex flex-col gap-1">
@@ -20,7 +39,9 @@ function ValidatedInput({ value, onChange, onBlur, placeholder, type = "text", c
           className={`${className} ${ringClass} pr-9`}
         />
         {(showValid || showInvalid) && (
-          <span className={`absolute right-3 top-1/2 -translate-y-1/2 text-sm font-bold pointer-events-none ${showValid ? "text-emerald-500" : "text-red-400"}`}>
+          <span
+            className={`absolute right-3 top-1/2 -translate-y-1/2 text-sm font-bold pointer-events-none ${showValid ? "text-emerald-500" : "text-red-400"}`}
+          >
             {showValid ? "✓" : "✕"}
           </span>
         )}

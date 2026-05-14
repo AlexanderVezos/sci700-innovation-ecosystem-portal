@@ -23,13 +23,17 @@ function Navbar() {
   const { reduceMotion, toggleReduceMotion } = useMotion();
 
   const isHome = location.pathname === "/";
-  const hasStickyBar = ["/directory", "/events", "/opportunities"].includes(location.pathname);
+  const hasStickyBar = ["/directory", "/events", "/opportunities"].includes(
+    location.pathname,
+  );
 
   useEffect(() => {
     const activeIndex = links.findIndex((l) => l.to === location.pathname);
     const activeEl = linkRefs.current[activeIndex];
     const navEl = navRef.current;
     if (activeEl && navEl) {
+      // Subtract nav's own viewport offset so the indicator position is relative
+      // to the nav container, not the viewport.
       const navLeft = navEl.getBoundingClientRect().left;
       const linkLeft = activeEl.getBoundingClientRect().left;
       setIndicatorStyle({
@@ -56,7 +60,11 @@ function Navbar() {
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-52 flex items-center justify-between px-6 lg:px-8 py-4 transition-all duration-300 ${
-        transparent ? "bg-transparent" : hasStickyBar ? "bg-white" : "bg-white shadow-sm"
+        transparent
+          ? "bg-transparent"
+          : hasStickyBar
+            ? "bg-white"
+            : "bg-white shadow-sm"
       }`}
     >
       {/* Logo — always links home */}

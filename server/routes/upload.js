@@ -4,7 +4,7 @@ import requireAdmin from "../requireAdmin.js";
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key:    process.env.CLOUDINARY_API_KEY,
+  api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
@@ -15,7 +15,9 @@ export default function () {
   router.post("/", requireAdmin, async (req, res) => {
     const { data } = req.body;
     if (!data || !data.startsWith("data:image/")) {
-      return res.status(400).json({ error: "Expected a base64 image data URI." });
+      return res
+        .status(400)
+        .json({ error: "Expected a base64 image data URI." });
     }
     try {
       const result = await cloudinary.uploader.upload(data, {

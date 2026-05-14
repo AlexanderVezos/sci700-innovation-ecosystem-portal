@@ -19,7 +19,10 @@ export default function (db) {
   router.get("/", async (_req, res) => {
     const today = new Date().toISOString().slice(0, 10);
     res.json(
-      await events.find({ status: "approved", date: { $gte: today } }).sort({ date: 1 }).toArray(),
+      await events
+        .find({ status: "approved", date: { $gte: today } })
+        .sort({ date: 1 })
+        .toArray(),
     );
   });
 

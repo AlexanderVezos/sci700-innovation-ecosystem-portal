@@ -11,16 +11,66 @@ import PageTransition from "@/components/PageTransition";
 import { TAGS } from "@/lib/startupConstants";
 
 const TAG_STYLE = {
-  AgriTech:               { bg: "rgba(74,222,128,0.15)",  stroke: "#4ade80", text: "#bbf7d0", glow: "#4ade80" },
-  CleanTech:              { bg: "rgba(52,211,153,0.15)",  stroke: "#34d399", text: "#a7f3d0", glow: "#34d399" },
-  "Creative Industries":  { bg: "rgba(45,212,191,0.15)",  stroke: "#2dd4bf", text: "#99f6e4", glow: "#2dd4bf" },
-  EdTech:                 { bg: "rgba(34,211,238,0.15)",  stroke: "#22d3ee", text: "#a5f3fc", glow: "#22d3ee" },
-  FinTech:                { bg: "rgba(56,189,248,0.15)",  stroke: "#38bdf8", text: "#bae6fd", glow: "#38bdf8" },
-  HealthTech:             { bg: "rgba(96,165,250,0.15)",  stroke: "#60a5fa", text: "#bfdbfe", glow: "#60a5fa" },
-  Manufacturing:          { bg: "rgba(129,140,248,0.15)", stroke: "#818cf8", text: "#c7d2fe", glow: "#818cf8" },
-  "Professional Services":{ bg: "rgba(167,139,250,0.15)", stroke: "#a78bfa", text: "#ddd6fe", glow: "#a78bfa" },
-  "Tourism & Hospitality":{ bg: "rgba(232,121,249,0.15)", stroke: "#e879f9", text: "#f5d0fe", glow: "#e879f9" },
-  Other:                  { bg: "rgba(148,163,184,0.15)", stroke: "#94a3b8", text: "#cbd5e1", glow: "#94a3b8" },
+  AgriTech: {
+    bg: "rgba(74,222,128,0.15)",
+    stroke: "#4ade80",
+    text: "#bbf7d0",
+    glow: "#4ade80",
+  },
+  CleanTech: {
+    bg: "rgba(52,211,153,0.15)",
+    stroke: "#34d399",
+    text: "#a7f3d0",
+    glow: "#34d399",
+  },
+  "Creative Industries": {
+    bg: "rgba(45,212,191,0.15)",
+    stroke: "#2dd4bf",
+    text: "#99f6e4",
+    glow: "#2dd4bf",
+  },
+  EdTech: {
+    bg: "rgba(34,211,238,0.15)",
+    stroke: "#22d3ee",
+    text: "#a5f3fc",
+    glow: "#22d3ee",
+  },
+  FinTech: {
+    bg: "rgba(56,189,248,0.15)",
+    stroke: "#38bdf8",
+    text: "#bae6fd",
+    glow: "#38bdf8",
+  },
+  HealthTech: {
+    bg: "rgba(96,165,250,0.15)",
+    stroke: "#60a5fa",
+    text: "#bfdbfe",
+    glow: "#60a5fa",
+  },
+  Manufacturing: {
+    bg: "rgba(129,140,248,0.15)",
+    stroke: "#818cf8",
+    text: "#c7d2fe",
+    glow: "#818cf8",
+  },
+  "Professional Services": {
+    bg: "rgba(167,139,250,0.15)",
+    stroke: "#a78bfa",
+    text: "#ddd6fe",
+    glow: "#a78bfa",
+  },
+  "Tourism & Hospitality": {
+    bg: "rgba(232,121,249,0.15)",
+    stroke: "#e879f9",
+    text: "#f5d0fe",
+    glow: "#e879f9",
+  },
+  Other: {
+    bg: "rgba(148,163,184,0.15)",
+    stroke: "#94a3b8",
+    text: "#cbd5e1",
+    glow: "#94a3b8",
+  },
 };
 
 const DEFAULT_STYLE = TAG_STYLE.Other;
@@ -41,14 +91,19 @@ function gradientId(tags) {
 }
 
 function initials(name) {
-  return name.split(/\s+/).slice(0, 2).map((w) => w[0]?.toUpperCase() ?? "").join("");
+  return name
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((w) => w[0]?.toUpperCase() ?? "")
+    .join("");
 }
 
 function bubbleR(employees, viewportMin, nodeCount = 1) {
   const scale = Math.max(0.7, 1 - Math.max(0, nodeCount - 20) / 520);
   const minR = viewportMin * 0.028 * scale;
   const maxR = viewportMin * 0.065 * scale;
-  const t = (Math.min(65, Math.sqrt(Math.max(employees || 12, 1)) * 9) - 30) / 35;
+  const t =
+    (Math.min(65, Math.sqrt(Math.max(employees || 12, 1)) * 9) - 30) / 35;
   return minR + Math.max(0, t) * (maxR - minR);
 }
 
@@ -78,9 +133,21 @@ function DetailPanel({ node, onClose }) {
   const s = primaryStyle(node);
   const tags = getNodeTags(node);
   const contacts = [
-    node.email   && { label: "Email",   href: `mailto:${node.email}`,   value: node.email },
-    node.website && { label: "Website", href: node.website,              value: node.website },
-    node.phone   && { label: "Phone",   href: `tel:${node.phone}`,       value: node.phone },
+    node.email && {
+      label: "Email",
+      href: `mailto:${node.email}`,
+      value: node.email,
+    },
+    node.website && {
+      label: "Website",
+      href: node.website,
+      value: node.website,
+    },
+    node.phone && {
+      label: "Phone",
+      href: `tel:${node.phone}`,
+      value: node.phone,
+    },
   ].filter(Boolean);
 
   return (
@@ -91,30 +158,49 @@ function DetailPanel({ node, onClose }) {
       exit={{ opacity: 0, x: 32 }}
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
       className="absolute right-5 top-5 bottom-5 rounded-2xl shadow-2xl flex flex-col overflow-hidden z-20"
-      style={{ background: "rgba(15,23,42,0.95)", border: `1px solid ${s.stroke}40`, width: "260px" }}
+      style={{
+        background: "rgba(15,23,42,0.95)",
+        border: `1px solid ${s.stroke}40`,
+        width: "260px",
+      }}
     >
       <div className="p-5 flex flex-col gap-3 flex-1 overflow-y-auto">
-        <button onClick={onClose} className="self-end text-slate-500 hover:text-slate-300 transition-colors text-xs">
+        <button
+          onClick={onClose}
+          className="self-end text-slate-500 hover:text-slate-300 transition-colors text-xs"
+        >
           ✕ Close
         </button>
 
         <div
           className="w-14 h-14 rounded-xl flex items-center justify-center font-black text-xl select-none shrink-0"
-          style={{ background: s.bg, color: s.text, border: `1.5px solid ${s.stroke}` }}
+          style={{
+            background: s.bg,
+            color: s.text,
+            border: `1.5px solid ${s.stroke}`,
+          }}
         >
           {initials(node.name)}
         </div>
 
         <div>
-          <h2 className="font-black text-white text-base leading-tight">{node.name}</h2>
+          <h2 className="font-black text-white text-base leading-tight">
+            {node.name}
+          </h2>
           {node.type && (
-            <span className="text-xs text-slate-500 mt-0.5 block">{node.type}</span>
+            <span className="text-xs text-slate-500 mt-0.5 block">
+              {node.type}
+            </span>
           )}
           <div className="flex flex-wrap gap-1 mt-1.5">
             {tags.map((tag) => {
               const ts = TAG_STYLE[tag] ?? DEFAULT_STYLE;
               return (
-                <span key={tag} className="text-xs font-medium px-2 py-0.5 rounded-full" style={{ background: ts.bg, color: ts.text }}>
+                <span
+                  key={tag}
+                  className="text-xs font-medium px-2 py-0.5 rounded-full"
+                  style={{ background: ts.bg, color: ts.text }}
+                >
                   {tag}
                 </span>
               );
@@ -122,23 +208,39 @@ function DetailPanel({ node, onClose }) {
           </div>
         </div>
 
-        <p className="text-sm leading-relaxed" style={{ color: "#94a3b8" }}>{node.description}</p>
+        <p className="text-sm leading-relaxed" style={{ color: "#94a3b8" }}>
+          {node.description}
+        </p>
 
-        <div className="flex flex-col gap-1 text-xs" style={{ color: "#64748b" }}>
-          {node.year      && <span>Est. {node.year}</span>}
+        <div
+          className="flex flex-col gap-1 text-xs"
+          style={{ color: "#64748b" }}
+        >
+          {node.year && <span>Est. {node.year}</span>}
           {node.employees && <span>{node.employees} people</span>}
-          {node.stage     && <span>{node.stage}</span>}
+          {node.stage && <span>{node.stage}</span>}
         </div>
 
         {contacts.length > 0 && (
-          <div className="pt-3 border-t flex flex-col gap-1.5" style={{ borderColor: "#1e293b" }}>
+          <div
+            className="pt-3 border-t flex flex-col gap-1.5"
+            style={{ borderColor: "#1e293b" }}
+          >
             {contacts.map(({ label, href, value }) => (
               <div key={label} className="flex items-center gap-2 text-xs">
-                <span className="w-14 font-semibold uppercase tracking-wide shrink-0" style={{ color: "#475569" }}>
+                <span
+                  className="w-14 font-semibold uppercase tracking-wide shrink-0"
+                  style={{ color: "#475569" }}
+                >
                   {label}
                 </span>
-                <a href={href} target={label === "Website" ? "_blank" : undefined} rel="noreferrer"
-                  className="truncate hover:underline" style={{ color: "#f59e0b" }}>
+                <a
+                  href={href}
+                  target={label === "Website" ? "_blank" : undefined}
+                  rel="noreferrer"
+                  className="truncate hover:underline"
+                  style={{ color: "#f59e0b" }}
+                >
                   {value}
                 </a>
               </div>
@@ -165,8 +267,12 @@ function EcosystemMap() {
   const skipRebuild = useRef(false);
   const newNodeTimer = useRef(null);
 
-  useEffect(() => { dimsRef.current = dims; }, [dims]);
-  useEffect(() => { filterTagRef.current = filterTag; }, [filterTag]);
+  useEffect(() => {
+    dimsRef.current = dims;
+  }, [dims]);
+  useEffect(() => {
+    filterTagRef.current = filterTag;
+  }, [filterTag]);
 
   const visibleSelected =
     selected && (filterTag === "All" || nodeMatchesFilter(selected, filterTag))
@@ -179,6 +285,8 @@ function EcosystemMap() {
       .then((data) => {
         const sim = simRef.current;
         if (sim && sim.nodes().length > 0) {
+          // Flag the startups-change effect to skip a full rebuild — we're
+          // handling incremental insertion here instead.
           skipRebuild.current = true;
           const existingIds = new Set(sim.nodes().map((n) => n._id));
           const brandNew = data.filter((s) => !existingIds.has(s._id));
@@ -195,12 +303,22 @@ function EcosystemMap() {
               y: h / 2 + (Math.random() - 0.5) * 100,
             }));
             sim.nodes([...existingNodes, ...newSimNodes]);
-            sim.force("collide", forceCollide((d) => d.r + 4).strength(0.9).iterations(8));
+            sim.force(
+              "collide",
+              forceCollide((d) => d.r + 4)
+                .strength(0.9)
+                .iterations(8),
+            );
             applyForces(sim, w, h, filterTagRef.current);
+            // 0.6 rather than 1.0 — only the new nodes need to settle,
+            // a full alpha restart would destabilize the existing layout.
             sim.alpha(0.6).restart();
             clearTimeout(newNodeTimer.current);
             setNewNodeIds(new Set(brandNew.map((s) => s._id)));
-            newNodeTimer.current = setTimeout(() => setNewNodeIds(new Set()), 3500);
+            newNodeTimer.current = setTimeout(
+              () => setNewNodeIds(new Set()),
+              3500,
+            );
           }
         }
         setStartups(data);
@@ -211,7 +329,10 @@ function EcosystemMap() {
   useEffect(() => {
     fetchStartups();
     const interval = setInterval(fetchStartups, POLL_INTERVAL);
-    return () => { clearInterval(interval); clearTimeout(newNodeTimer.current); };
+    return () => {
+      clearInterval(interval);
+      clearTimeout(newNodeTimer.current);
+    };
   }, [fetchStartups]);
 
   useEffect(() => {
@@ -227,7 +348,10 @@ function EcosystemMap() {
 
   useEffect(() => {
     if (!startups.length) return;
-    if (skipRebuild.current) { skipRebuild.current = false; return; }
+    if (skipRebuild.current) {
+      skipRebuild.current = false;
+      return;
+    }
     simRef.current?.stop();
 
     const { w, h } = dimsRef.current;
@@ -248,7 +372,12 @@ function EcosystemMap() {
     let tick = 0;
     const sim = forceSimulation(initial)
       .force("charge", forceManyBody().strength(-25))
-      .force("collide", forceCollide((d) => d.r + 4).strength(0.9).iterations(8))
+      .force(
+        "collide",
+        forceCollide((d) => d.r + 4)
+          .strength(0.9)
+          .iterations(8),
+      )
       .alphaDecay(0.016)
       .alphaTarget(0)
       .velocityDecay(0.38)
@@ -258,12 +387,14 @@ function EcosystemMap() {
           n.x = Math.max(n.r + 4, Math.min(cw - n.r - 4, n.x));
           n.y = Math.max(n.r + 4, Math.min(ch - n.r - 4, n.y));
         }
-        if (++tick % 3 === 0) setNodes(sim.nodes().map((n) => ({ ...n })));
+        if (++tick % 3 === 0) setNodes(sim.nodes().map((n) => ({ ...n }))); // throttle React updates; D3 ticks at ~60fps
       })
       .on("end", () => setNodes(sim.nodes().map((n) => ({ ...n }))));
 
     applyForces(sim, w, h, filterTagRef.current);
 
+    // Pre-simulate before first paint so nodes don't visibly spawn from the center.
+    // Scales with node count but capped so init time stays bounded.
     const preTicks = Math.min(80 + total * 1.2, 300);
     sim.tick(preTicks);
     for (const n of sim.nodes()) {
@@ -281,7 +412,12 @@ function EcosystemMap() {
     const vMin = Math.min(dims.w, dims.h);
     const total = sim.nodes().length;
     for (const n of sim.nodes()) n.r = bubbleR(n.employees, vMin, total);
-    sim.force("collide", forceCollide((d) => d.r + 4).strength(0.9).iterations(8));
+    sim.force(
+      "collide",
+      forceCollide((d) => d.r + 4)
+        .strength(0.9)
+        .iterations(8),
+    );
     applyForces(sim, dims.w, dims.h, filterTagRef.current);
     sim.alpha(0.3).restart();
   }, [dims]);
@@ -314,9 +450,14 @@ function EcosystemMap() {
 
   return (
     <PageTransition>
-      <div className="flex flex-col" style={{ background: "#080f1e", minHeight: "100vh" }}>
+      <div
+        className="flex flex-col"
+        style={{ background: "#080f1e", minHeight: "100vh" }}
+      >
         <div className="px-8 md:px-16 pt-28 pb-5 flex flex-col gap-4 shrink-0">
-          <h1 className="text-4xl font-black tracking-tighter text-white">Ecosystem Map</h1>
+          <h1 className="text-4xl font-black tracking-tighter text-white">
+            Ecosystem Map
+          </h1>
           <div className="flex gap-2 flex-wrap">
             {["All", ...TAGS].map((t) => (
               <button
@@ -326,7 +467,11 @@ function EcosystemMap() {
                 style={
                   filterTag === t
                     ? { background: "#f59e0b", color: "#1c1917" }
-                    : { background: "rgba(255,255,255,0.07)", color: "rgba(255,255,255,0.5)", border: "1px solid rgba(255,255,255,0.1)" }
+                    : {
+                        background: "rgba(255,255,255,0.07)",
+                        color: "rgba(255,255,255,0.5)",
+                        border: "1px solid rgba(255,255,255,0.1)",
+                      }
                 }
               >
                 {t}
@@ -335,17 +480,46 @@ function EcosystemMap() {
           </div>
         </div>
 
-        <div ref={containerRef} className="flex-1 relative motion-exempt" style={{ minHeight: "500px" }}>
-          <svg width="100%" height="100%" className="absolute inset-0" style={{ overflow: "visible" }} onClick={() => setSelected(null)}>
+        <div
+          ref={containerRef}
+          className="flex-1 relative motion-exempt"
+          style={{ minHeight: "500px" }}
+        >
+          <svg
+            width="100%"
+            height="100%"
+            className="absolute inset-0"
+            style={{ overflow: "visible" }}
+            onClick={() => setSelected(null)}
+          >
             <defs>
               {TAGS.map((tag) => {
                 const s = TAG_STYLE[tag] ?? DEFAULT_STYLE;
                 return (
-                  <filter key={tag} id={`glow-${tag.replace(/[^a-zA-Z]/g, "")}`} x="-50%" y="-50%" width="200%" height="200%">
+                  <filter
+                    key={tag}
+                    id={`glow-${tag.replace(/[^a-zA-Z]/g, "")}`}
+                    x="-50%"
+                    y="-50%"
+                    width="200%"
+                    height="200%"
+                  >
                     <feGaussianBlur stdDeviation="6" result="blur" />
-                    <feFlood floodColor={s.glow} floodOpacity="0.5" result="color" />
-                    <feComposite in="color" in2="blur" operator="in" result="glow" />
-                    <feMerge><feMergeNode in="glow" /><feMergeNode in="SourceGraphic" /></feMerge>
+                    <feFlood
+                      floodColor={s.glow}
+                      floodOpacity="0.5"
+                      result="color"
+                    />
+                    <feComposite
+                      in="color"
+                      in2="blur"
+                      operator="in"
+                      result="glow"
+                    />
+                    <feMerge>
+                      <feMergeNode in="glow" />
+                      <feMergeNode in="SourceGraphic" />
+                    </feMerge>
                   </filter>
                 );
               })}
@@ -353,11 +527,34 @@ function EcosystemMap() {
                 const s0 = TAG_STYLE[tags[0]] ?? DEFAULT_STYLE;
                 const s1 = TAG_STYLE[tags[1]] ?? DEFAULT_STYLE;
                 return (
-                  <linearGradient key={gradientId(tags)} id={gradientId(tags)} x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%"   stopColor={s0.stroke} stopOpacity="0.35" />
-                    <stop offset="46%"  stopColor={s0.stroke} stopOpacity="0.28" />
-                    <stop offset="54%"  stopColor={s1.stroke} stopOpacity="0.28" />
-                    <stop offset="100%" stopColor={s1.stroke} stopOpacity="0.35" />
+                  <linearGradient
+                    key={gradientId(tags)}
+                    id={gradientId(tags)}
+                    x1="0%"
+                    y1="0%"
+                    x2="100%"
+                    y2="100%"
+                  >
+                    <stop
+                      offset="0%"
+                      stopColor={s0.stroke}
+                      stopOpacity="0.35"
+                    />
+                    <stop
+                      offset="46%"
+                      stopColor={s0.stroke}
+                      stopOpacity="0.28"
+                    />
+                    <stop
+                      offset="54%"
+                      stopColor={s1.stroke}
+                      stopOpacity="0.28"
+                    />
+                    <stop
+                      offset="100%"
+                      stopColor={s1.stroke}
+                      stopOpacity="0.35"
+                    />
                   </linearGradient>
                 );
               })}
@@ -378,42 +575,101 @@ function EcosystemMap() {
                 <g
                   key={node._id ?? node.id}
                   transform={`translate(${node.x},${node.y})`}
-                  onClick={(e) => { e.stopPropagation(); handleBubbleClick(node); }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleBubbleClick(node);
+                  }}
                   onMouseEnter={() => setHovered(node.id)}
                   onMouseLeave={() => setHovered(null)}
-                  style={{ cursor: "pointer", opacity: dimmed ? 0.15 : 1, transition: "opacity 0.35s" }}
-                  filter={isHovered || isSelected ? `url(#glow-${glowTag})` : undefined}
+                  style={{
+                    cursor: "pointer",
+                    opacity: dimmed ? 0.15 : 1,
+                    transition: "opacity 0.35s",
+                  }}
+                  filter={
+                    isHovered || isSelected
+                      ? `url(#glow-${glowTag})`
+                      : undefined
+                  }
                 >
                   <motion.g
                     initial={isNew ? { scale: 0, opacity: 0 } : false}
-                    animate={{ scale: isHovered && !isSelected ? 1.06 : 1, opacity: 1 }}
-                    transition={isNew ? { type: "spring", stiffness: 300, damping: 18 } : { duration: 0.15 }}
-                    style={{ transformBox: "fill-box", transformOrigin: "center" }}
+                    animate={{
+                      scale: isHovered && !isSelected ? 1.06 : 1,
+                      opacity: 1,
+                    }}
+                    transition={
+                      isNew
+                        ? { type: "spring", stiffness: 300, damping: 18 }
+                        : { duration: 0.15 }
+                    }
+                    style={{
+                      transformBox: "fill-box",
+                      transformOrigin: "center",
+                    }}
                   >
-                    <circle r={node.r} fill={fill} stroke={isSelected ? "#f59e0b" : s.stroke} strokeWidth={isSelected ? 4 : 1.5} />
+                    <circle
+                      r={node.r}
+                      fill={fill}
+                      stroke={isSelected ? "#f59e0b" : s.stroke}
+                      strokeWidth={isSelected ? 4 : 1.5}
+                    />
                     {isMulti && (
-                      <circle r={node.r} fill="none" stroke={TAG_STYLE[tags[1]]?.stroke ?? s.stroke} strokeWidth="1.5" strokeDasharray="4 3" opacity="0.75" />
+                      <circle
+                        r={node.r}
+                        fill="none"
+                        stroke={TAG_STYLE[tags[1]]?.stroke ?? s.stroke}
+                        strokeWidth="1.5"
+                        strokeDasharray="4 3"
+                        opacity="0.75"
+                      />
                     )}
                     {isNew && (
-                      <motion.circle r={node.r} fill="none" stroke="#f59e0b" strokeWidth={4}
-                        initial={{ opacity: 1 }} animate={{ opacity: 0 }}
-                        transition={{ duration: 3.5, delay: 0.2, ease: "easeOut" }}
+                      <motion.circle
+                        r={node.r}
+                        fill="none"
+                        stroke="#f59e0b"
+                        strokeWidth={4}
+                        initial={{ opacity: 1 }}
+                        animate={{ opacity: 0 }}
+                        transition={{
+                          duration: 3.5,
+                          delay: 0.2,
+                          ease: "easeOut",
+                        }}
                         style={{ pointerEvents: "none" }}
                       />
                     )}
-                    <text textAnchor="middle" dominantBaseline="central"
+                    <text
+                      textAnchor="middle"
+                      dominantBaseline="central"
                       y={node.r > 42 ? -node.r * 0.18 : 0}
-                      fill={s.text} fontSize={node.r * 0.44} fontWeight="800" fontFamily="inherit"
+                      fill={s.text}
+                      fontSize={node.r * 0.44}
+                      fontWeight="800"
+                      fontFamily="inherit"
                       style={{ pointerEvents: "none", userSelect: "none" }}
                     >
                       {initials(node.name)}
                     </text>
                     {node.r > 42 && (
-                      <text textAnchor="middle" dominantBaseline="central" y={node.r * 0.32}
-                        fill={s.text} fontSize={node.r * 0.2} fontWeight="600" fontFamily="inherit"
-                        style={{ pointerEvents: "none", userSelect: "none", opacity: 0.7 }}
+                      <text
+                        textAnchor="middle"
+                        dominantBaseline="central"
+                        y={node.r * 0.32}
+                        fill={s.text}
+                        fontSize={node.r * 0.2}
+                        fontWeight="600"
+                        fontFamily="inherit"
+                        style={{
+                          pointerEvents: "none",
+                          userSelect: "none",
+                          opacity: 0.7,
+                        }}
                       >
-                        {node.name.length > 13 ? node.name.slice(0, 12) + "…" : node.name}
+                        {node.name.length > 13
+                          ? node.name.slice(0, 12) + "…"
+                          : node.name}
                       </text>
                     )}
                   </motion.g>
@@ -424,13 +680,22 @@ function EcosystemMap() {
 
           <AnimatePresence>
             {visibleSelected && (
-              <DetailPanel key={visibleSelected.id} node={visibleSelected} onClose={() => setSelected(null)} />
+              <DetailPanel
+                key={visibleSelected.id}
+                node={visibleSelected}
+                onClose={() => setSelected(null)}
+              />
             )}
           </AnimatePresence>
 
           {nodes.length === 0 && (
             <div className="absolute inset-0 flex items-center justify-center">
-              <p className="text-sm" style={{ color: "rgba(255,255,255,0.25)" }}>No listings found.</p>
+              <p
+                className="text-sm"
+                style={{ color: "rgba(255,255,255,0.25)" }}
+              >
+                No listings found.
+              </p>
             </div>
           )}
         </div>

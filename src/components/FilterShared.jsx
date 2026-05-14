@@ -183,6 +183,8 @@ export function DualRangeSlider({
 }) {
   const trackRef = useRef(null);
   const dragging = useRef(null);
+  // Refs mirror the props so the pointermove/pointerup handlers always read current
+  // values without needing to be re-registered on every render.
   const loRef = useRef(lo);
   const hiRef = useRef(hi);
   const onLoRef = useRef(onLoChange);

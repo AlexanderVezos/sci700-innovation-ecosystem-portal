@@ -28,14 +28,29 @@ function App() {
     if (scrollRef.current) scrollRef.current.scrollTop = 0;
   }, [location.pathname]);
 
-  if (isAdmin) return <><Toaster /><Admin /></>;
-  if (isKiosk) return <><Toaster /><Kiosk /></>;
+  if (isAdmin)
+    return (
+      <>
+        <Toaster />
+        <Admin />
+      </>
+    );
+  if (isKiosk)
+    return (
+      <>
+        <Toaster />
+        <Kiosk />
+      </>
+    );
 
   return (
     <div className="h-screen">
       <Navbar />
       <Toaster />
-      <div ref={scrollRef} className={`h-full ${isStoryDetail ? "overflow-hidden" : "overflow-y-auto"}`}>
+      <div
+        ref={scrollRef}
+        className={`h-full ${isStoryDetail ? "overflow-hidden" : "overflow-y-auto"}`}
+      >
         <div className={isStoryDetail ? "h-full" : "min-h-full flex flex-col"}>
           <div className={isStoryDetail ? "h-full" : "flex-1"}>
             <AnimatePresence mode="wait">

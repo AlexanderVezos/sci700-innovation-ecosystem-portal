@@ -21,7 +21,8 @@ function excerpt(body, max = 120) {
 }
 
 function StoryCard({ story, reduceMotion }) {
-  const { ref, onMouseMove, onMouseLeave, cardStyle, imgStyle } = useTilt(reduceMotion);
+  const { ref, onMouseMove, onMouseLeave, cardStyle, imgStyle } =
+    useTilt(reduceMotion);
 
   return (
     <motion.div

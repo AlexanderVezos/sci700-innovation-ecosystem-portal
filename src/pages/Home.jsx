@@ -47,8 +47,7 @@ function CyclingType({ reduceMotion }) {
   const [deleting, setDeleting] = useState(false);
   const [done, setDone] = useState(false);
 
-  // Derive display values — when motion is off, show final text immediately
-  // without touching state (avoids syncing state in an effect).
+  // When motion is off, bypass typewriter state entirely rather than syncing it in an effect.
   const displayText = reduceMotion ? final : text;
   const showCursor = !reduceMotion && !done;
 
@@ -74,6 +73,8 @@ function CyclingType({ reduceMotion }) {
     }
 
     const next = CYCLING_PHRASES[idx + 1];
+    // Only delete back to the shared prefix so characters common to both phrases
+    // are never re-typed.
     const keepLen = commonPrefixLen(current, next);
     if (text.length <= keepLen) {
       const tid = setTimeout(() => {
@@ -137,7 +138,7 @@ function StatBlob({ value, label, index, animate: shouldAnimate }) {
       ease: [0.16, 1, 0.3, 1],
       delay: shouldAnimate ? index * 0.15 : 0,
     });
-    return controls.stop;
+    return controls.stop; // framer-motion animate() cleanup — stops the tween on unmount
   }, [count, value, index, shouldAnimate]);
 
   return (
@@ -553,7 +554,7 @@ function Home() {
         .catch(() => {});
     };
     fetchStats();
-    const interval = setInterval(fetchStats, 1000);
+    const interval = setInterval(fetchStats, 5000);
     return () => clearInterval(interval);
   }, []);
 

@@ -13,7 +13,7 @@ export function useTilt(reduceMotion) {
   const rotateY = useTransform(x, [-0.5, 0.5], [-5, 5]);
   const scale = useSpring(1, springConfig);
 
-  // Image drifts opposite to tilt — base scale ensures edges never show
+  // Image drifts opposite to tilt; the 1.15 base scale in imgStyle ensures no edges are exposed
   const imgX = useTransform(x, [-0.5, 0.5], ["-6px", "6px"]);
   const imgY = useTransform(y, [-0.5, 0.5], ["-6px", "6px"]);
 

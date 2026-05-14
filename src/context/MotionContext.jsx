@@ -4,6 +4,8 @@ import { createContext, useContext, useEffect, useState } from "react";
 const MotionContext = createContext(null);
 
 export function MotionProvider({ children }) {
+  // localStorage checked first so an explicit user toggle survives page reloads
+  // and overrides whatever the OS accessibility setting says.
   const [reduceMotion, setReduceMotion] = useState(() => {
     const stored = localStorage.getItem("reduceMotion");
     if (stored !== null) return stored === "true";
