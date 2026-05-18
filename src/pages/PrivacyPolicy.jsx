@@ -10,7 +10,7 @@ function PrivacyPolicy() {
               Privacy Policy
             </h1>
             <p className="text-slate-400 mt-4 text-sm">
-              Last updated: April 2026
+              Last updated: May 2026
             </p>
           </div>
         </div>
@@ -29,10 +29,10 @@ function PrivacyPolicy() {
               Principles (APPs).
             </p>
             <p className="text-slate-600 leading-relaxed mt-3">
-              By submitting information to the Platform (including startup
-              listings, events, or opportunity posts) you agree to the
-              collection and use of your information as described in this
-              policy.
+              By submitting information to the Platform (including directory
+              listings, events, opportunity posts, or ecosystem map entries) you
+              agree to the collection and use of your information as described
+              in this policy.
             </p>
           </section>
 
@@ -45,12 +45,15 @@ function PrivacyPolicy() {
               submitting listings, including:
             </p>
             <ul className="list-disc list-inside text-slate-600 mt-2 space-y-1">
-              <li>Organisation or startup name</li>
+              <li>Organisation or entity name</li>
               <li>
-                Contact details — email address, phone number, and/or website
-                URL
+                Contact details including email address, phone number, and
+                website URL
               </li>
-              <li>Business description, founding year, team size, and stage</li>
+              <li>
+                Organisation description, founding year, team size, and stage
+                (for directory listings)
+              </li>
               <li>
                 Event details including title, date, location, and organiser
                 name

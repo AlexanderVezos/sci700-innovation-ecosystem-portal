@@ -10,7 +10,7 @@ function Terms() {
               Terms &amp; Conditions
             </h1>
             <p className="text-slate-400 mt-4 text-sm">
-              Last updated: April 2026
+              Last updated: May 2026
             </p>
           </div>
         </div>
@@ -46,8 +46,9 @@ function Terms() {
               3. User Submissions
             </h2>
             <p className="text-slate-600 leading-relaxed">
-              By submitting a startup listing, event, or opportunity to the
-              Platform, you represent and warrant that:
+              By submitting a directory listing, event, opportunity, or
+              ecosystem map entry to the Platform, you represent and warrant
+              that:
             </p>
             <ul className="list-disc list-inside text-slate-600 mt-2 space-y-1">
               <li>
