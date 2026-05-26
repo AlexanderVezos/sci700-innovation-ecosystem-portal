@@ -90,13 +90,11 @@ Railway deploys the portal to a public URL with no server setup required.
 1. Sign up at [railway.com](https://railway.com) -- if GitHub login fails, sign up with email and connect GitHub afterwards from your account settings
 2. The repository must be set to **public** on GitHub before Railway can see it -- you can make it private again after the initial deploy if needed
 3. Click **New Project > Deploy from GitHub repo** and select this repository
-4. When asked for configuration, set:
-   - Build command: `npm run build`
-   - Start command: `npm start`
-5. Go to the **Variables** tab and add each value from your `.env` file
+4. Railway will detect the project automatically -- no build or start commands needed
+5. Go to the **Variables** tab and add each value from your `.env` file -- **do this before the first deploy or the site will fail to start**
 6. Go to **Settings > Networking > Generate Domain** -- Railway provides a public URL
-7. Go back to **Variables** and update `CORS_ORIGIN` to match that URL
-8. Railway will redeploy automatically -- the site will be live within a couple of minutes
+7. Go back to **Variables** and update `CORS_ORIGIN` to match that URL, then click **Deploy** to rebuild
+8. The site will be live within a couple of minutes
 
 ---
 
