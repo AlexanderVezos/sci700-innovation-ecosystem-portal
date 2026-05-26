@@ -59,13 +59,16 @@ The database export is provided as JSON files in the `data/` folder -- one per c
 [MongoDB Compass](https://www.mongodb.com/products/compass) is a free desktop app with a visual interface.
 
 1. Download and install Compass
-2. Open Compass and paste your `MONGO_URI` into the connection field, then click **Connect**
-3. Click **Create database**, enter `innovation-portal` as the database name and `listings` as the first collection name
-4. Click on the `listings` collection, then **Add Data > Import JSON file** and select `data/listings.json`
-5. Back in the left panel, click the **+** next to `innovation-portal` to create the remaining collections and repeat the import for each:
-   - `events` > `data/events.json`
-   - `opportunities` > `data/opportunities.json`
-   - `stories` > `data/stories.json`
+2. Paste your `MONGO_URI` into the connection field and click **Connect**
+3. In the left panel, click **+** next to Databases, name it `innovation-portal`, and give the first collection any name -- `listings` is fine
+4. For each collection, click its name in the left panel, then **Add Data > Import JSON file** and select the matching file from the `data/` folder. To add a new collection, click **+** next to `innovation-portal` and repeat.
+
+| Collection | File |
+| --- | --- |
+| `listings` | `data/listings.json` |
+| `events` | `data/events.json` |
+| `opportunities` | `data/opportunities.json` |
+| `stories` | `data/stories.json` |
 
 ### Via terminal
 
