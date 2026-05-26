@@ -35,7 +35,7 @@ The portal needs two free cloud services. Create an account with each, then fill
 
 ### Filling in .env
 
-Copy `.env.example` to `.env` and fill in each value:
+Rename `.env.example` to `.env` and fill in each value:
 
 ```
 MONGO_URI=           # MongoDB connection string from above
