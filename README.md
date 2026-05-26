@@ -63,12 +63,12 @@ The database export is provided as JSON files in the `data/` folder -- one per c
 3. In the left panel, click **+** next to Databases, name it `innovation-portal`, and give the first collection any name -- `listings` is fine
 4. For each collection, click its name in the left panel, then **Add Data > Import JSON file** and select the matching file from the `data/` folder. To add a new collection, click **+** next to `innovation-portal` and repeat.
 
-| Collection | File |
-| --- | --- |
-| `listings` | `data/listings.json` |
-| `events` | `data/events.json` |
+| Collection      | File                      |
+| --------------- | ------------------------- |
+| `listings`      | `data/listings.json`      |
+| `events`        | `data/events.json`        |
 | `opportunities` | `data/opportunities.json` |
-| `stories` | `data/stories.json` |
+| `stories`       | `data/stories.json`       |
 
 ### Via terminal
 
