@@ -42,7 +42,7 @@ Rename `.env.example` to `.env` and fill in each value:
 MONGO_URI=           # MongoDB connection string from above
 ADMIN_USER=          # choose a username for the admin panel
 ADMIN_PASS=          # choose a strong password
-CORS_ORIGIN=         # your Railway URL once deployed, e.g. https://yourapp.up.railway.app
+CORS_ORIGIN=         # your public URL once deployed, e.g. https://yourapp.koyeb.app
 CLOUDINARY_CLOUD_NAME=
 CLOUDINARY_API_KEY=
 CLOUDINARY_API_SECRET=
@@ -83,18 +83,17 @@ mongoimport --uri="$MONGO_URI" --db=innovation-portal --collection=stories      
 
 ---
 
-## 3. Hosting with Railway
+## 3. Hosting with Koyeb
 
-Railway deploys the portal to a public URL with no server setup required.
+Koyeb deploys the portal to a public URL for free, with no server setup required and no time limit.
 
-1. Sign up at [railway.com](https://railway.com) -- if GitHub login fails, sign up with email and connect GitHub afterwards from your account settings
-2. The repository must be set to **public** on GitHub before Railway can see it -- you can make it private again after the initial deploy if needed
-3. Click **New Project > Deploy from GitHub repo** and select this repository
-4. Railway will detect the project automatically -- no build or start commands needed
-5. Go to the **Variables** tab and add each value from your `.env` file -- **do this before the first deploy or the site will fail to start**
-6. Go to **Settings > Networking > Generate Domain** -- Railway provides a public URL
-7. Go back to **Variables** and update `CORS_ORIGIN` to match that URL, then click **Deploy** to rebuild
-8. The site will be live within a couple of minutes
+1. Sign up at [koyeb.com](https://koyeb.com)
+2. The repository must be set to **public** on GitHub before Koyeb can see it -- you can make it private again after the initial deploy if needed
+3. Click **Create Service > GitHub** and select this repository
+4. Koyeb will detect the project automatically -- no build or start commands needed
+5. Go to the **Environment variables** section and add each value from your `.env` file -- **do this before deploying or the site will fail to start**
+6. Click **Deploy** -- Koyeb provides a public URL once the build completes
+7. Go back to **Environment variables**, update `CORS_ORIGIN` to match that URL, and redeploy
 
 ---
 
