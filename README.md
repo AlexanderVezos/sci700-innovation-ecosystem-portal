@@ -87,7 +87,7 @@ mongoimport --uri="$MONGO_URI" --db=innovation-portal --collection=stories      
 
 Railway deploys the portal to a public URL with no server setup required.
 
-1. Sign up at [railway.com](https://railway.com) using your GitHub account
+1. Sign up at [railway.com](https://railway.com) with your/connecting to GitHub account
 2. Click **New Project > Deploy from GitHub repo** and select this repository
 3. When asked for configuration, set:
    - Build command: `npm run build`
