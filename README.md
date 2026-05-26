@@ -113,12 +113,7 @@ npm run build      # production build
 npm start          # production server on port 3002
 ```
 
-For persistent deployment, use [PM2](https://pm2.keymetrics.io):
-```bash
-npm install -g pm2
-pm2 start ecosystem.config.cjs
-pm2 startup && pm2 save
-```
+For persistent deployment, use your preferred process manager to run `npm start`.
 
 ---
 
