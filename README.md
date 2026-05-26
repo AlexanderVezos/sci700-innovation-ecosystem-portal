@@ -51,7 +51,24 @@ CLOUDINARY_API_SECRET=
 
 ## 2. Importing the existing data
 
-The database export is provided as a set of JSON files, one per collection, in the `data/` folder. Once your Atlas cluster is set up and `MONGO_URI` is in your `.env`, run:
+The database export is provided as a set of JSON files in the `data/` folder -- one per collection. Import each file into your Atlas cluster using whichever method suits you.
+
+### Via Atlas (no software required)
+
+1. Go to [cloud.mongodb.com](https://cloud.mongodb.com) and open your cluster
+2. Click **Browse Collections**
+3. Click **Add Data > Import JSON or CSV file**
+4. Select the database `innovation-portal`, enter the collection name (e.g. `listings`), and upload the corresponding file from the `data/` folder
+5. Repeat for each collection: `listings`, `events`, `opportunities`, `stories`
+
+### Via MongoDB Compass (desktop GUI)
+
+1. Download and install [MongoDB Compass](https://www.mongodb.com/products/compass)
+2. Connect using your `MONGO_URI`
+3. Open the `innovation-portal` database (create it if it doesn't exist)
+4. For each collection, click **Add Data > Import JSON file** and select the file from the `data/` folder
+
+### Via terminal
 
 ```bash
 mongoimport --uri="$MONGO_URI" --db=innovation-portal --collection=listings      --file=data/listings.json      --jsonArray
@@ -60,7 +77,7 @@ mongoimport --uri="$MONGO_URI" --db=innovation-portal --collection=opportunities
 mongoimport --uri="$MONGO_URI" --db=innovation-portal --collection=stories        --file=data/stories.json        --jsonArray
 ```
 
-`mongoimport` is included with the [MongoDB Database Tools](https://www.mongodb.com/try/download/database-tools). Alternatively, [MongoDB Compass](https://www.mongodb.com/products/compass) can import JSON files through its GUI without using the terminal.
+`mongoimport` is included with the [MongoDB Database Tools](https://www.mongodb.com/try/download/database-tools).
 
 ---
 
