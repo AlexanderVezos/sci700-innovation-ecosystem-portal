@@ -1,0 +1,57 @@
+[{
+  "_id": {
+    "$oid": "6a0aa04d34cafd58373ee985"
+  },
+  "type": "Government",
+  "name": "Sunshine Coast Council ",
+  "tags": [
+    "Other"
+  ],
+  "description": "Economic Development Branch of Sunshine Coast Council supporting and connecting local businesses, innovators and entrepreneurs to grow and thrive ",
+  "stage": null,
+  "email": "businessdevelopment@sunshinecoast.qls.gov.au",
+  "website": "https://www.sunshinecoast.qld.gov.au",
+  "phone": "",
+  "status": "approved",
+  "createdAt": {
+    "$date": "2026-05-18T05:14:53.378Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6a0cf65f57da8a0d7033d33c"
+  },
+  "type": "Government",
+  "name": "AusIndustry",
+  "tags": [
+    "Other"
+  ],
+  "description": "AusIndustry assists innovators and entrepreneurs to scale and grow. ",
+  "stage": null,
+  "email": "kay.strong@industry.gov.au",
+  "website": "https://www.business.gov.au",
+  "phone": "",
+  "status": "approved",
+  "createdAt": {
+    "$date": "2026-05-19T23:46:39.095Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6a0d33de57da8a0d7033d33e"
+  },
+  "type": "Industry Partner",
+  "name": "Blue Seas AI",
+  "tags": [
+    "Professional Services"
+  ],
+  "description": "Helping transform businesses with AI. Eliminate admin and other boring bits to help owners increase their revenue.",
+  "stage": null,
+  "email": "hello@blueseas.ai",
+  "website": "https://blueseas.ai",
+  "phone": "0431 916 939",
+  "status": "approved",
+  "createdAt": {
+    "$date": "2026-05-20T04:09:02.070Z"
+  }
+}]

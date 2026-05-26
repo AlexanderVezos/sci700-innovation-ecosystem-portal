@@ -1,0 +1,114 @@
+import express from "express";
+import rateLimit from "express-rate-limit";
+import { generateToken, revokeToken, getAutoApprove, setAutoApprove } from "../adminState.js";
+import requireAdmin from "../requireAdmin.js";
+import { ObjectId } from "mongodb";
+import { scrapeMefsc } from "../scrapers/mefsc.js";
+import { scrapeSunshineCoast } from "../scrapers/sunshinecoast.js";
+
+const loginLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 5, standardHeaders: true, legacyHeaders: false });
+
+export default function (db) {
+  const router = express.Router();
+  const startups = db.collection("listings");
+  const events = db.collection("events");
+  const opps = db.collection("opportunities");
+
+  // ── Auth ──────────────────────────────────────────────────────────────────
+
+  router.post("/login", loginLimiter, (req, res) => {
+    const { username, password } = req.body;
+    if (username !== process.env.ADMIN_USER || password !== process.env.ADMIN_PASS) {
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
+    res.json({ token: generateToken() });
+  });
+
+  router.post("/logout", requireAdmin, (req, res) => {
+    revokeToken(req.headers.authorization.slice(7));
+    res.json({ ok: true });
+  });
+
+  // ── Pending (all three collections) ──────────────────────────────────────
+
+  router.get("/pending", requireAdmin, async (_req, res) => {
+    const [pendingStartups, pendingEvents, pendingOpps] = await Promise.all([
+      startups.find({ status: "pending" }).sort({ createdAt: 1 }).toArray(),
+      events.find({ status: "pending" }).sort({ createdAt: 1 }).toArray(),
+      opps.find({ status: "pending" }).sort({ createdAt: 1 }).toArray(),
+    ]);
+    res.json({ startups: pendingStartups, events: pendingEvents, opportunities: pendingOpps });
+  });
+
+  // ── Approve / Reject (proxies for each collection) ───────────────────────
+
+  router.patch("/startups/:id", requireAdmin, async (req, res) => {
+    const { status } = req.body;
+    if (!["approved", "rejected"].includes(status)) return res.status(400).json({ error: "Invalid status" });
+    if (!ObjectId.isValid(req.params.id)) return res.status(400).json({ error: "Invalid id" });
+    const result = await startups.updateOne({ _id: new ObjectId(req.params.id) }, { $set: { status } });
+    if (result.matchedCount === 0) return res.status(404).json({ error: "Not found" });
+    res.json({ ok: true });
+  });
+
+  router.patch("/events/:id", requireAdmin, async (req, res) => {
+    const { status, type, organizer } = req.body;
+    if (!["approved", "rejected"].includes(status)) return res.status(400).json({ error: "Invalid status" });
+    if (!ObjectId.isValid(req.params.id)) return res.status(400).json({ error: "Invalid id" });
+    const update = { status };
+    if (type) update.type = type;
+    if (typeof organizer === "string") update.organizer = organizer;
+    const result = await events.updateOne({ _id: new ObjectId(req.params.id) }, { $set: update });
+    if (result.matchedCount === 0) return res.status(404).json({ error: "Not found" });
+    res.json({ ok: true });
+  });
+
+  router.patch("/opportunities/:id", requireAdmin, async (req, res) => {
+    const { status } = req.body;
+    if (!["approved", "rejected"].includes(status)) return res.status(400).json({ error: "Invalid status" });
+    if (!ObjectId.isValid(req.params.id)) return res.status(400).json({ error: "Invalid id" });
+    const result = await opps.updateOne({ _id: new ObjectId(req.params.id) }, { $set: { status } });
+    if (result.matchedCount === 0) return res.status(404).json({ error: "Not found" });
+    res.json({ ok: true });
+  });
+
+  // ── Scrape events ─────────────────────────────────────────────────────────
+
+  router.post("/scrape-events", requireAdmin, async (_req, res) => {
+    const results = { added: 0, skipped: 0, errors: [] };
+
+    const scrapers = [
+      { name: "MEFSC", fn: scrapeMefsc },
+      { name: "Sunshine Coast Council", fn: scrapeSunshineCoast },
+    ];
+
+    for (const { name, fn } of scrapers) {
+      try {
+        const scraped = await fn();
+        for (const ev of scraped) {
+          const exists = await events.findOne({ sourceUrl: ev.sourceUrl });
+          if (exists) { results.skipped++; continue; }
+          await events.insertOne({ ...ev, status: "pending", createdAt: new Date() });
+          results.added++;
+        }
+      } catch (err) {
+        results.errors.push(`${name}: ${err.message}`);
+      }
+    }
+
+    res.json(results);
+  });
+
+  // ── Settings ──────────────────────────────────────────────────────────────
+
+  router.get("/settings", requireAdmin, (_req, res) => {
+    res.json({ autoApprove: getAutoApprove() });
+  });
+
+  router.patch("/settings", requireAdmin, (req, res) => {
+    if (typeof req.body.autoApprove === "boolean") setAutoApprove(req.body.autoApprove);
+    res.json({ autoApprove: getAutoApprove() });
+  });
+
+  return router;
+}
