@@ -1,0 +1,304 @@
+[{
+  "_id": {
+    "$oid": "6a017ea1b64624bd48647b10"
+  },
+  "title": "Queensland Exporter Regional Roadshow",
+  "description": "As part of Queensland Small Business Month, the Queensland Government invites you to attend the Queensland Exporter Regional Roadshow 2026. Whether you are looking to export your products or services globally for the first time or have recently start...",
+  "date": "2026-05-20",
+  "location": "Maroochydore, QLD",
+  "type": "Roadshow",
+  "organizer": "Trade and Investment Queensland",
+  "rsvpUrl": "https://events.sunshinecoast.qld.gov.au/event/35098241-a/queensland-exporter-regional-roadshow",
+  "imageUrl": "https://dg865muyztvxf.cloudfront.net/554x416/hdsKo%2Bznp0j8/jCZ6bhpC0JjGPs%3DhdsKo%2Bznp0j8/jCZ6bhpC0JjGPs%3D.jpg",
+  "sourceUrl": "https://events.sunshinecoast.qld.gov.au/event/35098241-a/queensland-exporter-regional-roadshow",
+  "source": "Sunshine Coast Council",
+  "status": "approved",
+  "createdAt": {
+    "$date": "2026-05-11T07:00:49.208Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6a017ea1b64624bd48647b11"
+  },
+  "title": "Doing Business with Government - Manufacturer Workshop",
+  "description": "Build the capability to compete for government contracts Are you an advanced manufacturing or food & beverage business looking to strengthen your position as a government supplier? Delivered in partnership between Sunshine Coast Council , Manufacturi...",
+  "date": "2026-05-26",
+  "location": "Alexandra Headland, QLD",
+  "type": "Workshop",
+  "organizer": "Sunshine Coast Council, Manufacturing Excellence Forum, Food & Agribusiness Network",
+  "rsvpUrl": "https://events.sunshinecoast.qld.gov.au/event/34976210-a/doing-business-with-government-manufacturer-workshop",
+  "imageUrl": "https://dg865muyztvxf.cloudfront.net/554x416/qd787ZXW4lpvnhsbXNRRkKdxTRA%3Dqd787ZXW4lpvnhsbXNRRkKdxTRA%3D.jpg",
+  "sourceUrl": "https://events.sunshinecoast.qld.gov.au/event/34976210-a/doing-business-with-government-manufacturer-workshop",
+  "source": "Sunshine Coast Council",
+  "status": "approved",
+  "createdAt": {
+    "$date": "2026-05-11T07:00:49.246Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6a017ea1b64624bd48647b12"
+  },
+  "title": "Sunshine Coast Master Builders BUSSQ Roadshow",
+  "description": "Master Builders BUSSQ Roadshow is back for 2026. We’re heading across Queensland to bring the latest industry news, technical updates, and the best in...",
+  "date": "2026-06-02",
+  "location": "Bokarina, QLD",
+  "type": "Roadshow",
+  "organizer": "Master Builders Queensland - Sunshine Coast",
+  "rsvpUrl": "https://events.sunshinecoast.qld.gov.au/event/34762961-a/sunshine-coast-master-builders-bussq-roadshow",
+  "imageUrl": "https://dg865muyztvxf.cloudfront.net/314x210/lZkTtwB7IeazKay7yu/8ax9zs7w%3D30de6213-95b6-4f49-87a7-9e9b133c31c2.jpeg",
+  "sourceUrl": "https://events.sunshinecoast.qld.gov.au/event/34762961-a/sunshine-coast-master-builders-bussq-roadshow",
+  "source": "Sunshine Coast Council",
+  "status": "approved",
+  "createdAt": {
+    "$date": "2026-05-11T07:00:49.285Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6a017ea1b64624bd48647b13"
+  },
+  "title": "Connecting Women in Industry",
+  "description": "Our speakers Rebecca McIntosh (Bec Mac) Director, PlaceLove and POPSART media Bec Mac is a creator, innovator and collaborator with 20+ years’ experie...",
+  "date": "2026-06-03",
+  "location": "Maroochydore, QLD",
+  "type": "Networking",
+  "organizer": "Qld Department of State Development - SEQ North",
+  "rsvpUrl": "https://events.sunshinecoast.qld.gov.au/event/35048951-a/connecting-women-in-industry",
+  "imageUrl": "https://dg865muyztvxf.cloudfront.net/314x210/hI/rZ5kCWV9Dt7mcgTqPKfaB3VI%3D47e83e5c-1927-4dad-be9a-d69b0d48c1bc.jpeg",
+  "sourceUrl": "https://events.sunshinecoast.qld.gov.au/event/35048951-a/connecting-women-in-industry",
+  "source": "Sunshine Coast Council",
+  "status": "approved",
+  "createdAt": {
+    "$date": "2026-05-11T07:00:49.323Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6a017ea1b64624bd48647b14"
+  },
+  "title": "Sunshine Coast Commercial Builders Forum",
+  "description": "Join us on Tusday, 9 June where Master Builders General Manager – Building Services, Brendan Parkes, will break down what the clauses actually require...",
+  "date": "2026-06-09",
+  "location": "Birtinya, QLD",
+  "type": "Workshop",
+  "organizer": "Master Builders Queensland - Sunshine Coast",
+  "rsvpUrl": "https://events.sunshinecoast.qld.gov.au/event/35106933-a/sunshine-coast-commercial-builders-forum",
+  "imageUrl": "https://dg865muyztvxf.cloudfront.net/314x210/GN%2BaUqvqhe6891INNt0khXXExbg%3D919219ce-6e0f-462e-b759-cb685fa465af.jpeg",
+  "sourceUrl": "https://events.sunshinecoast.qld.gov.au/event/35106933-a/sunshine-coast-commercial-builders-forum",
+  "source": "Sunshine Coast Council",
+  "status": "approved",
+  "createdAt": {
+    "$date": "2026-05-11T07:00:49.362Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6a017ea1b64624bd48647b15"
+  },
+  "title": "Sunshine Coast Inspired Minds Lunch",
+  "description": "Join us on Thursday, 18 June , at our Sunshine Coast Inspired Minds Lunch , designed to bring together the women shaping the future of the constructio...",
+  "date": "2026-06-18",
+  "location": "Mountain Creek, QLD",
+  "type": "Networking",
+  "organizer": "Master Builders Queensland - Sunshine Coast",
+  "rsvpUrl": "https://events.sunshinecoast.qld.gov.au/event/35048961-a/sunshine-coast-inspired-minds-lunch",
+  "imageUrl": "https://dg865muyztvxf.cloudfront.net/314x210/AnzYbFXjr0Ynk7Me0vmLB84JQ%2BU%3D64ff1f57-2fc4-4c3f-b35b-e5443072a4e0.jpeg",
+  "sourceUrl": "https://events.sunshinecoast.qld.gov.au/event/35048961-a/sunshine-coast-inspired-minds-lunch",
+  "source": "Sunshine Coast Council",
+  "status": "approved",
+  "createdAt": {
+    "$date": "2026-05-11T07:00:49.400Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6a017ea1b64624bd48647b16"
+  },
+  "title": "Meet the Makers 2026: Industry Lunch, Panel & Networking",
+  "description": "Meet the Makers 2026: Industry Lunch, Panel & Networking Join us for an afternoon of connection, conversation and industry insight as part of Meet the...",
+  "date": "2026-06-23",
+  "location": "Bokarina, QLD",
+  "type": "Networking",
+  "organizer": "Food & Agribusiness Network",
+  "rsvpUrl": "https://events.sunshinecoast.qld.gov.au/event/34998761-a/meet-the-makers-2026-industry-lunch-panel-networking",
+  "imageUrl": "https://dg865muyztvxf.cloudfront.net/314x210/TDZ11XtS4OrWFQ77g9gfWPxgQbg%3D67ec735c-378d-4e43-9f12-104775b07add.jpg%40responsive-1600.webp",
+  "sourceUrl": "https://events.sunshinecoast.qld.gov.au/event/34998761-a/meet-the-makers-2026-industry-lunch-panel-networking",
+  "source": "Sunshine Coast Council",
+  "status": "approved",
+  "createdAt": {
+    "$date": "2026-05-11T07:00:49.439Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6a017ea1b64624bd48647b17"
+  },
+  "title": "Buyer Registration - Meet The Makers 2026",
+  "description": "Meet the Makers 2026 is a curated trade event connecting buyers directly with food and beverage producers actively looking to grow their wholesale, re...",
+  "date": "2026-06-23",
+  "location": "Bokarina, QLD",
+  "type": "Other",
+  "organizer": "Food & Agribusiness Network",
+  "rsvpUrl": "https://events.sunshinecoast.qld.gov.au/event/34998762-a/buyer-registration-meet-the-makers-2026",
+  "imageUrl": "https://dg865muyztvxf.cloudfront.net/314x210/X20CP3FBnKejjuzc7b0SjLfIJqw%3Dc68b4931-449a-4f1c-8082-49d8e82616ee.png%40responsive-1600.webp",
+  "sourceUrl": "https://events.sunshinecoast.qld.gov.au/event/34998762-a/buyer-registration-meet-the-makers-2026",
+  "source": "Sunshine Coast Council",
+  "status": "rejected",
+  "createdAt": {
+    "$date": "2026-05-11T07:00:49.477Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6a017ea1b64624bd48647b18"
+  },
+  "title": "Women in Manufacturing - Sunshine Coast",
+  "description": "Join us at the Sunshine Coast Women in Manufacturing breakfast for an engaging discussion on Queensland manufacturers’ ability to innovate and the opp...",
+  "date": "2026-07-22",
+  "location": "Sippy Downs, QLD",
+  "type": "Networking",
+  "organizer": "Manufacturing Queensland (NRMMRRD)",
+  "rsvpUrl": "https://events.sunshinecoast.qld.gov.au/event/34961781-a/women-in-manufacturing-sunshine-coast",
+  "imageUrl": "https://dg865muyztvxf.cloudfront.net/314x210/6rjt15sc887BIOefWZl61se35IE%3Dc1066cde-e894-4a18-967f-8b27387af8ef.jpeg",
+  "sourceUrl": "https://events.sunshinecoast.qld.gov.au/event/34961781-a/women-in-manufacturing-sunshine-coast",
+  "source": "Sunshine Coast Council",
+  "status": "approved",
+  "createdAt": {
+    "$date": "2026-05-11T07:00:49.515Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6a017ea1b64624bd48647b19"
+  },
+  "title": "2026 FEMALE ENTREPRENEURS Summit",
+  "description": "Come on your own, or invite another Business Babe and make it a 'Girls Weekend Away' on the beautiful Sunshine Coast! Friday 23 October, 2026 | 9:00am...",
+  "date": "2026-10-23",
+  "location": "Bokarina, QLD",
+  "type": "Networking",
+  "organizer": "FABE KEILY - EMPOWERING WOMEN NETWORK",
+  "rsvpUrl": "https://events.sunshinecoast.qld.gov.au/event/34556664-a/2026-female-entrepreneurs-summit",
+  "imageUrl": "https://dg865muyztvxf.cloudfront.net/314x210/xpV5HWlMnqHx5Pi01LMLEsNUF34%3Df4d02414-3648-43a2-964e-04e0cdbf7e03.jpeg",
+  "sourceUrl": "https://events.sunshinecoast.qld.gov.au/event/34556664-a/2026-female-entrepreneurs-summit",
+  "source": "Sunshine Coast Council",
+  "status": "approved",
+  "createdAt": {
+    "$date": "2026-05-11T07:00:49.554Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6a0ab33d4634ce9d57614127"
+  },
+  "title": "Sunshine Coast Maker Space",
+  "description": "Sunshine Coast Maker Space — a Manufacturing Excellence Forum Sunshine Coast event.",
+  "date": "2026-04-29",
+  "location": "Sunshine Coast Maker Space",
+  "type": "Other",
+  "organizer": "Manufacturing Excellence Forum SC",
+  "rsvpUrl": "https://events.humanitix.com/april-event-at-mkrs",
+  "imageUrl": null,
+  "sourceUrl": "https://events.humanitix.com/april-event-at-mkrs",
+  "source": "MEFSC",
+  "status": "rejected",
+  "createdAt": {
+    "$date": "2026-05-18T06:35:41.366Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6a0ab33d4634ce9d57614128"
+  },
+  "title": "MEF at AMW",
+  "description": "MEF at AMW — a Manufacturing Excellence Forum Sunshine Coast event.",
+  "date": "2026-05-12",
+  "location": "Sunshine Coast Maker Space",
+  "type": "Other",
+  "organizer": "Manufacturing Excellence Forum SC",
+  "rsvpUrl": "https://events.humanitix.com/may-event-at-amw-2026",
+  "imageUrl": null,
+  "sourceUrl": "https://events.humanitix.com/may-event-at-amw-2026",
+  "source": "MEFSC",
+  "status": "rejected",
+  "createdAt": {
+    "$date": "2026-05-18T06:35:41.419Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6a0ab3414634ce9d57614129"
+  },
+  "title": "Eumundi Chamber of Commerce Inc Annual General Meeting",
+  "description": "The Eumundi Chamber of Commerce invites the local business community to attend its 2026 Annual General Meeting. This year marks 90 years since the formation of the Eumundi Chamber, a legacy we are proud to uphold through our modern focus on collabora...",
+  "date": "2026-05-26",
+  "location": "Eumundi, QLD",
+  "type": "Networking",
+  "organizer": "Eumundi Chamber of Commerce",
+  "rsvpUrl": "https://events.sunshinecoast.qld.gov.au/event/35107032-a/eumundi-chamber-of-commerce-inc-annual-general-meeting",
+  "imageUrl": "https://dg865muyztvxf.cloudfront.net/845x567/jQA16RdOYAuhN60jHK0hqrhh1bw%3DjQA16RdOYAuhN60jHK0hqrhh1bw%3D.jpg",
+  "sourceUrl": "https://events.sunshinecoast.qld.gov.au/event/35107032-a/eumundi-chamber-of-commerce-inc-annual-general-meeting",
+  "source": "Sunshine Coast Council",
+  "status": "approved",
+  "createdAt": {
+    "$date": "2026-05-18T06:35:45.715Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6a0bab147472437b2077c88e"
+  },
+  "title": "Metalmorphic Laser",
+  "description": "Metalmorphic Laser — a Manufacturing Excellence Forum Sunshine Coast event.",
+  "date": "2026-06-24",
+  "location": "Metalmorphic Laser",
+  "type": "Workshop",
+  "organizer": "Manufacturing Excellence Forum SC",
+  "rsvpUrl": "https://events.humanitix.com/metalmorphic",
+  "imageUrl": null,
+  "sourceUrl": "https://events.humanitix.com/metalmorphic",
+  "source": "MEFSC",
+  "status": "approved",
+  "createdAt": {
+    "$date": "2026-05-19T00:13:08.705Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6a0d07a557da8a0d7033d33d"
+  },
+  "title": "FWD>>>FEST 26",
+  "description": "FWD>FEST is a multi-day business festival for entrepreneurs and innovators and their support system. From idea formation to walking the talk global success stories, FWD>FEST is a mecca for entrepreneurial spirit! Based on the Sunshine Coast, Queensla...",
+  "date": "2026-05-20",
+  "location": "Mooloolaba, QLD",
+  "type": "Expo",
+  "organizer": "Silicon Coast",
+  "rsvpUrl": "https://events.sunshinecoast.qld.gov.au/event/34863843-a/fwdfest-26",
+  "imageUrl": "https://dg865muyztvxf.cloudfront.net/845x567/STnfYnMGAiuEEnyulvU%2B3kLwdps%3DSTnfYnMGAiuEEnyulvU%2B3kLwdps%3D.jpg",
+  "sourceUrl": "https://events.sunshinecoast.qld.gov.au/event/34863843-a/fwdfest-26",
+  "source": "Sunshine Coast Council",
+  "status": "approved",
+  "createdAt": {
+    "$date": "2026-05-20T01:00:21.599Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6a126d2c57da8a0d7033d33f"
+  },
+  "title": "People, Performance & Productivity - Sunshine Coast (And Live Streamed)",
+  "description": "With wage costs increasing, many business owners are feeling the pressure. You want to pay your people properly. You want to keep good staff. But you ...",
+  "date": "2026-06-23",
+  "location": "Maroochydore, QLD",
+  "type": "Workshop",
+  "organizer": "Phoebe Kitto",
+  "rsvpUrl": "https://events.sunshinecoast.qld.gov.au/event/35160923-a/people-performance-productivity-sunshine-coast-and-live-streamed",
+  "imageUrl": "https://dg865muyztvxf.cloudfront.net/314x210/GkW9fpSl2gwaf021HkTmBqMxxYw%3Da001b1eb-5e8a-4d40-a6e6-cd0c2df0bc69.png%40responsive-1600.webp",
+  "sourceUrl": "https://events.sunshinecoast.qld.gov.au/event/35160923-a/people-performance-productivity-sunshine-coast-and-live-streamed",
+  "source": "Sunshine Coast Council",
+  "status": "approved",
+  "createdAt": {
+    "$date": "2026-05-24T03:14:52.913Z"
+  }
+}]

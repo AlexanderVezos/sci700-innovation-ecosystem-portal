@@ -8,7 +8,7 @@ A web platform connecting startups, investors, researchers, corporates, and gove
 
 1. [Service accounts and .env](#1-service-accounts-and-env)
 2. [Importing the existing data](#2-importing-the-existing-data)
-3. [Running in the browser (no install)](#3-running-in-the-browser-no-install)
+3. [Hosting with Railway](#3-hosting-with-railway)
 4. [Running locally or self-hosting](#4-running-locally-or-self-hosting)
 5. [Admin panel](#5-admin-panel)
 
@@ -22,11 +22,12 @@ The portal needs two free cloud services. Create an account with each, then fill
 
 1. Sign up at [cloud.mongodb.com](https://cloud.mongodb.com)
 2. Create a free cluster (M0, Sydney -- AWS ap-southeast-2)
-3. Create a database user and note the password
-4. Click **Connect > Drivers > Node.js** and copy the connection string:
+3. Create a database user when prompted and note the password
+4. Once the cluster is ready, click **Connect > Drivers > Node.js** and copy the connection string:
    ```
    mongodb+srv://<user>:<password>@<cluster>.mongodb.net/
    ```
+   Replace `<password>` with the database user password you set
 
 ### Cloudinary
 
@@ -41,7 +42,7 @@ Rename `.env.example` to `.env` and fill in each value:
 MONGO_URI=           # MongoDB connection string from above
 ADMIN_USER=          # choose a username for the admin panel
 ADMIN_PASS=          # choose a strong password
-CORS_ORIGIN=         # your domain, e.g. https://portal.example.com (or http://localhost:5173 for local)
+CORS_ORIGIN=         # your Railway URL once deployed, e.g. https://yourapp.up.railway.app
 CLOUDINARY_CLOUD_NAME=
 CLOUDINARY_API_KEY=
 CLOUDINARY_API_SECRET=
@@ -51,22 +52,20 @@ CLOUDINARY_API_SECRET=
 
 ## 2. Importing the existing data
 
-The database export is provided as a set of JSON files in the `data/` folder -- one per collection. Import each file into your Atlas cluster using whichever method suits you.
+The database export is provided as JSON files in the `data/` folder -- one per collection. Import each file into your Atlas cluster.
 
-### Via Atlas (no software required)
+### Via MongoDB Compass (recommended)
 
-1. Go to [cloud.mongodb.com](https://cloud.mongodb.com) and open your cluster
-2. Click **Browse Collections**
-3. Click **Add Data > Import JSON or CSV file**
-4. Select the database `innovation-portal`, enter the collection name (e.g. `listings`), and upload the corresponding file from the `data/` folder
-5. Repeat for each collection: `listings`, `events`, `opportunities`, `stories`
+[MongoDB Compass](https://www.mongodb.com/products/compass) is a free desktop app with a visual interface.
 
-### Via MongoDB Compass (desktop GUI)
-
-1. Download and install [MongoDB Compass](https://www.mongodb.com/products/compass)
-2. Connect using your `MONGO_URI`
-3. Open the `innovation-portal` database (create it if it doesn't exist)
-4. For each collection, click **Add Data > Import JSON file** and select the file from the `data/` folder
+1. Download and install Compass
+2. Open Compass and paste your `MONGO_URI` into the connection field, then click **Connect**
+3. Click **Create database**, enter `innovation-portal` as the database name and `listings` as the first collection name
+4. Click on the `listings` collection, then **Add Data > Import JSON file** and select `data/listings.json`
+5. Back in the left panel, click the **+** next to `innovation-portal` to create the remaining collections and repeat the import for each:
+   - `events` > `data/events.json`
+   - `opportunities` > `data/opportunities.json`
+   - `stories` > `data/stories.json`
 
 ### Via terminal
 
@@ -81,27 +80,19 @@ mongoimport --uri="$MONGO_URI" --db=innovation-portal --collection=stories      
 
 ---
 
-## 3. Running in the browser (no install)
+## 3. Hosting with Railway
 
-GitHub Codespaces runs the portal entirely in your browser. No software required.
+Railway deploys the portal to a public URL with no server setup required.
 
-**You will need:** a free [GitHub account](https://github.com) and access to this repository (request an invitation from the project owner).
-
-1. Open the repository on GitHub
-2. Click the green **Code** button > **Codespaces** tab > **Create codespace on main**
-3. Wait about a minute for the environment to load
-4. In the Terminal at the bottom, run:
-   ```
-   npm install --legacy-peer-deps
-   ```
-5. Drag and drop your `.env` file into the file panel on the left (top-level folder)
-6. Run:
-   ```
-   npm run dev
-   ```
-7. When a notification appears, click **Open in Browser**
-
-To stop: close the Codespace from the repository page under **Code > Codespaces**.
+1. Sign up at [railway.com](https://railway.com) using your GitHub account
+2. Click **New Project > Deploy from GitHub repo** and select this repository
+3. When asked for configuration, set:
+   - Build command: `npm run build`
+   - Start command: `npm start`
+4. Go to the **Variables** tab and add each value from your `.env` file
+5. Go to **Settings > Networking > Generate Domain** -- Railway provides a public URL
+6. Go back to **Variables** and update `CORS_ORIGIN` to match that URL
+7. Railway will redeploy automatically -- the site will be live within a couple of minutes
 
 ---
 
@@ -113,21 +104,10 @@ Requires [Node.js 20+](https://nodejs.org) (LTS).
 git clone <repo-url>
 cd <project-folder>
 npm install --legacy-peer-deps
-cp .env.example .env
-# fill in .env (see section 1)
-```
-
-**Development:**
-```bash
-npm run dev
-# visit http://localhost:5173
-```
-
-**Production:**
-```bash
-npm run build
-npm start
-# serves on port 3002
+# rename .env.example to .env and fill in values (see section 1)
+npm run dev        # development — visit http://localhost:5173
+npm run build      # production build
+npm start          # production server on port 3002
 ```
 
 For persistent deployment, use [PM2](https://pm2.keymetrics.io):
@@ -145,7 +125,7 @@ The admin panel is at `/admin`. Log in with the `ADMIN_USER` and `ADMIN_PASS` fr
 
 ### Pending tab
 
-Public submissions (listings, events, opportunities) arrive here. They are not visible on the portal until approved. Use **Approve** or **Reject** on each card. For events, you can set the event type and organiser before approving.
+Public submissions (listings, events, opportunities) arrive here and are not visible on the portal until reviewed. Use **Approve** or **Reject** on each card. For events, you can set the event type and organiser before approving.
 
 ### Stories tab
 
