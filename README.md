@@ -87,17 +87,16 @@ mongoimport --uri="$MONGO_URI" --db=innovation-portal --collection=stories      
 
 Railway deploys the portal to a public URL with no server setup required.
 
-1. Sign up at [railway.com](https://railway.com)
-2. Click **New Project** and either:
-   - **Deploy from GitHub repo** -- if Railway can see your repository, select it here
-   - **Deploy from a zip** -- if the repo is private or Railway can't connect to GitHub, download the ZIP from the GitHub release page and drag it onto the deploy area
-3. When asked for configuration, set:
+1. Sign up at [railway.com](https://railway.com) -- if GitHub login fails, sign up with email and connect GitHub afterwards from your account settings
+2. The repository must be set to **public** on GitHub before Railway can see it -- you can make it private again after the initial deploy if needed
+3. Click **New Project > Deploy from GitHub repo** and select this repository
+4. When asked for configuration, set:
    - Build command: `npm run build`
    - Start command: `npm start`
-4. Go to the **Variables** tab and add each value from your `.env` file
-5. Go to **Settings > Networking > Generate Domain** -- Railway provides a public URL
-6. Go back to **Variables** and update `CORS_ORIGIN` to match that URL
-7. Railway will redeploy automatically -- the site will be live within a couple of minutes
+5. Go to the **Variables** tab and add each value from your `.env` file
+6. Go to **Settings > Networking > Generate Domain** -- Railway provides a public URL
+7. Go back to **Variables** and update `CORS_ORIGIN` to match that URL
+8. Railway will redeploy automatically -- the site will be live within a couple of minutes
 
 ---
 
