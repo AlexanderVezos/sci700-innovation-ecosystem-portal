@@ -32,7 +32,7 @@ app.use(
     origin: process.env.CORS_ORIGIN || "https://startupsc.punkrecords.xyz",
   }),
 );
-app.use(express.json());
+app.use(express.json({ limit: "10mb" }));
 
 if (!process.env.MONGO_URI) {
   console.error("ERROR: MONGO_URI is not set in .env — server will not start.");
@@ -58,5 +58,4 @@ app.get("/{*path}", (_req, res) =>
   res.sendFile(path.join(__dirname, "../dist/index.html")),
 );
 
-const PORT = process.env.PORT || 3002;
-app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+app.listen(3002, () => console.log("Server running on http://localhost:3002"));
