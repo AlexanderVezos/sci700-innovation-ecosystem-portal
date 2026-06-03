@@ -8,7 +8,7 @@ A web platform connecting startups, investors, researchers, corporates, and gove
 
 1. [Service accounts and .env](#1-service-accounts-and-env)
 2. [Importing the existing data](#2-importing-the-existing-data)
-3. [Hosting with Railway](#3-hosting-with-railway)
+3. [Hosting with Render](#3-hosting-with-railway)
 4. [Running locally or self-hosting](#4-running-locally-or-self-hosting)
 5. [Admin panel](#5-admin-panel)
 
