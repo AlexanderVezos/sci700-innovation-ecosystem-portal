@@ -604,7 +604,7 @@ function StoriesTab({ token }) {
           {stories.map((s) => (
             <div
               key={s._id}
-              className="bg-slate-800 rounded-xl border border-slate-700 p-4 flex items-center gap-4"
+              className="bg-slate-800 rounded-xl border border-slate-700 p-4 flex flex-wrap items-center gap-3"
             >
               {s.imageUrl && (
                 <img
@@ -617,7 +617,7 @@ function StoriesTab({ token }) {
                 <p className="font-bold text-white text-sm truncate">
                   {s.title}
                 </p>
-                <div className="flex items-center gap-2 mt-0.5">
+                <div className="flex items-center gap-2 mt-0.5 flex-wrap">
                   <span
                     className={`text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-md ${
                       s.status === "published"
@@ -634,11 +634,11 @@ function StoriesTab({ token }) {
                   )}
                 </div>
               </div>
-              <div className="flex items-center gap-2 shrink-0">
+              <div className="flex items-center gap-2 w-full sm:w-auto">
                 <button
                   onClick={() => toggleStatus(s)}
                   disabled={busy[s._id]}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors disabled:opacity-40 ${
+                  className={`flex-1 sm:flex-none px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors disabled:opacity-40 ${
                     s.status === "published"
                       ? "border-slate-600 text-slate-400 hover:text-slate-200"
                       : "border-emerald-500/40 text-emerald-400 hover:bg-emerald-500/10"
@@ -649,14 +649,14 @@ function StoriesTab({ token }) {
                 <button
                   onClick={() => setEditing(s)}
                   disabled={busy[s._id]}
-                  className="px-3 py-1.5 rounded-lg text-xs font-bold border border-slate-600 text-slate-400 hover:text-slate-200 transition-colors disabled:opacity-40"
+                  className="flex-1 sm:flex-none px-3 py-1.5 rounded-lg text-xs font-bold border border-slate-600 text-slate-400 hover:text-slate-200 transition-colors disabled:opacity-40"
                 >
                   Edit
                 </button>
                 <button
                   onClick={() => deleteStory(s)}
                   disabled={busy[s._id]}
-                  className="px-3 py-1.5 rounded-lg text-xs font-bold border border-red-500/30 text-red-400 hover:bg-red-500/10 transition-colors disabled:opacity-40"
+                  className="flex-1 sm:flex-none px-3 py-1.5 rounded-lg text-xs font-bold border border-red-500/30 text-red-400 hover:bg-red-500/10 transition-colors disabled:opacity-40"
                 >
                   Delete
                 </button>
