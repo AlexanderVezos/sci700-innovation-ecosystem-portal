@@ -205,7 +205,7 @@ function PendingCard({ item, type, token, onDecision }) {
               href={item.rsvpUrl || item.website}
               target="_blank"
               rel="noreferrer"
-              className="text-[11px] text-cyan-400 hover:text-cyan-300 truncate max-w-[200px]"
+              className="text-[11px] text-cyan-400 hover:text-cyan-300 truncate max-w-50"
             >
               🔗 {item.rsvpUrl ? "View event" : item.website}
             </a>
@@ -755,8 +755,8 @@ function Dashboard({ token, onLogout }) {
   return (
     <div className="min-h-screen bg-slate-950">
       {/* Top bar */}
-      <div className="sticky top-0 z-10 bg-slate-900 border-b border-slate-800 px-6 py-3 flex items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
+      <div className="sticky top-0 z-10 bg-slate-900 border-b border-slate-800 px-4 md:px-6 py-3 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+        <div className="flex items-center gap-3 flex-wrap">
           <span className="text-lg font-black tracking-tighter text-white">
             STARTUP<span className="text-amber-400">SC</span>
             <span className="text-slate-500 font-semibold text-sm ml-2">
@@ -768,7 +768,7 @@ function Dashboard({ token, onLogout }) {
               {totalPending}
             </span>
           )}
-          <div className="flex gap-1 ml-4">
+          <div className="flex gap-1">
             {[
               ["pending", "Pending"],
               ["stories", "Stories"],
@@ -788,7 +788,7 @@ function Dashboard({ token, onLogout }) {
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 flex-wrap">
           {/* Auto-approve toggle */}
           <button
             onClick={toggleAutoApprove}
@@ -815,7 +815,7 @@ function Dashboard({ token, onLogout }) {
 
           <button
             onClick={logout}
-            className="text-xs text-slate-500 hover:text-slate-300 transition-colors font-medium"
+            className="text-xs text-slate-500 hover:text-slate-300 transition-colors font-medium ml-1"
           >
             Sign out
           </button>

@@ -768,24 +768,24 @@ export default function EventsPanel() {
     <>
       <div className="h-2" />
       {/* Sticky bar — z-51 covers navbar shadow when docked */}
-      <div className="sticky top-14 lg:top-[72px] z-51 bg-white border-b border-slate-200">
-        <div className="max-w-5xl mx-auto px-8 md:px-16 py-3 flex flex-col md:flex-row md:items-center gap-2">
+      <div className="sticky top-14 lg:top-18 z-51 bg-white border-b border-slate-200">
+        <div className="max-w-5xl mx-auto px-8 md:px-16 py-3 flex flex-col gap-2 md:flex-row md:items-center">
           <div className="flex items-center gap-2 md:shrink-0">
             <button
               onClick={() => setFormOpen(true)}
-              className="flex-1 md:flex-none text-sm font-semibold px-4 py-2 rounded-xl bg-slate-800 text-white hover:bg-slate-700 transition-colors"
+              className="text-sm font-semibold px-4 py-2 rounded-xl bg-slate-800 text-white hover:bg-slate-700 transition-colors shrink-0"
             >
               + Add Event
             </button>
-            <div className="flex-1 md:hidden">
+            <div className="md:hidden">
               <MobileFilterButton
                 onClick={() => setMobileFiltersOpen((o) => !o)}
                 totalActive={totalActive}
               />
             </div>
-          </div>
-          <div className="flex items-center gap-2 flex-1 min-w-0">
             <ViewToggle view={view} setView={setView} />
+          </div>
+          <div className="flex items-center gap-2 w-full md:flex-1 md:min-w-0">
             <input
               type="search"
               placeholder="Search events…"
@@ -824,7 +824,7 @@ export default function EventsPanel() {
 
         <div className="flex gap-6 items-start">
           {/* Sidebar */}
-          <div className="hidden md:block w-52 shrink-0 sticky top-32 lg:top-[136px]">
+          <div className="hidden md:block w-52 shrink-0 sticky top-32 lg:top-34">
             <FilterPanel {...filterPanelProps} />
           </div>
 
